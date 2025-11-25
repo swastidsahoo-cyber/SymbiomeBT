@@ -66,47 +66,16 @@ li {
 .metric-value {
     font-size: 2.5rem;
     font-weight: 700;
-    background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-family: 'JetBrains Mono', monospace;
+    box-shadow: 0 0 0 0 rgba(0, 242, 254, 0.4);
 }
 
-/* Custom Buttons */
-.stButton>button {
-    background: linear-gradient(90deg, #00f2fe 0%, #4facfe 100%);
-    color: #000000 !important;
-    font-weight: 700;
-    border: none;
-    border-radius: 12px;
-    padding: 0.75rem 1.5rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+70% {
+    box-shadow: 0 0 0 20px rgba(0, 242, 254, 0);
 }
 
-.stButton>button:hover {
-    transform: scale(1.02);
-    box-shadow: 0 8px 25px rgba(0, 242, 254, 0.5);
+100% {
+    box-shadow: 0 0 0 0 rgba(0, 242, 254, 0);
 }
-
-.stButton>button p {
-    color: #000000 !important;
-    /* Ensure button text is black for contrast */
-}
-
-/* Animations */
-@keyframes pulse-glow {
-    0% {
-        box-shadow: 0 0 0 0 rgba(0, 242, 254, 0.4);
-    }
-
-    70% {
-        box-shadow: 0 0 0 20px rgba(0, 242, 254, 0);
-    }
-
-    100% {
-        box-shadow: 0 0 0 0 rgba(0, 242, 254, 0);
-    }
 }
 
 .pulse-animation {
