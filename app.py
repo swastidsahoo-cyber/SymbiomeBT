@@ -2,9 +2,11 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
-from modules.science_logic import calculate_sri, predict_recovery, get_digital_twin_insight
+from modules.science_logic import calculate_sri
 import time
 import os
+import random
+from datetime import datetime
 
 # ==========================================
 # SYMBIOME APP CONFIGURATION
@@ -33,38 +35,60 @@ load_css()
 # SESSION STATE MANAGEMENT
 # ==========================================
 if 'show_coach' not in st.session_state:
-    st.session_state.show_coach = False
+    st.session_state.show_coach = True # Default open for demo
 if 'biofeedback_active' not in st.session_state:
     st.session_state.biofeedback_active = False
 if 'hydration_active' not in st.session_state:
     st.session_state.hydration_active = False
+if 'tip_index' not in st.session_state:
+    st.session_state.tip_index = 0
+if 'live_mode' not in st.session_state:
+    st.session_state.live_mode = False
+
+# --- DYNAMIC DATA SIMULATION ---
+def simulate_live_data():
+    """Generates 'live' biometric data with natural fluctuations."""
+    now = time.time()
+    # Create a sine wave fluctuation based on time for "breathing" effect
+    fluctuation = (random.random() - 0.5) * 5
+    
+    # Base values with noise
+    hrv = 65 + (10 * random.sin(now / 10)) + fluctuation
+    gsr = 12 + (2 * random.cos(now / 15)) + (fluctuation / 2)
+    facial = 85 + fluctuation
+    temp = 36.6 + (random.random() - 0.5) * 0.2
+    ph = 7.35 + (random.random() - 0.5) * 0.05
+    
+    return hrv, gsr, facial, temp, ph
+
+# Get live data
+live_hrv, live_gsr, live_facial, live_temp, live_ph = simulate_live_data()
+current_sri = int(calculate_sri(live_hrv, live_gsr, live_facial))
+
+# --- AI COACH TIPS ---
+tips = [
+    {"title": "Maintain Balance", "text": "Good resilience! A quick coherent breathing session (1-2 min) can push you into optimal range."},
+    {"title": "Hydration Alert", "text": "Your GSR indicates mild dehydration. Drinking 200ml of water can improve cognitive focus by 12%."},
+    {"title": "Circadian Sync", "text": "Light exposure now will boost your cortisol awakening response for better energy tomorrow."},
+    {"title": "Vagal Tone", "text": "Humming for 60 seconds stimulates the Vagus nerve and lowers heart rate instantly."},
+    {"title": "Screen Fatigue", "text": "Blink rate has decreased. Look at an object 20ft away for 20 seconds to reset eye strain."}
+]
+
+def next_tip():
+    st.session_state.tip_index = (st.session_state.tip_index + 1) % len(tips)
 
 def toggle_coach():
     st.session_state.show_coach = not st.session_state.show_coach
 
 def start_biofeedback():
     st.session_state.biofeedback_active = True
+    st.toast("Biofeedback Sensors Calibrated", icon="🧬")
 
 def start_hydration():
     st.session_state.hydration_active = True
 
-# ==========================================
-# DATA LOADING
-# ==========================================
-@st.cache_data
-def load_data():
-    try:
-        base_dir = os.path.dirname(__file__)
-        history_path = os.path.join(base_dir, "data", "user_history.csv")
-        session_path = os.path.join(base_dir, "data", "simulated_session.csv")
-        
-        history_df = pd.read_csv(history_path)
-        session_df = pd.read_csv(session_path)
-        return history_df, session_df
-    except FileNotFoundError:
-        return pd.DataFrame(), pd.DataFrame()
-
-history_df, session_df = load_data()
+def toggle_live_mode():
+    st.session_state.live_mode = not st.session_state.live_mode
 
 # ==========================================
 # MAIN DASHBOARD LAYOUT
@@ -89,31 +113,29 @@ with c1:
     st.markdown("# Symbiome Resilience System")
     st.markdown("AI-Powered Biological Intelligence Platform")
 with c2:
-    st.markdown("""
-    <div style="text-align: right;">
-        <span style="background: rgba(0, 242, 254, 0.1); color: #00f2fe; padding: 5px 10px; border-radius: 8px; font-size: 0.8rem; border: 1px solid rgba(0, 242, 254, 0.3);">
-            ● LIVE MONITORING
-        </span>
-    </div>
-    """, unsafe_allow_html=True)
+    # Live Mode Toggle
+    if st.button(f"{'🔴 STOP LIVE' if st.session_state.live_mode else '🟢 GO LIVE'}", use_container_width=True):
+        toggle_live_mode()
+        st.rerun()
+    
+    if st.session_state.live_mode:
+        st.caption("Live Monitoring Active: Auto-refreshing...")
+        time.sleep(3) # Simulate 3s refresh rate
+        st.rerun()
 
 st.markdown("---")
 
 # --- SECTION 1: HERO (SRI GAUGE) ---
-if not session_df.empty:
-    latest_hrv = session_df['HRV_Score'].iloc[-1]
-    latest_gsr = session_df['GSR_Score'].iloc[-1]
-    latest_facial = session_df['Facial_Calm'].iloc[-1]
-    current_sri = int(calculate_sri(latest_hrv, latest_gsr, latest_facial))
-else:
-    latest_hrv, latest_gsr, latest_facial, current_sri = 60, 10, 80, 75
-
+# Dynamic Status Text
 if current_sri >= 75:
     sri_color, status_text, glow_color = "#00f2fe", "OPTIMAL STATE", "rgba(0, 242, 254, 0.6)"
+    advice_text = "System functioning at peak efficiency. Engage in high-focus tasks."
 elif current_sri >= 50:
     sri_color, status_text, glow_color = "#f2c94c", "BALANCED", "rgba(242, 201, 76, 0.6)"
+    advice_text = "Your resilience is stable. Small adjustments can optimize performance."
 else:
     sri_color, status_text, glow_color = "#ff4b1f", "HIGH STRESS", "rgba(255, 75, 31, 0.6)"
+    advice_text = "System load high. Recommended: 5-minute recovery break."
 
 col_hero_1, col_hero_2, col_hero_3 = st.columns([1, 2, 1])
 
@@ -142,7 +164,7 @@ with col_hero_2:
         <div style="margin-top: 25px; font-size: 1.5rem; font-weight: 700; color: {sri_color}; letter-spacing: 3px; text-shadow: 0 0 20px {glow_color};">
             {status_text}
         </div>
-        <div style="color: #64748b; margin-top: 5px;">Your resilience is stable. Small adjustments can optimize performance.</div>
+        <div style="color: #64748b; margin-top: 5px; text-align: center;">{advice_text}</div>
     </div>
     """, unsafe_allow_html=True)
     
@@ -157,10 +179,10 @@ with col_hero_2:
 st.markdown("### ⚡ Real-Time Biological Readings")
 m1, m2, m3, m4 = st.columns(4)
 metrics = [
-    ("Heart Rate", f"{int(latest_hrv + 20)}", "bpm", "#ff4b1f"),
-    ("GSR (Stress)", f"{latest_gsr}", "µS", "#f2c94c"),
-    ("pH Level", f"{session_df['pH_Level'].iloc[-1]}", "pH", "#00f2fe"),
-    ("Temperature", f"{session_df['Temperature_C'].iloc[-1]}", "°C", "#a8ff78")
+    ("Heart Rate", f"{int(live_hrv)}", "bpm", "#ff4b1f"),
+    ("GSR (Stress)", f"{live_gsr:.1f}", "µS", "#f2c94c"),
+    ("pH Level", f"{live_ph:.2f}", "pH", "#00f2fe"),
+    ("Temperature", f"{live_temp:.1f}", "°C", "#a8ff78")
 ]
 
 for col, (label, val, unit, color) in zip([m1, m2, m3, m4], metrics):
@@ -208,18 +230,18 @@ st.markdown(f"""
         <div style="font-size: 1.1rem; font-weight: 700; color: white;">✨ AI Insight</div>
         <div style="background: #e11d48; color: white; padding: 2px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 700;">LIVE</div>
     </div>
-    <div style="font-size: 1.2rem; color: #e2e8f0; margin-bottom: 10px;">Optimal resilience maintained. Continue current wellness practices.</div>
-    <div style="color: #a855f7; font-size: 0.9rem; font-weight: 600;">Confidence: 92%</div>
+    <div style="font-size: 1.2rem; color: #e2e8f0; margin-bottom: 10px;">{advice_text}</div>
+    <div style="color: #a855f7; font-size: 0.9rem; font-weight: 600;">Confidence: {random.randint(88, 95)}%</div>
 </div>
 """, unsafe_allow_html=True)
 
 # Detailed Metrics Grid
 c_grid1, c_grid2 = st.columns(2)
 with c_grid1:
-    st.markdown("""
+    st.markdown(f"""
     <div class="ai-grid-card">
         <div class="ai-grid-label">⏱️ Expected Recovery</div>
-        <div class="ai-grid-value">4.2 min</div>
+        <div class="ai-grid-value">{random.uniform(3.5, 5.5):.1f} min</div>
         <div style="font-size: 0.7rem; color: #10b981;">↑ 19% from last week</div>
     </div>
     """, unsafe_allow_html=True)
@@ -232,17 +254,17 @@ with c_grid1:
     """, unsafe_allow_html=True)
 
 with c_grid2:
-    st.markdown("""
+    st.markdown(f"""
     <div class="ai-grid-card">
         <div class="ai-grid-label">📉 Stress Risk</div>
-        <div class="ai-grid-value" style="color: #10b981;">Low</div>
+        <div class="ai-grid-value" style="color: {'#10b981' if current_sri > 50 else '#ff4b1f'};">{'Low' if current_sri > 50 else 'Moderate'}</div>
         <div style="font-size: 0.7rem; color: #10b981;">Stable trend</div>
     </div>
     """, unsafe_allow_html=True)
-    st.markdown("""
+    st.markdown(f"""
     <div class="ai-grid-card">
         <div class="ai-grid-label">🤖 AI Confidence</div>
-        <div class="ai-grid-value">92%</div>
+        <div class="ai-grid-value">{random.randint(90, 98)}%</div>
         <div style="font-size: 0.7rem; color: #94a3b8;">High accuracy</div>
     </div>
     """, unsafe_allow_html=True)
@@ -284,11 +306,11 @@ col_radar, col_zones = st.columns([1, 1])
 with col_radar:
     categories = ['Cardiovascular', 'Neurological', 'Metabolic', 'Thermal', 'Stress Resilience']
     r_values = [
-        history_df['Cardiovascular_Score'].iloc[-1],
-        history_df['Neurological_Score'].iloc[-1],
-        history_df['Metabolic_Score'].iloc[-1],
-        history_df['Thermal_Score'].iloc[-1],
-        100 - latest_gsr
+        min(100, live_hrv + 20),
+        min(100, live_facial),
+        80,
+        90,
+        current_sri
     ]
     fig = go.Figure()
     fig.add_trace(go.Scatterpolar(r=r_values, theta=categories, fill='toself', line_color='#00f2fe', fillcolor='rgba(0, 242, 254, 0.2)'))
@@ -300,9 +322,13 @@ with col_radar:
 with col_zones:
     st.markdown('<div class="glass-card">', unsafe_allow_html=True)
     st.markdown('<div class="metric-label">7-DAY RESILIENCE TREND</div>', unsafe_allow_html=True)
-    fig = px.area(history_df.tail(7), x='Date', y='Symbiome_Resilience_Score', template='plotly_dark')
+    # Generate dynamic trend data
+    dates = pd.date_range(end=datetime.now(), periods=7).strftime('%a')
+    trend_values = [random.randint(50, 90) for _ in range(6)] + [current_sri]
+    
+    fig = px.area(x=dates, y=trend_values, template='plotly_dark')
     fig.update_traces(line_color='#00f2fe', fillcolor='rgba(0, 242, 254, 0.1)')
-    fig.update_layout(height=250, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', margin=dict(l=0, r=0, t=0, b=0), xaxis=dict(showgrid=False), yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.1)'))
+    fig.update_layout(height=250, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', margin=dict(l=0, r=0, t=0, b=0), xaxis=dict(showgrid=False), yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.1)', range=[0, 100]))
     st.plotly_chart(fig, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -372,7 +398,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# --- AI COACH (INTERACTIVE) ---
+# --- AI COACH (INTERACTIVE & DYNAMIC) ---
 # Floating Bubble CSS (Hidden button overlay)
 st.markdown("""
 <style>
@@ -383,36 +409,31 @@ div.stButton > button[kind="secondary"] {
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+    background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
     color: white;
     font-size: 24px;
     border: none;
-    box-shadow: 0 4px 20px rgba(0, 242, 254, 0.4);
+    box-shadow: 0 4px 20px rgba(15, 118, 110, 0.4);
     z-index: 9999;
     transition: transform 0.3s ease;
 }
 div.stButton > button[kind="secondary"]:hover {
     transform: scale(1.1);
-    box-shadow: 0 8px 30px rgba(0, 242, 254, 0.6);
+    box-shadow: 0 8px 30px rgba(15, 118, 110, 0.6);
 }
 </style>
 """, unsafe_allow_html=True)
 
 # Toggle logic
-st.button("🤖", key="coach_btn", on_click=toggle_coach, type="secondary")
+st.button("🍃", key="coach_btn", on_click=toggle_coach, type="secondary")
 
-# Tip Popup (Styled exactly like UI)
+# Tip Popup (Styled EXACTLY like UI)
 if st.session_state.show_coach:
-    st.markdown("""
-    <div style="
-        position: fixed; bottom: 100px; right: 30px; width: 350px;
-        background: #115e59; /* Dark Teal */
-        border-radius: 12px;
-        padding: 20px; 
-        box-shadow: 0 10px 40px rgba(0,0,0,0.5); 
-        z-index: 9998;
-        font-family: 'Outfit', sans-serif;
-    ">
+    current_tip = tips[st.session_state.tip_index]
+    
+    # Render the card using HTML/CSS
+    st.markdown(f"""
+    <div class="ai-coach-card">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
             <div style="display: flex; align-items: center; gap: 10px;">
                 <div style="
@@ -421,43 +442,73 @@ if st.session_state.show_coach:
                     border-radius: 50%; 
                     display: flex; justify-content: center; align-items: center;
                 ">
-                    <span style="font-size: 16px;">💡</span>
+                    <span style="font-size: 16px;">🍃</span>
                 </div>
                 <div>
                     <div style="font-size: 0.8rem; color: #ccfbf1; font-weight: 600;">AI Coach</div>
-                    <div style="font-size: 0.9rem; color: white; font-weight: 700;">Did You Know?</div>
+                    <div style="font-size: 0.9rem; color: white; font-weight: 700;">{current_tip['title']}</div>
                 </div>
             </div>
             <div style="cursor: pointer; color: #ccfbf1;">✕</div>
         </div>
         
         <div style="font-size: 0.9rem; color: #f0fdfa; line-height: 1.5; margin-bottom: 20px;">
-            Your gut microbiome produces 90% of serotonin. Poor gut health can reduce HRV by 18% on average.
+            {current_tip['text']}
         </div>
         
         <div style="display: flex; justify-content: space-between; align-items: center;">
-            <button style="
-                background: #2dd4bf; 
-                color: #0f172a; 
-                border: none; 
-                padding: 8px 16px; 
-                border-radius: 6px; 
-                font-size: 0.85rem; 
-                font-weight: 600; 
-                cursor: pointer;
-            ">Learn More</button>
+            <button class="quick-session-btn">Quick Session</button>
             
-            <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                <span style="font-size: 0.85rem; color: #ccfbf1; font-weight: 600;">Next Tip</span>
-                <div style="display: flex; gap: 4px;">
-                    <div style="width: 6px; height: 6px; background: #2dd4bf; border-radius: 50%;"></div>
-                    <div style="width: 6px; height: 6px; background: rgba(45, 212, 191, 0.3); border-radius: 50%;"></div>
-                    <div style="width: 6px; height: 6px; background: rgba(45, 212, 191, 0.3); border-radius: 50%;"></div>
-                </div>
+            <div class="next-tip-btn-container" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <!-- We use a hidden Streamlit button for logic, but style it to look like the UI -->
             </div>
+        </div>
+        
+        <div style="display: flex; justify-content: center; margin-top: 15px; gap: 4px;">
+             <div class="progress-dot {'active' if st.session_state.tip_index % 3 == 0 else ''}"></div>
+             <div class="progress-dot {'active' if st.session_state.tip_index % 3 == 1 else ''}"></div>
+             <div class="progress-dot {'active' if st.session_state.tip_index % 3 == 2 else ''}"></div>
         </div>
     </div>
     """, unsafe_allow_html=True)
+    
+    # Invisible buttons to trigger logic
+    # We use absolute positioning to place Streamlit buttons over the HTML design
+    st.markdown("""
+    <style>
+    div.stButton > button[key="next_tip_btn"] {
+        position: fixed;
+        bottom: 135px;
+        right: 50px;
+        background: transparent;
+        color: white;
+        border: none;
+        z-index: 99999;
+        font-weight: 600;
+    }
+    div.stButton > button[key="quick_session_btn"] {
+        position: fixed;
+        bottom: 135px;
+        right: 180px;
+        background: transparent; /* Transparent because the HTML behind it provides the teal look */
+        color: transparent;
+        height: 40px;
+        width: 120px;
+        border: none;
+        z-index: 99999;
+    }
+    div.stButton > button[key="quick_session_btn"]:hover {
+        background: transparent;
+        color: transparent;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    st.button("Next Tip >", key="next_tip_btn", on_click=next_tip)
+    if st.button("Quick Session", key="quick_session_btn"):
+        st.toast("Starting Quick Coherence Session...", icon="🌬️")
+        time.sleep(1)
+        st.toast("Session Complete! (+5 HRV)", icon="✅")
 
 # --- SIDEBAR ---
 with st.sidebar:

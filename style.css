@@ -132,36 +132,6 @@ header {
     visibility: hidden;
 }
 
-/* AI Coach Styles */
-.ai-coach-container {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    z-index: 9999;
-}
-
-.ai-coach-bubble {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 4px 20px rgba(0, 242, 254, 0.4);
-    cursor: pointer;
-    transition: transform 0.3s ease;
-    animation: pulse-glow 3s infinite;
-}
-
-.ai-coach-bubble:hover {
-    transform: scale(1.1);
-}
-
-.ai-coach-icon {
-    font-size: 30px;
-}
-
 /* Navigation Bar Styles */
 .nav-container {
     display: flex;
@@ -251,4 +221,67 @@ header {
     font-size: 1.2rem;
     font-weight: 700;
     color: white;
+}
+
+/* AI Coach Specific Styles */
+.ai-coach-card {
+    position: fixed;
+    bottom: 100px;
+    right: 30px;
+    width: 350px;
+    background: #0f766e;
+    /* Dark Teal matching UI */
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+    font-family: 'Outfit', sans-serif;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.quick-session-btn {
+    background: #14b8a6;
+    /* Teal-500 */
+    color: #0f172a;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.quick-session-btn:hover {
+    background: #2dd4bf;
+    /* Teal-400 */
+}
+
+.next-tip-btn {
+    background: transparent;
+    color: #ccfbf1;
+    border: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.next-tip-btn:hover {
+    color: white;
+}
+
+.progress-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(204, 251, 241, 0.3);
+}
+
+.progress-dot.active {
+    background: #14b8a6;
+    width: 18px;
+    border-radius: 4px;
 }
