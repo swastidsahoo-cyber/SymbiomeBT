@@ -433,42 +433,37 @@ if st.session_state.show_coach:
     current_tip = tips[st.session_state.tip_index]
     
     # Render the card using HTML/CSS
-    # IMPORTANT: No indentation for the HTML string to avoid code block rendering
+    # IMPORTANT: We use a single f-string with NO indentation for the HTML content to prevent Markdown code block rendering
     st.markdown(f"""
 <div class="ai-coach-card">
-    <div class="coach-header">
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <div class="coach-icon-box">
-                <!-- SVG Lightbulb Icon to match screenshot -->
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2C8.13 2 5 5.13 5 9C5 11.38 6.19 13.47 8 14.74V17C8 17.55 8.45 18 9 18H15C15.55 18 16 17.55 16 17V14.74C17.81 13.47 19 11.38 19 9C19 5.13 15.87 2 12 2ZM14 22H10C9.45 22 9 21.55 9 21V20H15V21C15 21.55 14.55 22 14 22Z" fill="#ccfbf1"/>
-                </svg>
-            </div>
-            <div>
-                <div style="font-size: 0.75rem; color: #14b8a6; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">AI Coach</div>
-                <div style="font-size: 1.1rem; color: white; font-weight: 700; margin-top: 2px;">Did You Know?</div>
-            </div>
-        </div>
-        <div style="cursor: pointer; color: #ccfbf1; font-size: 1.2rem;">✕</div>
-    </div>
-    
-    <div class="coach-content">
-        {current_tip['text']}
-    </div>
-    
-    <div class="coach-footer">
-        <button class="quick-session-btn">Learn More</button>
-        
-        <div class="next-tip-btn-container" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-            <span style="color: #ccfbf1; font-weight: 600; font-size: 0.9rem;">Next Tip</span>
-        </div>
-    </div>
-    
-    <div style="display: flex; justify-content: center; margin-top: 20px; gap: 6px;">
-            <div class="progress-dot {'active' if st.session_state.tip_index % 3 == 0 else ''}"></div>
-            <div class="progress-dot {'active' if st.session_state.tip_index % 3 == 1 else ''}"></div>
-            <div class="progress-dot {'active' if st.session_state.tip_index % 3 == 2 else ''}"></div>
-    </div>
+<div class="coach-header">
+<div style="display: flex; align-items: center; gap: 12px;">
+<div class="coach-icon-box">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 2C8.13 2 5 5.13 5 9C5 11.38 6.19 13.47 8 14.74V17C8 17.55 8.45 18 9 18H15C15.55 18 16 17.55 16 17V14.74C17.81 13.47 19 11.38 19 9C19 5.13 15.87 2 12 2ZM14 22H10C9.45 22 9 21.55 9 21V20H15V21C15 21.55 14.55 22 14 22Z" fill="#ccfbf1"/>
+</svg>
+</div>
+<div>
+<div style="font-size: 0.75rem; color: #14b8a6; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">AI Coach</div>
+<div style="font-size: 1.1rem; color: white; font-weight: 700; margin-top: 2px;">Did You Know?</div>
+</div>
+</div>
+<div style="cursor: pointer; color: #ccfbf1; font-size: 1.2rem;">✕</div>
+</div>
+<div class="coach-content">
+{current_tip['text']}
+</div>
+<div class="coach-footer">
+<button class="quick-session-btn">Learn More</button>
+<div class="next-tip-btn-container" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+<span style="color: #ccfbf1; font-weight: 600; font-size: 0.9rem;">Next Tip</span>
+</div>
+</div>
+<div style="display: flex; justify-content: center; margin-top: 20px; gap: 6px;">
+<div class="progress-dot {'active' if st.session_state.tip_index % 3 == 0 else ''}"></div>
+<div class="progress-dot {'active' if st.session_state.tip_index % 3 == 1 else ''}"></div>
+<div class="progress-dot {'active' if st.session_state.tip_index % 3 == 2 else ''}"></div>
+</div>
 </div>
 """, unsafe_allow_html=True)
     
