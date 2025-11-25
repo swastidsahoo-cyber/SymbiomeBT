@@ -30,13 +30,23 @@ def load_css():
 load_css()
 
 # ==========================================
-# SESSION STATE (Interactive Coach)
+# SESSION STATE MANAGEMENT
 # ==========================================
-if 'show_tip' not in st.session_state:
-    st.session_state.show_tip = False
+if 'show_coach' not in st.session_state:
+    st.session_state.show_coach = False
+if 'biofeedback_active' not in st.session_state:
+    st.session_state.biofeedback_active = False
+if 'hydration_active' not in st.session_state:
+    st.session_state.hydration_active = False
 
-def toggle_tip():
-    st.session_state.show_tip = not st.session_state.show_tip
+def toggle_coach():
+    st.session_state.show_coach = not st.session_state.show_coach
+
+def start_biofeedback():
+    st.session_state.biofeedback_active = True
+
+def start_hydration():
+    st.session_state.hydration_active = True
 
 # ==========================================
 # DATA LOADING
@@ -136,10 +146,12 @@ with col_hero_2:
     </div>
     """, unsafe_allow_html=True)
     
-    if st.button("⚡ Start Biofeedback Session", use_container_width=True):
-        st.toast("Initializing Sensors...", icon="🧬")
-        time.sleep(1)
-        st.toast("Session Started!", icon="✅")
+    # Biofeedback Button Logic
+    if st.session_state.biofeedback_active:
+        st.success("✅ Biofeedback Session Active")
+        st.progress(65, text="Calibrating Sensors...")
+    else:
+        st.button("⚡ Start Biofeedback Session", on_click=start_biofeedback, use_container_width=True)
 
 # --- SECTION 2: REAL-TIME BIOMETRICS STRIP ---
 st.markdown("### ⚡ Real-Time Biological Readings")
@@ -166,7 +178,27 @@ for col, (label, val, unit, color) in zip([m1, m2, m3, m4], metrics):
         </div>
         """, unsafe_allow_html=True)
 
-# --- SECTION 3: DETAILED AI PREDICTION ENGINE ---
+# --- SECTION 3: BEHAVIORAL FEEDBACK LOOP ---
+st.markdown("### 🔄 Behavioral Feedback Loop")
+
+# Hydration Card with Button Logic
+c_hydro_1, c_hydro_2 = st.columns([3, 1])
+with c_hydro_1:
+    st.markdown("""
+    <div class="glass-card" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+        <div style="font-weight: 600; font-size: 1.1rem; color: white; margin-bottom: 5px;">💧 Hydration Break</div>
+        <div style="color: #94a3b8;">Your pH is slightly acidic. Drink 250ml of alkaline water.</div>
+        <div style="font-size: 0.8rem; color: #00f2fe; margin-top: 10px;">⏱️ 2 min • ⚖️ Balances pH levels</div>
+    </div>
+    """, unsafe_allow_html=True)
+with c_hydro_2:
+    st.markdown('<div style="height: 25px;"></div>', unsafe_allow_html=True) # Spacer
+    if st.session_state.hydration_active:
+        st.button("✅ Active", disabled=True, use_container_width=True)
+    else:
+        st.button("Start", on_click=start_hydration, use_container_width=True)
+
+# --- SECTION 4: DETAILED AI PREDICTION ENGINE ---
 st.markdown("### 🔮 AI Prediction Engine")
 
 # Main AI Insight Card
@@ -227,7 +259,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# --- SECTION 4: DID YOU KNOW? (BREATHING) ---
+# --- SECTION 5: DID YOU KNOW? (BREATHING) ---
 st.markdown("""
 <div class="glass-card" style="background: rgba(255, 255, 255, 0.05); border-left: 4px solid #f59e0b;">
     <div style="display: flex; align-items: center; margin-bottom: 10px;">
@@ -245,7 +277,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# --- SECTION 5: SYSTEM ANALYSIS & TRENDS ---
+# --- SECTION 6: SYSTEM ANALYSIS & TRENDS ---
 st.markdown("### 📊 System Analysis & Trends")
 col_radar, col_zones = st.columns([1, 1])
 
@@ -274,7 +306,7 @@ with col_zones:
     st.plotly_chart(fig, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-# --- SECTION 6: SIF FRAMEWORK ---
+# --- SECTION 7: SIF FRAMEWORK ---
 st.markdown("### 🚀 Symbiome Intelligence Framework (SIF)")
 features = [
     ("Resilience Mirror", "Transform stress into art", "✨"),
@@ -341,10 +373,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- AI COACH (INTERACTIVE) ---
-# Toggle logic
-if st.button("🤖", key="coach_btn", help="AI Coach"):
-    toggle_tip()
-
 # Floating Bubble CSS (Hidden button overlay)
 st.markdown("""
 <style>
@@ -370,24 +398,63 @@ div.stButton > button[kind="secondary"]:hover {
 </style>
 """, unsafe_allow_html=True)
 
-# Tip Popup
-if st.session_state.show_tip:
+# Toggle logic
+st.button("🤖", key="coach_btn", on_click=toggle_coach, type="secondary")
+
+# Tip Popup (Styled exactly like UI)
+if st.session_state.show_coach:
     st.markdown("""
     <div style="
-        position: fixed; bottom: 100px; right: 30px; width: 300px;
-        background: #0f172a; border: 1px solid #1e293b; border-radius: 16px;
-        padding: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); z-index: 9998;
+        position: fixed; bottom: 100px; right: 30px; width: 350px;
+        background: #115e59; /* Dark Teal */
+        border-radius: 12px;
+        padding: 20px; 
+        box-shadow: 0 10px 40px rgba(0,0,0,0.5); 
+        z-index: 9998;
+        font-family: 'Outfit', sans-serif;
     ">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <span style="font-weight: 700; color: #00f2fe;">💡 AI Coach Tip</span>
-            <span style="font-size: 0.8rem; color: #94a3b8;">Just now</span>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="
+                    width: 32px; height: 32px; 
+                    background: rgba(255,255,255,0.1); 
+                    border-radius: 50%; 
+                    display: flex; justify-content: center; align-items: center;
+                ">
+                    <span style="font-size: 16px;">💡</span>
+                </div>
+                <div>
+                    <div style="font-size: 0.8rem; color: #ccfbf1; font-weight: 600;">AI Coach</div>
+                    <div style="font-size: 0.9rem; color: white; font-weight: 700;">Did You Know?</div>
+                </div>
+            </div>
+            <div style="cursor: pointer; color: #ccfbf1;">✕</div>
         </div>
-        <div style="font-size: 0.9rem; color: #e2e8f0; line-height: 1.5;">
+        
+        <div style="font-size: 0.9rem; color: #f0fdfa; line-height: 1.5; margin-bottom: 20px;">
             Your gut microbiome produces 90% of serotonin. Poor gut health can reduce HRV by 18% on average.
         </div>
-        <div style="margin-top: 15px; display: flex; justify-content: space-between;">
-            <button style="background: #00f2fe; color: black; border: none; padding: 5px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 600;">Learn More</button>
-            <button style="background: transparent; color: #94a3b8; border: none; font-size: 0.8rem;">Next Tip</button>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <button style="
+                background: #2dd4bf; 
+                color: #0f172a; 
+                border: none; 
+                padding: 8px 16px; 
+                border-radius: 6px; 
+                font-size: 0.85rem; 
+                font-weight: 600; 
+                cursor: pointer;
+            ">Learn More</button>
+            
+            <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <span style="font-size: 0.85rem; color: #ccfbf1; font-weight: 600;">Next Tip</span>
+                <div style="display: flex; gap: 4px;">
+                    <div style="width: 6px; height: 6px; background: #2dd4bf; border-radius: 50%;"></div>
+                    <div style="width: 6px; height: 6px; background: rgba(45, 212, 191, 0.3); border-radius: 50%;"></div>
+                    <div style="width: 6px; height: 6px; background: rgba(45, 212, 191, 0.3); border-radius: 50%;"></div>
+                </div>
+            </div>
         </div>
     </div>
     """, unsafe_allow_html=True)
