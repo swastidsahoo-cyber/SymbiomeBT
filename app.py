@@ -433,45 +433,41 @@ if st.session_state.show_coach:
     current_tip = tips[st.session_state.tip_index]
     
     # Render the card using HTML/CSS
+    # IMPORTANT: No indentation for the HTML string to avoid code block rendering
     st.markdown(f"""
-    <div class="ai-coach-card">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <div style="
-                    width: 32px; height: 32px; 
-                    background: rgba(255,255,255,0.1); 
-                    border-radius: 50%; 
-                    display: flex; justify-content: center; align-items: center;
-                ">
-                    <span style="font-size: 16px;">🍃</span>
-                </div>
-                <div>
-                    <div style="font-size: 0.8rem; color: #ccfbf1; font-weight: 600;">AI Coach</div>
-                    <div style="font-size: 0.9rem; color: white; font-weight: 700;">{current_tip['title']}</div>
-                </div>
+<div class="ai-coach-card">
+    <div class="coach-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="coach-icon-box">
+                <span style="font-size: 16px;">🍃</span>
             </div>
-            <div style="cursor: pointer; color: #ccfbf1;">✕</div>
-        </div>
-        
-        <div style="font-size: 0.9rem; color: #f0fdfa; line-height: 1.5; margin-bottom: 20px;">
-            {current_tip['text']}
-        </div>
-        
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <button class="quick-session-btn">Quick Session</button>
-            
-            <div class="next-tip-btn-container" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                <!-- We use a hidden Streamlit button for logic, but style it to look like the UI -->
+            <div>
+                <div style="font-size: 0.8rem; color: #ccfbf1; font-weight: 600;">AI Coach</div>
+                <div style="font-size: 0.9rem; color: white; font-weight: 700;">{current_tip['title']}</div>
             </div>
         </div>
+        <div style="cursor: pointer; color: #ccfbf1;">✕</div>
+    </div>
+    
+    <div class="coach-content">
+        {current_tip['text']}
+    </div>
+    
+    <div class="coach-footer">
+        <button class="quick-session-btn">Quick Session</button>
         
-        <div style="display: flex; justify-content: center; margin-top: 15px; gap: 4px;">
-             <div class="progress-dot {'active' if st.session_state.tip_index % 3 == 0 else ''}"></div>
-             <div class="progress-dot {'active' if st.session_state.tip_index % 3 == 1 else ''}"></div>
-             <div class="progress-dot {'active' if st.session_state.tip_index % 3 == 2 else ''}"></div>
+        <div class="next-tip-btn-container" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <!-- We use a hidden Streamlit button for logic, but style it to look like the UI -->
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    
+    <div style="display: flex; justify-content: center; margin-top: 15px; gap: 4px;">
+            <div class="progress-dot {'active' if st.session_state.tip_index % 3 == 0 else ''}"></div>
+            <div class="progress-dot {'active' if st.session_state.tip_index % 3 == 1 else ''}"></div>
+            <div class="progress-dot {'active' if st.session_state.tip_index % 3 == 2 else ''}"></div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
     
     # Invisible buttons to trigger logic
     # We use absolute positioning to place Streamlit buttons over the HTML design

@@ -239,6 +239,36 @@ header {
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.coach-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.coach-icon-box {
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.coach-content {
+    font-size: 0.9rem;
+    color: #f0fdfa;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.coach-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .quick-session-btn {
     background: #14b8a6;
     /* Teal-500 */
