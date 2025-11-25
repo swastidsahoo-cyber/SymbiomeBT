@@ -29,7 +29,8 @@ h6 {
 p,
 div,
 span,
-label {
+label,
+li {
     color: #e2e8f0 !important;
     /* High contrast off-white */
 }
@@ -191,4 +192,63 @@ header {
 .nav-item.active {
     color: #00f2fe;
     background: rgba(0, 242, 254, 0.1);
+}
+
+/* Footer Styles */
+.footer-container {
+    margin-top: 80px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.85rem;
+}
+
+.footer-col h4 {
+    color: #00f2fe !important;
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+.footer-col ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-col li {
+    margin-bottom: 8px;
+    color: #94a3b8 !important;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.footer-col li:hover {
+    color: white !important;
+}
+
+.bottom-bar {
+    margin-top: 40px;
+    text-align: center;
+    color: #64748b !important;
+    font-size: 0.75rem;
+    padding-bottom: 20px;
+}
+
+/* AI Prediction Grid */
+.ai-grid-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 15px;
+    margin-bottom: 10px;
+}
+
+.ai-grid-label {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-bottom: 5px;
+}
+
+.ai-grid-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: white;
 }
