@@ -4,6 +4,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 from modules.science_logic import calculate_sri, predict_recovery, get_digital_twin_insight
 import time
+import os
 
 # ==========================================
 # SYMBIOME APP CONFIGURATION
@@ -19,8 +20,13 @@ st.set_page_config(
 # CSS & ASSETS
 # ==========================================
 def load_css():
-    with open("style.css") as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    # Fix for Streamlit Cloud: Ensure we look in the current directory
+    css_path = os.path.join(os.path.dirname(__file__), "style.css")
+    try:
+        with open(css_path) as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    except FileNotFoundError:
+        st.error(f"Error: style.css not found at {css_path}")
 
 load_css()
 
@@ -30,8 +36,13 @@ load_css()
 @st.cache_data
 def load_data():
     try:
-        history_df = pd.read_csv("data/user_history.csv")
-        session_df = pd.read_csv("data/simulated_session.csv")
+        # Fix for Streamlit Cloud: Ensure we look in the current directory
+        base_dir = os.path.dirname(__file__)
+        history_path = os.path.join(base_dir, "data", "user_history.csv")
+        session_path = os.path.join(base_dir, "data", "simulated_session.csv")
+        
+        history_df = pd.read_csv(history_path)
+        session_df = pd.read_csv(session_path)
         return history_df, session_df
     except FileNotFoundError:
         return pd.DataFrame(), pd.DataFrame()
@@ -39,18 +50,21 @@ def load_data():
 history_df, session_df = load_data()
 
 # ==========================================
-# HELPER FUNCTIONS
-# ==========================================
-def render_glass_card(content):
-    st.markdown(f"""
-    <div class="glass-card">
-        {content}
-    </div>
-    """, unsafe_allow_html=True)
-
-# ==========================================
 # MAIN DASHBOARD LAYOUT
 # ==========================================
+
+# --- NAVIGATION BAR ---
+st.markdown("""
+<div class="nav-container">
+    <a href="#" class="nav-item active">Dashboard</a>
+    <a href="#" class="nav-item">Monitor</a>
+    <a href="#" class="nav-item">Training</a>
+    <a href="#" class="nav-item">Digital Twin</a>
+    <a href="#" class="nav-item">Journal</a>
+    <a href="#" class="nav-item">Research</a>
+    <a href="#" class="nav-item">Community</a>
+</div>
+""", unsafe_allow_html=True)
 
 # --- HEADER ---
 c1, c2 = st.columns([3, 1])
@@ -70,10 +84,17 @@ st.markdown("---")
 
 # --- SECTION 1: HERO (SRI GAUGE) ---
 # Logic
-latest_hrv = session_df['HRV_Score'].iloc[-1]
-latest_gsr = session_df['GSR_Score'].iloc[-1]
-latest_facial = session_df['Facial_Calm'].iloc[-1]
-current_sri = int(calculate_sri(latest_hrv, latest_gsr, latest_facial))
+if not session_df.empty:
+    latest_hrv = session_df['HRV_Score'].iloc[-1]
+    latest_gsr = session_df['GSR_Score'].iloc[-1]
+    latest_facial = session_df['Facial_Calm'].iloc[-1]
+    current_sri = int(calculate_sri(latest_hrv, latest_gsr, latest_facial))
+else:
+    # Fallback if data fails
+    latest_hrv = 60
+    latest_gsr = 10
+    latest_facial = 80
+    current_sri = 75
 
 if current_sri >= 75:
     sri_color = "#00f2fe" # Cyan
@@ -118,6 +139,14 @@ with col_hero_2:
         <div style="color: #64748b; margin-top: 5px;">Your resilience is stable. Small adjustments can optimize performance.</div>
     </div>
     """, unsafe_allow_html=True)
+    
+    # Biofeedback Button
+    if st.button("⚡ Start Biofeedback Session", use_container_width=True):
+        st.toast("Initializing Sensors...", icon="🧬")
+        time.sleep(1)
+        st.toast("Calibrating Baseline...", icon="📊")
+        time.sleep(1)
+        st.toast("Session Started!", icon="✅")
 
 # --- SECTION 2: REAL-TIME BIOMETRICS STRIP ---
 st.markdown("### ⚡ Real-Time Biological Readings")
@@ -145,7 +174,20 @@ for col, (label, val, unit, color) in zip([m1, m2, m3, m4], metrics):
         </div>
         """, unsafe_allow_html=True)
 
-# --- SECTION 3: SYSTEM ANALYSIS (RADAR & ZONES) ---
+# --- SECTION 3: BEHAVIORAL FEEDBACK LOOP ---
+st.markdown("### 🔄 Behavioral Feedback Loop")
+st.markdown("""
+<div class="glass-card" style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <div style="font-weight: 600; font-size: 1.1rem; color: white; margin-bottom: 5px;">💧 Hydration Break</div>
+        <div style="color: #94a3b8;">Your pH is slightly acidic. Drink 250ml of alkaline water.</div>
+        <div style="font-size: 0.8rem; color: #00f2fe; margin-top: 10px;">⏱️ 2 min • ⚖️ Balances pH levels</div>
+    </div>
+    <button style="background: rgba(0, 242, 254, 0.1); color: #00f2fe; border: 1px solid #00f2fe; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600;">Start</button>
+</div>
+""", unsafe_allow_html=True)
+
+# --- SECTION 4: SYSTEM ANALYSIS (RADAR & ZONES) ---
 st.markdown("### 🧬 System Component Analysis")
 
 col_radar, col_zones = st.columns([1, 1])
@@ -228,7 +270,7 @@ with col_zones:
     </div>
     """, unsafe_allow_html=True)
 
-# --- SECTION 4: AI PREDICTION & TRENDS ---
+# --- SECTION 5: AI PREDICTION & TRENDS ---
 st.markdown("### 🔮 AI Prediction Engine")
 
 c_ai, c_trend = st.columns([1, 2])
@@ -264,7 +306,7 @@ with c_trend:
     st.plotly_chart(fig, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-# --- SECTION 5: SIF FRAMEWORK (CARDS) ---
+# --- SECTION 6: SIF FRAMEWORK (CARDS) ---
 st.markdown("### 🚀 Symbiome Intelligence Framework (SIF)")
 
 features = [
@@ -288,6 +330,15 @@ for i, (title, desc, icon) in enumerate(features):
         </div>
         """, unsafe_allow_html=True)
 
+# --- AI COACH (FLOATING) ---
+st.markdown("""
+<div class="ai-coach-container">
+    <div class="ai-coach-bubble" title="AI Coach">
+        <span class="ai-coach-icon">🤖</span>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
 # --- SIDEBAR (SETTINGS & DOCS) ---
 with st.sidebar:
     st.image("https://img.icons8.com/fluency/96/dna-helix.png", width=50)
@@ -301,5 +352,8 @@ with st.sidebar:
             
     with st.expander("📄 Scientific Documentation"):
         st.markdown("Read the whitepaper:")
-        with open("science_whitepaper.md", "r") as f:
-            st.download_button("Download Whitepaper", f, file_name="Symbiome_Whitepaper.md")
+        try:
+            with open("science_whitepaper.md", "r") as f:
+                st.download_button("Download Whitepaper", f, file_name="Symbiome_Whitepaper.md")
+        except FileNotFoundError:
+            st.error("Whitepaper file not found.")

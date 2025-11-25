@@ -130,3 +130,65 @@ footer {
 header {
     visibility: hidden;
 }
+
+/* AI Coach Styles */
+.ai-coach-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 9999;
+}
+
+.ai-coach-bubble {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 20px rgba(0, 242, 254, 0.4);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    animation: pulse-glow 3s infinite;
+}
+
+.ai-coach-bubble:hover {
+    transform: scale(1.1);
+}
+
+.ai-coach-icon {
+    font-size: 30px;
+}
+
+/* Navigation Bar Styles */
+.nav-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 10px 0;
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.nav-item {
+    color: #94a3b8;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.nav-item:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-item.active {
+    color: #00f2fe;
+    background: rgba(0, 242, 254, 0.1);
+}
