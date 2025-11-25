@@ -432,63 +432,6 @@ st.button("🍃", key="coach_btn", on_click=toggle_coach, type="secondary")
 if st.session_state.show_coach:
     current_tip = tips[st.session_state.tip_index]
     
-    # Render the card using HTML/CSS
-    # IMPORTANT: No indentation for the HTML string to avoid code block rendering
-    st.markdown(f"""
-<div class="ai-coach-card">
-    <div class="coach-header">
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <div class="coach-icon-box">
-                <span style="font-size: 18px;">💡</span>
-            </div>
-            <div>
-                <div style="font-size: 0.8rem; color: #14b8a6; font-weight: 600; letter-spacing: 0.5px;">AI Coach</div>
-                <div style="font-size: 1.1rem; color: white; font-weight: 700;">Did You Know?</div>
-            </div>
-        </div>
-        <div style="cursor: pointer; color: #ccfbf1;">✕</div>
-    </div>
-    
-    <div class="coach-content">
-        {current_tip['text']}
-    </div>
-    
-    <div class="coach-footer">
-        <button class="quick-session-btn">Learn More</button>
-        
-        <div class="next-tip-btn-container" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-            <!-- We use a hidden Streamlit button for logic, but style it to look like the UI -->
-        </div>
-    </div>
-    
-    <div style="display: flex; justify-content: center; margin-top: 15px; gap: 4px;">
-            <div class="progress-dot {'active' if st.session_state.tip_index % 3 == 0 else ''}"></div>
-            <div class="progress-dot {'active' if st.session_state.tip_index % 3 == 1 else ''}"></div>
-            <div class="progress-dot {'active' if st.session_state.tip_index % 3 == 2 else ''}"></div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
-    
-    # Invisible buttons to trigger logic
-    # We use absolute positioning to place Streamlit buttons over the HTML design
-    st.markdown("""
-    <style>
-    div.stButton > button[key="next_tip_btn"] {
-        position: fixed;
-        bottom: 135px;
-        right: 50px;
-        background: transparent;
-        color: white;
-        border: none;
-        z-index: 99999;
-        font-weight: 600;
-        font-size: 0.9rem;
-    }
-    div.stButton > button[key="learn_more_btn"] {
-        position: fixed;
-        bottom: 135px;
-        right: 180px;
-        background: transparent;
         color: transparent;
         height: 40px;
         width: 120px;
