@@ -476,31 +476,31 @@ if st.session_state.show_coach:
         position: fixed;
         bottom: 135px;
         right: 50px;
-        background: transparent;
-        color: transparent; /* Text is in HTML, button is invisible overlay */
-        border: none;
+        background: transparent !important;
+        color: transparent !important; /* Text is in HTML, button is invisible overlay */
+        border: none !important;
         z-index: 99999;
         height: 30px;
         width: 80px;
     }
     div.stButton > button[key="next_tip_btn"]:hover {
-        background: transparent;
-        color: transparent;
+        background: transparent !important;
+        color: transparent !important;
     }
     div.stButton > button[key="learn_more_btn"] {
         position: fixed;
         bottom: 135px;
         right: 180px;
-        background: transparent;
-        color: transparent;
+        background: transparent !important;
+        color: transparent !important;
         height: 40px;
         width: 120px;
-        border: none;
+        border: none !important;
         z-index: 99999;
     }
     div.stButton > button[key="learn_more_btn"]:hover {
-        background: transparent;
-        color: transparent;
+        background: transparent !important;
+        color: transparent !important;
     }
     </style>
     """, unsafe_allow_html=True)
