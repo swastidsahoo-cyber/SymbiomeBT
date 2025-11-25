@@ -402,29 +402,8 @@ st.markdown("""
 
 # --- AI COACH (INTERACTIVE & DYNAMIC) ---
 # Floating Bubble CSS (Hidden button overlay)
-st.markdown("""
-<style>
-div.stButton > button[kind="secondary"] {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
-    color: white;
-    font-size: 24px;
-    border: none;
-    box-shadow: 0 4px 20px rgba(15, 118, 110, 0.4);
-    z-index: 9999;
-    transition: transform 0.3s ease;
-}
-div.stButton > button[kind="secondary"]:hover {
-    transform: scale(1.1);
-    box-shadow: 0 8px 30px rgba(15, 118, 110, 0.6);
-}
-</style>
-""", unsafe_allow_html=True)
+# Floating Bubble CSS (Hidden button overlay)
+# Styles are now handled in the main CSS block below using .st-key selectors
 
 # Toggle logic
 st.button("🍃", key="coach_btn", on_click=toggle_coach, type="secondary")
@@ -472,33 +451,56 @@ if st.session_state.show_coach:
     # We use absolute positioning to place Streamlit buttons over the HTML design
     st.markdown("""
     <style>
-    div.stButton > button[key="next_tip_btn"] {
-        position: fixed;
-        bottom: 135px;
-        right: 50px;
-        background: transparent !important;
-        color: transparent !important; /* Text is in HTML, button is invisible overlay */
+    /* Toggle Button - Targeted by Key */
+    .st-key-coach_btn button {
+        position: fixed !important;
+        bottom: 30px !important;
+        right: 30px !important;
+        width: 60px !important;
+        height: 60px !important;
+        border-radius: 50% !important;
+        background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%) !important;
+        color: white !important;
+        font-size: 24px !important;
         border: none !important;
-        z-index: 99999;
-        height: 30px;
-        width: 80px;
+        box-shadow: 0 4px 20px rgba(15, 118, 110, 0.4) !important;
+        z-index: 9999 !important;
+        transition: transform 0.3s ease !important;
     }
-    div.stButton > button[key="next_tip_btn"]:hover {
+    .st-key-coach_btn button:hover {
+        transform: scale(1.1) !important;
+        box-shadow: 0 8px 30px rgba(15, 118, 110, 0.6) !important;
+    }
+
+    /* Invisible Buttons - Targeted by Key */
+    .st-key-next_tip_btn button {
+        position: fixed !important;
+        bottom: 135px !important;
+        right: 50px !important;
+        background: transparent !important;
+        color: transparent !important;
+        border: none !important;
+        z-index: 99999 !important;
+        height: 30px !important;
+        width: 80px !important;
+    }
+    .st-key-next_tip_btn button:hover {
         background: transparent !important;
         color: transparent !important;
     }
-    div.stButton > button[key="learn_more_btn"] {
-        position: fixed;
-        bottom: 135px;
-        right: 180px;
+
+    .st-key-learn_more_btn button {
+        position: fixed !important;
+        bottom: 135px !important;
+        right: 180px !important;
         background: transparent !important;
         color: transparent !important;
-        height: 40px;
-        width: 120px;
+        height: 40px !important;
+        width: 120px !important;
         border: none !important;
-        z-index: 99999;
+        z-index: 99999 !important;
     }
-    div.stButton > button[key="learn_more_btn"]:hover {
+    .st-key-learn_more_btn button:hover {
         background: transparent !important;
         color: transparent !important;
     }
