@@ -7,6 +7,7 @@ import time
 import os
 import random
 from datetime import datetime
+import math
 
 # ==========================================
 # SYMBIOME APP CONFIGURATION
@@ -53,8 +54,8 @@ def simulate_live_data():
     fluctuation = (random.random() - 0.5) * 5
     
     # Base values with noise
-    hrv = 65 + (10 * random.sin(now / 10)) + fluctuation
-    gsr = 12 + (2 * random.cos(now / 15)) + (fluctuation / 2)
+    hrv = 65 + (10 * math.sin(now / 10)) + fluctuation
+    gsr = 12 + (2 * math.cos(now / 15)) + (fluctuation / 2)
     facial = 85 + fluctuation
     temp = 36.6 + (random.random() - 0.5) * 0.2
     ph = 7.35 + (random.random() - 0.5) * 0.05
