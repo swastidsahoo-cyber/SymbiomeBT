@@ -439,11 +439,11 @@ if st.session_state.show_coach:
     <div class="coach-header">
         <div style="display: flex; align-items: center; gap: 10px;">
             <div class="coach-icon-box">
-                <span style="font-size: 16px;">🍃</span>
+                <span style="font-size: 18px;">💡</span>
             </div>
             <div>
-                <div style="font-size: 0.8rem; color: #ccfbf1; font-weight: 600;">AI Coach</div>
-                <div style="font-size: 0.9rem; color: white; font-weight: 700;">{current_tip['title']}</div>
+                <div style="font-size: 0.8rem; color: #14b8a6; font-weight: 600; letter-spacing: 0.5px;">AI Coach</div>
+                <div style="font-size: 1.1rem; color: white; font-weight: 700;">Did You Know?</div>
             </div>
         </div>
         <div style="cursor: pointer; color: #ccfbf1;">✕</div>
@@ -454,7 +454,7 @@ if st.session_state.show_coach:
     </div>
     
     <div class="coach-footer">
-        <button class="quick-session-btn">Quick Session</button>
+        <button class="quick-session-btn">Learn More</button>
         
         <div class="next-tip-btn-container" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
             <!-- We use a hidden Streamlit button for logic, but style it to look like the UI -->
@@ -482,30 +482,31 @@ if st.session_state.show_coach:
         border: none;
         z-index: 99999;
         font-weight: 600;
+        font-size: 0.9rem;
     }
-    div.stButton > button[key="quick_session_btn"] {
+    div.stButton > button[key="learn_more_btn"] {
         position: fixed;
         bottom: 135px;
         right: 180px;
-        background: transparent; /* Transparent because the HTML behind it provides the teal look */
+        background: transparent;
         color: transparent;
         height: 40px;
         width: 120px;
         border: none;
         z-index: 99999;
     }
-    div.stButton > button[key="quick_session_btn"]:hover {
+    div.stButton > button[key="learn_more_btn"]:hover {
         background: transparent;
         color: transparent;
     }
     </style>
     """, unsafe_allow_html=True)
     
-    st.button("Next Tip >", key="next_tip_btn", on_click=next_tip)
-    if st.button("Quick Session", key="quick_session_btn"):
-        st.toast("Starting Quick Coherence Session...", icon="🌬️")
+    st.button("Next Tip", key="next_tip_btn", on_click=next_tip)
+    if st.button("Learn More", key="learn_more_btn"):
+        st.toast("Opening detailed research...", icon="📚")
         time.sleep(1)
-        st.toast("Session Complete! (+5 HRV)", icon="✅")
+        st.toast("Insight saved to Journal", icon="✅")
 
 # --- SIDEBAR ---
 with st.sidebar:
