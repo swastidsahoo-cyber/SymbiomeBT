@@ -175,7 +175,7 @@ with col_hero_2:
         st.progress(65, text="Calibrating Sensors...")
     else:
         # Using a target-like unicode symbol to match the mockup
-        st.button("◎ Start Biofeedback Session", on_click=start_biofeedback, use_container_width=True)
+        st.button("◎ START BIOFEEDBACK SESSION", on_click=start_biofeedback, type="primary", use_container_width=True)
 
 # --- SECTION 2: REAL-TIME BIOMETRICS STRIP ---
 st.markdown("### ⚡ Real-Time Biological Readings")

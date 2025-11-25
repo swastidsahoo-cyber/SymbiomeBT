@@ -66,16 +66,60 @@ li {
 .metric-value {
     font-size: 2.5rem;
     font-weight: 700;
-    box-shadow: 0 0 0 0 rgba(0, 242, 254, 0.4);
+    background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-family: 'JetBrains Mono', monospace;
 }
 
-70% {
-    box-shadow: 0 0 0 20px rgba(0, 242, 254, 0);
+/* Custom Buttons - VIBRANT RECTANGULAR STYLE */
+/* Target the Primary Button specifically */
+.stButton>button[kind="primary"] {
+    background: linear-gradient(90deg, #00c4cc 0%, #009890 100%) !important;
+    /* Vibrant Teal */
+    color: #ffffff !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-weight: 800 !important;
+    font-size: 1.2rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 1rem 2rem !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 20px rgba(0, 196, 204, 0.5) !important;
+    white-space: nowrap !important;
+    opacity: 1 !important;
 }
 
-100% {
-    box-shadow: 0 0 0 0 rgba(0, 242, 254, 0);
+.stButton>button[kind="primary"]:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 10px 30px rgba(0, 196, 204, 0.7) !important;
+    background: linear-gradient(90deg, #2dd4bf 0%, #14b8a6 100%) !important;
+    /* Brighter on hover */
+    color: #ffffff !important;
 }
+
+/* Reset secondary/other buttons to avoid conflicts */
+.stButton>button[kind="secondary"] {
+    background: transparent !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: #e2e8f0 !important;
+}
+
+/* Animations */
+@keyframes pulse-glow {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 242, 254, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 20px rgba(0, 242, 254, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 242, 254, 0);
+    }
 }
 
 .pulse-animation {
