@@ -473,36 +473,32 @@ if st.session_state.show_coach:
     }
 
     /* Invisible Buttons - Targeted by Key */
+    /* We use opacity: 0 to make them completely invisible but still clickable */
+    /* This avoids issues where global text styles override transparency */
     .st-key-next_tip_btn button {
         position: fixed !important;
         bottom: 135px !important;
         right: 50px !important;
-        background: transparent !important;
-        color: transparent !important;
-        border: none !important;
+        opacity: 0 !important;
         z-index: 99999 !important;
         height: 30px !important;
         width: 80px !important;
     }
     .st-key-next_tip_btn button:hover {
-        background: transparent !important;
-        color: transparent !important;
+        opacity: 0 !important;
     }
 
     .st-key-learn_more_btn button {
         position: fixed !important;
         bottom: 135px !important;
         right: 180px !important;
-        background: transparent !important;
-        color: transparent !important;
+        opacity: 0 !important;
+        z-index: 99999 !important;
         height: 40px !important;
         width: 120px !important;
-        border: none !important;
-        z-index: 99999 !important;
     }
     .st-key-learn_more_btn button:hover {
-        background: transparent !important;
-        color: transparent !important;
+        opacity: 0 !important;
     }
     </style>
     """, unsafe_allow_html=True)
