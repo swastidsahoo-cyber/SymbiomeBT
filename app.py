@@ -67,12 +67,25 @@ live_hrv, live_gsr, live_facial, live_temp, live_ph = simulate_live_data()
 current_sri = int(calculate_sri(live_hrv, live_gsr, live_facial))
 
 # --- AI COACH TIPS ---
+# --- AI COACH TIPS ---
 tips = [
     {"title": "Maintain Balance", "text": "Good resilience! A quick coherent breathing session (1-2 min) can push you into optimal range."},
     {"title": "Hydration Alert", "text": "Your GSR indicates mild dehydration. Drinking 200ml of water can improve cognitive focus by 12%."},
     {"title": "Circadian Sync", "text": "Light exposure now will boost your cortisol awakening response for better energy tomorrow."},
     {"title": "Vagal Tone", "text": "Humming for 60 seconds stimulates the Vagus nerve and lowers heart rate instantly."},
-    {"title": "Screen Fatigue", "text": "Blink rate has decreased. Look at an object 20ft away for 20 seconds to reset eye strain."}
+    {"title": "Screen Fatigue", "text": "Blink rate has decreased. Look at an object 20ft away for 20 seconds to reset eye strain."},
+    {"title": "Flow State", "text": "HRV coherence is high. You are in an optimal state for deep work and complex problem solving."},
+    {"title": "Cortisol Flush", "text": "A 5-minute walk can lower circulating cortisol levels by up to 20%, restoring mental clarity."},
+    {"title": "Sleep Debt", "text": "Recovery metrics suggest sleep debt. A 20-min power nap now can restore alertness without grogginess."},
+    {"title": "Nutrient Timing", "text": "Glucose levels are stable. Ideal time for complex cognitive tasks before the post-prandial dip."},
+    {"title": "Breath Focus", "text": "Box breathing (4-4-4-4) for 2 minutes can reduce acute stress response by 40%."},
+    {"title": "Social Coherence", "text": "Positive social interaction releases oxytocin, which directly counteracts cortisol effects."},
+    {"title": "Thermal Regulation", "text": "Slightly lowering ambient temperature can improve focus and alertness during mental work."},
+    {"title": "Posture Check", "text": "Upright posture increases testosterone and decreases cortisol compared to slouching."},
+    {"title": "Binaural Beats", "text": "Listening to 40Hz binaural beats can enhance focus and memory retention."},
+    {"title": "Blue Light", "text": "Reduce blue light exposure 2 hours before bed to protect melatonin production."},
+    {"title": "Gratitude", "text": "Practicing gratitude for 2 minutes increases HRV and emotional resilience."},
+    {"title": "Nature Exposure", "text": "Viewing fractals in nature (trees, leaves) reduces stress markers by up to 60%."}
 ]
 
 def next_tip():
@@ -205,22 +218,42 @@ for col, (label, val, unit, color) in zip([m1, m2, m3, m4], metrics):
 # --- SECTION 3: BEHAVIORAL FEEDBACK LOOP ---
 st.markdown("### 🔄 Behavioral Feedback Loop")
 
+# Hydration/Break Tips
+hydration_tips = [
+    {"title": "💧 Hydration Break", "text": "Your pH is slightly acidic. Drink 250ml of alkaline water.", "meta": "⏱️ 2 min • ⚖️ Balances pH levels"},
+    {"title": "🧠 Brain Boost", "text": "Cognitive fatigue detected. Take 500mg of Lion's Mane mushroom extract.", "meta": "⏱️ 1 min • 🍄 Neurogenesis support"},
+    {"title": "👀 Vision Reset", "text": "Digital eye strain high. Practice the 20-20-20 rule immediately.", "meta": "⏱️ 2 min • 👁️ Reduces myopia risk"},
+    {"title": "🫁 Oxygen Flood", "text": "SpO2 levels slightly low. Do 30 rounds of Wim Hof breathing.", "meta": "⏱️ 5 min • ⚡ Alkalizes blood"},
+    {"title": "🧘‍♀️ Micro-Meditation", "text": "Alpha waves low. Close eyes and focus on breath sensation.", "meta": "⏱️ 3 min • 🌊 Restores focus"}
+]
+
+if 'hydration_index' not in st.session_state:
+    st.session_state.hydration_index = 0
+
+def cycle_hydration_advice():
+    st.session_state.hydration_index = (st.session_state.hydration_index + 1) % len(hydration_tips)
+    # Also trigger the "Active" state for visual feedback
+    st.session_state.hydration_active = True
+    # In a real app, this might start a timer, but for now we just show the active state
+    # We can toggle it back off after a delay if we had a proper async loop, 
+    # but for this interaction, let's just let the user click "Next" to cycle.
+
+current_hydro_tip = hydration_tips[st.session_state.hydration_index]
+
 # Hydration Card with Button Logic
 c_hydro_1, c_hydro_2 = st.columns([3, 1])
 with c_hydro_1:
-    st.markdown("""
+    st.markdown(f"""
     <div class="glass-card" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
-        <div style="font-weight: 600; font-size: 1.1rem; color: white; margin-bottom: 5px;">💧 Hydration Break</div>
-        <div style="color: #94a3b8;">Your pH is slightly acidic. Drink 250ml of alkaline water.</div>
-        <div style="font-size: 0.8rem; color: #00f2fe; margin-top: 10px;">⏱️ 2 min • ⚖️ Balances pH levels</div>
+        <div style="font-weight: 600; font-size: 1.1rem; color: white; margin-bottom: 5px;">{current_hydro_tip['title']}</div>
+        <div style="color: #94a3b8;">{current_hydro_tip['text']}</div>
+        <div style="font-size: 0.8rem; color: #00f2fe; margin-top: 10px;">{current_hydro_tip['meta']}</div>
     </div>
     """, unsafe_allow_html=True)
 with c_hydro_2:
     st.markdown('<div style="height: 25px;"></div>', unsafe_allow_html=True) # Spacer
-    if st.session_state.hydration_active:
-        st.button("✅ Active", disabled=True, use_container_width=True)
-    else:
-        st.button("Start", on_click=start_hydration, use_container_width=True)
+    # We change the button to "Next Advice" to allow cycling
+    st.button("Next Advice", on_click=cycle_hydration_advice, use_container_width=True)
 
 # --- SECTION 4: DETAILED AI PREDICTION ENGINE ---
 st.markdown("### 🔮 AI Prediction Engine")
