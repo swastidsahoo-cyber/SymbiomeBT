@@ -212,8 +212,6 @@ with c2:
     
     if st.session_state.live_mode:
         st.caption("Live Monitoring Active: Auto-refreshing...")
-        time.sleep(2) # Faster refresh for smoother feel
-        st.rerun()
 
 st.markdown("---")
 
@@ -646,6 +644,11 @@ if st.session_state.show_coach:
         st.toast("Opening detailed research...", icon="📚")
         time.sleep(1)
         st.toast("Insight saved to Journal", icon="✅")
+
+# --- AUTO-REFRESH LOGIC (MUST BE AT END) ---
+if st.session_state.live_mode:
+    time.sleep(2) # Refresh rate
+    st.rerun()
 
 # --- SIDEBAR ---
 with st.sidebar:
