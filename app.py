@@ -45,6 +45,10 @@ if 'tip_index' not in st.session_state:
     st.session_state.tip_index = 0
 if 'live_mode' not in st.session_state:
     st.session_state.live_mode = False
+if 'page' not in st.session_state:
+    st.session_state.page = 'Dashboard'
+if 'biofeedback_start_time' not in st.session_state:
+    st.session_state.biofeedback_start_time = None
 
 # --- DYNAMIC DATA SIMULATION ---
 def simulate_live_data():
@@ -209,12 +213,101 @@ def toggle_coach():
 def start_biofeedback():
     st.session_state.biofeedback_active = True
     st.session_state.live_mode = True # Auto-start live simulation
+    st.session_state.page = 'Monitor' # Navigate to Monitor
+    st.session_state.biofeedback_start_time = time.time()
     st.toast("Biofeedback Sensors Calibrated", icon="🧬")
 
 def stop_biofeedback():
     st.session_state.biofeedback_active = False
     st.session_state.live_mode = False # Optional: stop live mode when session ends
+    st.session_state.page = 'Dashboard' # Return to Dashboard
+    st.session_state.biofeedback_start_time = None
     st.rerun()
+
+def render_monitor():
+    """Renders the dedicated Biofeedback Monitor page."""
+    # --- HEADER ---
+    c1, c2 = st.columns([3, 1])
+    with c1:
+        st.markdown("# 🧬 Biofeedback Monitor")
+        st.markdown("Real-time Multi-Sensor Fusion & Entrainment")
+    with c2:
+        if st.button("⏹ STOP SESSION", type="primary", use_container_width=True):
+            stop_biofeedback()
+    
+    st.markdown("---")
+
+    # --- TIMER & STATUS ---
+    if st.session_state.biofeedback_start_time:
+        elapsed = int(time.time() - st.session_state.biofeedback_start_time)
+        mins, secs = divmod(elapsed, 60)
+        timer_text = f"{mins:02d}:{secs:02d}"
+        progress = min(1.0, elapsed / 180) # 3 mins max
+    else:
+        timer_text = "00:00"
+        progress = 0.0
+
+    st.markdown(f"""
+    <div style="text-align: center; margin-bottom: 30px;">
+        <div style="font-size: 3rem; font-weight: 700; color: #00f2fe; font-family: monospace;">{timer_text}</div>
+        <div style="color: #94a3b8;">Session Duration (Max 3:00)</div>
+    </div>
+    """, unsafe_allow_html=True)
+    st.progress(progress)
+
+    # --- SENSOR GRID ---
+    st.markdown("### 📡 Live Sensor Data")
+    
+    m1, m2, m3 = st.columns(3)
+    m4, m5 = st.columns([1, 1]) # Centered bottom row
+
+    metrics_top = [
+        ("Heart Rate Variability (HRV)", f"{int(live_hrv)} ms", "Vagal Tone Indicator", "#ff4b1f"),
+        ("Galvanic Skin Response (GSR)", f"{live_gsr:.1f} µS", "Sympathetic Arousal", "#f2c94c"),
+        ("Facial Calmness", f"{int(live_facial)}%", "Micro-expression Analysis", "#a8ff78")
+    ]
+    
+    metrics_bottom = [
+        ("Skin Temperature", f"{live_temp:.1f} °C", "Thermal Regulation", "#00f2fe"),
+        ("Salivary pH", f"{live_ph:.2f}", "Metabolic State", "#d8b4fe")
+    ]
+
+    for col, (label, val, desc, color) in zip([m1, m2, m3], metrics_top):
+        with col:
+            st.markdown(f"""
+            <div class="glass-card" style="text-align: center; padding: 30px;">
+                <div style="color: {color}; font-size: 1.2rem; font-weight: 700; margin-bottom: 10px;">{label}</div>
+                <div style="font-size: 3rem; font-weight: 700; color: white;">{val}</div>
+                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">{desc}</div>
+                <div style="margin-top: 20px; height: 60px; background: rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 0.8rem;">
+                    [Live Graph Placeholder]
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+    c_spacer_l, c_b1, c_b2, c_spacer_r = st.columns([1, 2, 2, 1])
+    for col, (label, val, desc, color) in zip([c_b1, c_b2], metrics_bottom):
+        with col:
+            st.markdown(f"""
+            <div class="glass-card" style="text-align: center; padding: 30px;">
+                <div style="color: {color}; font-size: 1.2rem; font-weight: 700; margin-bottom: 10px;">{label}</div>
+                <div style="font-size: 3rem; font-weight: 700; color: white;">{val}</div>
+                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">{desc}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+    # --- DATA SOURCE EXPLANATION ---
+    st.markdown("### ℹ️ Data Source & Methodology")
+    st.info("""
+    **Sensor Fusion Engine**: This monitor aggregates data from multiple simulated inputs:
+    *   **PPG Sensor (Optical)**: Measures blood volume pulse for HRV.
+    *   **EDA Sensor (Conductance)**: Measures sweat gland activity for GSR.
+    *   **Computer Vision**: Analyzes facial micro-expressions for emotional valence.
+    *   **Thermistor**: Precision skin temperature tracking.
+    *   **Electrochemical Sensor**: Real-time salivary pH monitoring.
+    
+    *Note: In this demo, data is synthesized using a physics-based physiological model.*
+    """)
 
 def start_hydration():
     st.session_state.hydration_active = True
@@ -223,8 +316,22 @@ def toggle_live_mode():
     st.session_state.live_mode = not st.session_state.live_mode
 
 # ==========================================
-# MAIN DASHBOARD LAYOUT
+# MAIN LAYOUT ROUTING
 # ==========================================
+
+# Auto-stop logic
+if st.session_state.biofeedback_active and st.session_state.biofeedback_start_time:
+    elapsed = time.time() - st.session_state.biofeedback_start_time
+    if elapsed > 180: # 3 minutes
+        stop_biofeedback()
+        st.toast("Session Complete: 3 Minutes Reached", icon="🏁")
+
+if st.session_state.page == 'Monitor':
+    render_monitor()
+else:
+    # ==========================================
+    # DASHBOARD LAYOUT
+    # ==========================================
 
 # --- NAVIGATION BAR ---
 st.markdown("""
