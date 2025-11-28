@@ -88,35 +88,52 @@ current_sri = int(calculate_sri(live_hrv, live_gsr, live_facial))
 # --- AI PREDICTION LOGIC ---
 def get_ai_predictions(sri):
     """Returns deterministic AI insights based on the SRI score."""
+    # Continuous calculation for recovery time (Inverse to SRI)
+    # SRI 100 -> ~2 mins, SRI 0 -> ~14 mins
+    recovery_val = max(2.0, 14.0 - (sri * 0.12)) + random.uniform(-0.5, 0.5)
+    
+    # Continuous confidence score
+    confidence_val = min(99, int(85 + (sri * 0.1) + random.uniform(-2, 2)))
+
     if sri >= 80:
         return {
-            "recovery": random.uniform(2.0, 3.5), # Fast recovery
-            "recovery_trend": "↑ 25% (Optimal)",
-            "peak_perf": "NOW - 18:00",
+            "recovery": recovery_val,
+            "recovery_trend": "↑ Optimal",
+            "peak_perf": "Peak State Active",
             "stress_risk": "Low",
             "stress_color": "#10b981",
-            "confidence": random.randint(94, 99),
+            "confidence": confidence_val,
             "insight": "Optimal resilience maintained. Continue current wellness practices."
         }
-    elif sri >= 50:
+    elif sri >= 60:
         return {
-            "recovery": random.uniform(4.0, 6.0), # Moderate recovery
-            "recovery_trend": "↑ 10% (Stable)",
-            "peak_perf": "10:00 - 12:00",
+            "recovery": recovery_val,
+            "recovery_trend": "→ Stable",
+            "peak_perf": "Within 30 mins",
+            "stress_risk": "Low-Moderate",
+            "stress_color": "#a3e635", # Lime green
+            "confidence": confidence_val,
+            "insight": "System stable. Minor adjustments to hydration could boost performance."
+        }
+    elif sri >= 40:
+        return {
+            "recovery": recovery_val,
+            "recovery_trend": "↘ Slowing",
+            "peak_perf": "Requires Calibration",
             "stress_risk": "Moderate",
             "stress_color": "#f59e0b",
-            "confidence": random.randint(88, 93),
-            "insight": "System stable. Minor adjustments to hydration could boost performance."
+            "confidence": confidence_val,
+            "insight": "Allostatic load increasing. 2-minute reset recommended."
         }
     else:
         return {
-            "recovery": random.uniform(8.0, 12.0), # Slow recovery
-            "recovery_trend": "↓ 15% (Needs Rest)",
-            "peak_perf": "Rest Required",
+            "recovery": recovery_val,
+            "recovery_trend": "↓ Critical",
+            "peak_perf": "Rest Essential",
             "stress_risk": "High",
             "stress_color": "#ef4444",
-            "confidence": random.randint(85, 90),
-            "insight": "High allostatic load detected. Immediate 5-minute coherence breathing recommended."
+            "confidence": confidence_val,
+            "insight": "High stress detected. Immediate 5-minute coherence breathing recommended."
         }
 
 ai_data = get_ai_predictions(current_sri)
