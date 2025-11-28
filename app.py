@@ -51,13 +51,32 @@ def simulate_live_data():
     """Generates 'live' biometric data with natural fluctuations."""
     now = time.time()
     # Create a sine wave fluctuation based on time for "breathing" effect
-    fluctuation = (random.random() - 0.5) * 5
+    fluctuation = (random.random() - 0.5) * 3
     
-    # Base values with noise
-    hrv = 65 + (10 * math.sin(now / 10)) + fluctuation
-    gsr = 12 + (2 * math.cos(now / 15)) + (fluctuation / 2)
-    facial = 85 + fluctuation
-    temp = 36.6 + (random.random() - 0.5) * 0.2
+    # BIOFEEDBACK MODE: Boost HRV, Lower Stress
+    if st.session_state.biofeedback_active:
+        # Simulate "Calming Down" - HRV rises, GSR drops
+        hrv_base = 85 + (15 * math.sin(now / 8)) # Higher, smoother HRV
+        gsr_base = 4 + (1 * math.cos(now / 10))  # Lower, stable GSR
+        facial_base = 95 # High calmness
+        temp_base = 36.4 # Slightly cooler (parasympathetic)
+    else:
+        # NORMAL MODE: Random stress spikes
+        hrv_base = 60 + (10 * math.sin(now / 10))
+        gsr_base = 12 + (4 * math.cos(now / 15))
+        facial_base = 75
+        temp_base = 36.7
+        
+        # Occasional "Stress Spike" (10% chance)
+        if random.random() < 0.1:
+            hrv_base -= 15
+            gsr_base += 5
+
+    # Apply noise
+    hrv = hrv_base + fluctuation
+    gsr = gsr_base + (fluctuation / 2)
+    facial = facial_base + fluctuation
+    temp = temp_base + (random.random() - 0.5) * 0.1
     ph = 7.35 + (random.random() - 0.5) * 0.05
     
     return hrv, gsr, facial, temp, ph
@@ -65,6 +84,59 @@ def simulate_live_data():
 # Get live data
 live_hrv, live_gsr, live_facial, live_temp, live_ph = simulate_live_data()
 current_sri = int(calculate_sri(live_hrv, live_gsr, live_facial))
+
+# --- AI PREDICTION LOGIC ---
+def get_ai_predictions(sri):
+    """Returns deterministic AI insights based on the SRI score."""
+    if sri >= 80:
+        return {
+            "recovery": random.uniform(2.0, 3.5), # Fast recovery
+            "recovery_trend": "↑ 25% (Optimal)",
+            "peak_perf": "NOW - 18:00",
+            "stress_risk": "Low",
+            "stress_color": "#10b981",
+            "confidence": random.randint(94, 99),
+            "insight": "Optimal resilience maintained. Continue current wellness practices."
+        }
+    elif sri >= 50:
+        return {
+            "recovery": random.uniform(4.0, 6.0), # Moderate recovery
+            "recovery_trend": "↑ 10% (Stable)",
+            "peak_perf": "10:00 - 12:00",
+            "stress_risk": "Moderate",
+            "stress_color": "#f59e0b",
+            "confidence": random.randint(88, 93),
+            "insight": "System stable. Minor adjustments to hydration could boost performance."
+        }
+    else:
+        return {
+            "recovery": random.uniform(8.0, 12.0), # Slow recovery
+            "recovery_trend": "↓ 15% (Needs Rest)",
+            "peak_perf": "Rest Required",
+            "stress_risk": "High",
+            "stress_color": "#ef4444",
+            "confidence": random.randint(85, 90),
+            "insight": "High allostatic load detected. Immediate 5-minute coherence breathing recommended."
+        }
+
+ai_data = get_ai_predictions(current_sri)
+
+# --- ROTATING FACTS ---
+science_facts = [
+    {"title": "Hydration", "text": "Drinking 500ml of water can increase HRV within 10 minutes by improving blood flow and reducing sympathetic activation."},
+    {"title": "Vagus Nerve", "text": "Cold exposure (15°C) to the face stimulates the Vagus nerve, instantly lowering heart rate and anxiety."},
+    {"title": "Sleep Spindles", "text": "A 20-minute nap increases 'sleep spindles' in the brain, which are directly linked to learning and memory consolidation."},
+    {"title": "Visual Cortex", "text": "Panoramic vision (looking at the horizon) engages the parasympathetic nervous system, reducing stress instantly."},
+    {"title": "Gut-Brain Axis", "text": "95% of serotonin is produced in the gut. Probiotic intake is strongly correlated with improved mood stability."}
+]
+
+if 'fact_index' not in st.session_state:
+    st.session_state.fact_index = 0
+
+def cycle_fact():
+    st.session_state.fact_index = (st.session_state.fact_index + 1) % len(science_facts)
+
+current_fact = science_facts[st.session_state.fact_index]
 
 # --- AI COACH TIPS ---
 # --- AI COACH TIPS ---
@@ -262,11 +334,19 @@ st.markdown("### 🔮 AI Prediction Engine")
 st.markdown(f"""
 <div class="glass-card" style="background: linear-gradient(135deg, rgba(118, 75, 162, 0.2) 0%, rgba(24, 24, 27, 0.5) 100%); border: 1px solid rgba(118, 75, 162, 0.4);">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <div style="font-size: 1.1rem; font-weight: 700; color: white;">✨ AI Insight</div>
-        <div style="background: #e11d48; color: white; padding: 2px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 700;">LIVE</div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="background: rgba(168, 85, 247, 0.2); padding: 8px; border-radius: 8px;">✨</div>
+            <div>
+                <div style="font-size: 1.1rem; font-weight: 700; color: white;">AI Insight</div>
+                <div style="font-size: 0.9rem; color: #e2e8f0;">{ai_data['insight']}</div>
+            </div>
+        </div>
+        <div style="background: #e11d48; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">Live</div>
     </div>
-    <div style="font-size: 1.2rem; color: #e2e8f0; margin-bottom: 10px;">{advice_text}</div>
-    <div style="color: #a855f7; font-size: 0.9rem; font-weight: 600;">Confidence: {random.randint(88, 95)}%</div>
+    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+        <div style="color: #a855f7; font-size: 0.85rem; font-weight: 600; border: 1px solid rgba(168, 85, 247, 0.3); padding: 4px 12px; border-radius: 12px;">Confidence: {ai_data['confidence']}%</div>
+        <div style="color: #a855f7; font-size: 0.85rem;">Maintain current routine</div>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -276,14 +356,14 @@ with c_grid1:
     st.markdown(f"""
     <div class="ai-grid-card">
         <div class="ai-grid-label">⏱️ Expected Recovery</div>
-        <div class="ai-grid-value">{random.uniform(3.5, 5.5):.1f} min</div>
-        <div style="font-size: 0.7rem; color: #10b981;">↑ 19% from last week</div>
+        <div class="ai-grid-value">{ai_data['recovery']:.1f} min</div>
+        <div style="font-size: 0.7rem; color: #10b981;">{ai_data['recovery_trend']}</div>
     </div>
     """, unsafe_allow_html=True)
-    st.markdown("""
+    st.markdown(f"""
     <div class="ai-grid-card">
         <div class="ai-grid-label">🎯 Peak Performance</div>
-        <div class="ai-grid-value">14:00 - 16:00</div>
+        <div class="ai-grid-value">{ai_data['peak_perf']}</div>
         <div style="font-size: 0.7rem; color: #94a3b8;">Today</div>
     </div>
     """, unsafe_allow_html=True)
@@ -292,14 +372,14 @@ with c_grid2:
     st.markdown(f"""
     <div class="ai-grid-card">
         <div class="ai-grid-label">📉 Stress Risk</div>
-        <div class="ai-grid-value" style="color: {'#10b981' if current_sri > 50 else '#ff4b1f'};">{'Low' if current_sri > 50 else 'Moderate'}</div>
+        <div class="ai-grid-value" style="color: {ai_data['stress_color']};">{ai_data['stress_risk']}</div>
         <div style="font-size: 0.7rem; color: #10b981;">Stable trend</div>
     </div>
     """, unsafe_allow_html=True)
     st.markdown(f"""
     <div class="ai-grid-card">
         <div class="ai-grid-label">🤖 AI Confidence</div>
-        <div class="ai-grid-value">{random.randint(90, 98)}%</div>
+        <div class="ai-grid-value">{ai_data['confidence']}%</div>
         <div style="font-size: 0.7rem; color: #94a3b8;">High accuracy</div>
     </div>
     """, unsafe_allow_html=True)
@@ -317,22 +397,38 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- SECTION 5: DID YOU KNOW? (BREATHING) ---
-st.markdown("""
+# --- SECTION 5: DID YOU KNOW? (ROTATING SCIENCE) ---
+# Use columns to place the refresh button next to the title
+st.markdown(f"""
 <div class="glass-card" style="background: rgba(255, 255, 255, 0.05); border-left: 4px solid #f59e0b;">
-    <div style="display: flex; align-items: center; margin-bottom: 10px;">
-        <span style="font-size: 1.5rem; margin-right: 10px;">💡</span>
-        <span style="font-weight: 700; color: #f59e0b;">Did You Know? - Breathing</span>
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div style="display: flex; align-items: center; margin-bottom: 10px;">
+            <div style="background: #451a03; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-right: 12px;">
+                <span style="font-size: 1.2rem; color: #f59e0b;">💡</span>
+            </div>
+            <span style="font-weight: 700; color: white; font-size: 1.1rem;">Did You Know? - {current_fact['title']}</span>
+        </div>
     </div>
-    <div style="color: #cbd5e1; margin-bottom: 10px;">
-        6 breaths per minute (5s in, 5s out) is the optimal rate for maximizing heart rate variability and vagal tone.
+    
+    <div style="color: #cbd5e1; margin-bottom: 15px; line-height: 1.6;">
+        {current_fact['text']}
     </div>
+    
     <div style="display: flex; gap: 5px;">
         <div style="width: 20px; height: 4px; background: #f59e0b; border-radius: 2px;"></div>
+        <div style="width: 4px; height: 4px; background: #475569; border-radius: 50%;"></div>
+        <div style="width: 4px; height: 4px; background: #475569; border-radius: 50%;"></div>
         <div style="width: 4px; height: 4px; background: #475569; border-radius: 50%;"></div>
         <div style="width: 4px; height: 4px; background: #475569; border-radius: 50%;"></div>
     </div>
 </div>
 """, unsafe_allow_html=True)
+
+# Invisible button to cycle facts (placed over the refresh icon area if we had one, 
+# but for now we can just add a small text button below or rely on auto-refresh)
+col_fact_refresh, _ = st.columns([1, 5])
+with col_fact_refresh:
+    st.button("🔄 New Fact", on_click=cycle_fact, use_container_width=True)
 
 # --- SECTION 6: SYSTEM ANALYSIS & TRENDS ---
 st.markdown("### 📊 System Analysis & Trends")
