@@ -401,26 +401,24 @@ st.markdown("""
 # Use columns to place the refresh button next to the title
 st.markdown(f"""
 <div class="glass-card" style="background: rgba(255, 255, 255, 0.05); border-left: 4px solid #f59e0b;">
-    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-        <div style="display: flex; align-items: center; margin-bottom: 10px;">
-            <div style="background: #451a03; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-right: 12px;">
-                <span style="font-size: 1.2rem; color: #f59e0b;">💡</span>
-            </div>
-            <span style="font-weight: 700; color: white; font-size: 1.1rem;">Did You Know? - {current_fact['title']}</span>
-        </div>
-    </div>
-    
-    <div style="color: #cbd5e1; margin-bottom: 15px; line-height: 1.6;">
-        {current_fact['text']}
-    </div>
-    
-    <div style="display: flex; gap: 5px;">
-        <div style="width: 20px; height: 4px; background: #f59e0b; border-radius: 2px;"></div>
-        <div style="width: 4px; height: 4px; background: #475569; border-radius: 50%;"></div>
-        <div style="width: 4px; height: 4px; background: #475569; border-radius: 50%;"></div>
-        <div style="width: 4px; height: 4px; background: #475569; border-radius: 50%;"></div>
-        <div style="width: 4px; height: 4px; background: #475569; border-radius: 50%;"></div>
-    </div>
+<div style="display: flex; justify-content: space-between; align-items: flex-start;">
+<div style="display: flex; align-items: center; margin-bottom: 10px;">
+<div style="background: #451a03; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-right: 12px;">
+<span style="font-size: 1.2rem; color: #f59e0b;">💡</span>
+</div>
+<span style="font-weight: 700; color: white; font-size: 1.1rem;">Did You Know? - {current_fact['title']}</span>
+</div>
+</div>
+<div style="color: #cbd5e1; margin-bottom: 15px; line-height: 1.6;">
+{current_fact['text']}
+</div>
+<div style="display: flex; gap: 5px;">
+<div style="width: 20px; height: 4px; background: #f59e0b; border-radius: 2px;"></div>
+<div style="width: 4px; height: 4px; background: #475569; border-radius: 50%;"></div>
+<div style="width: 4px; height: 4px; background: #475569; border-radius: 50%;"></div>
+<div style="width: 4px; height: 4px; background: #475569; border-radius: 50%;"></div>
+<div style="width: 4px; height: 4px; background: #475569; border-radius: 50%;"></div>
+</div>
 </div>
 """, unsafe_allow_html=True)
 
