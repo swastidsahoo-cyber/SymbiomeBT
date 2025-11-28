@@ -168,7 +168,13 @@ def toggle_coach():
 
 def start_biofeedback():
     st.session_state.biofeedback_active = True
+    st.session_state.live_mode = True # Auto-start live simulation
     st.toast("Biofeedback Sensors Calibrated", icon="🧬")
+
+def stop_biofeedback():
+    st.session_state.biofeedback_active = False
+    st.session_state.live_mode = False # Optional: stop live mode when session ends
+    st.rerun()
 
 def start_hydration():
     st.session_state.hydration_active = True
@@ -206,7 +212,7 @@ with c2:
     
     if st.session_state.live_mode:
         st.caption("Live Monitoring Active: Auto-refreshing...")
-        time.sleep(3) # Simulate 3s refresh rate
+        time.sleep(2) # Faster refresh for smoother feel
         st.rerun()
 
 st.markdown("---")
@@ -256,8 +262,13 @@ with col_hero_2:
     
     # Biofeedback Button Logic
     if st.session_state.biofeedback_active:
-        st.success("✅ Biofeedback Session Active")
-        st.progress(65, text="Calibrating Sensors...")
+        st.markdown(f"""
+        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 10px;">
+            <div style="color: #10b981; font-weight: 700; font-size: 1.1rem; margin-bottom: 5px;">🧬 Biofeedback Session Active</div>
+            <div style="color: #d1fae5; font-size: 0.9rem;">Entraining Vagal Tone... HRV Increasing...</div>
+        </div>
+        """, unsafe_allow_html=True)
+        st.button("⏹ STOP SESSION", on_click=stop_biofeedback, use_container_width=True)
     else:
         # Using a target-like unicode symbol to match the mockup
         st.button("◎ START BIOFEEDBACK SESSION", on_click=start_biofeedback, type="primary", use_container_width=True)
