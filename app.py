@@ -350,6 +350,28 @@ if st.session_state.biofeedback_active and st.session_state.biofeedback_start_ti
 
 if st.session_state.page == 'Monitor':
     render_monitor()
+else:
+    # ==========================================
+    # DASHBOARD LAYOUT
+    # ==========================================
+    
+    # --- NAVIGATION BAR ---
+    st.markdown("""
+    <div class="nav-container">
+        <a href="#" class="nav-item active">Dashboard</a>
+        <a href="#" class="nav-item">Monitor</a>
+        <a href="#" class="nav-item">Training</a>
+        <a href="#" class="nav-item">Digital Twin</a>
+        <a href="#" class="nav-item">Journal</a>
+        <a href="#" class="nav-item">Research</a>
+        <a href="#" class="nav-item">Community</a>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # --- HEADER ---
+    c1, c2 = st.columns([3, 1])
+    with c1:
+        st.markdown("# Symbiome Resilience System")
         st.markdown("AI-Powered Biological Intelligence Platform")
     with c2:
         # Live Mode Toggle
