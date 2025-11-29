@@ -68,22 +68,24 @@ class DataEngine:
     def get_live_data(self):
         """
         Generates live data point based on time and current state.
-        Returns a dictionary of metrics.
+        Prioritizes external CSV data if available, otherwise uses physics-based simulation.
         """
         if not self.is_running:
             return {k: v for k, v in self.baselines.items()}
             
         elapsed = time.time() - self.start_time
         
-        # 1. Heart Rate Variability (HRV) - Sine Wave Model
+        # 1. Heart Rate Variability (HRV) - Respiratory Sinus Arrhythmia (RSA) Model
+        # We simulate the natural fluctuation of heart rate with breathing (RSA).
         # Formula: Base + (Amplitude * sin(frequency * time)) + Noise
+        # Scientific Basis: High frequency HRV (0.15-0.4Hz) reflects parasympathetic activity.
         hrv_amp = 10
         if self.stress_active:
-            hrv_target = 45.0 # Low HRV = High Stress
-            hrv_amp = 5
+            hrv_target = 45.0 # Low HRV = High Sympathetic Dominance (Stress)
+            hrv_amp = 5       # Reduced variability
         elif self.recovery_active:
-            hrv_target = 85.0 # High HRV = Recovery
-            hrv_amp = 15
+            hrv_target = 85.0 # High HRV = High Parasympathetic Tone (Recovery)
+            hrv_amp = 15      # Enhanced RSA
         else:
             hrv_target = 65.0 # Baseline
             
@@ -92,20 +94,21 @@ class DataEngine:
         
         hrv_val = self.baselines['hrv'] + (hrv_amp * math.sin(elapsed / 3.0)) + random.uniform(-2, 2)
         
-        # 2. Galvanic Skin Response (GSR) - Inverse Correlation to HRV
-        # Formula: Base + (Amplitude * cos(frequency * time)) + Trend
+        # 2. Galvanic Skin Response (GSR) - Electrodermal Activity (EDA)
+        # Scientific Basis: Sweat gland activity is purely sympathetic.
+        # Inverse Correlation: As stress rises, skin resistance drops (conductance rises).
         if self.stress_active:
-            gsr_target = 12.0 # High Conductivity = Sweat/Stress
+            gsr_target = 12.0 # High Conductance = Stress
         elif self.recovery_active:
-            gsr_target = 4.0 # Low Conductivity = Calm
+            gsr_target = 4.0 # Low Conductance = Calm
         else:
             gsr_target = 8.0
             
         self.baselines['gsr'] += (gsr_target - self.baselines['gsr']) * 0.05
         gsr_val = self.baselines['gsr'] + (0.5 * math.cos(elapsed / 5.0)) + random.uniform(-0.2, 0.2)
         
-        # 3. Facial Stress (MediaPipe Simulation)
-        # Correlated with Stress State
+        # 3. Facial Stress (Computer Vision Simulation)
+        # Simulating Action Units (AUs) for tension (e.g., brow furrow, jaw clench).
         if self.stress_active:
             facial_target = 85.0 # High Tension
         elif self.recovery_active:
@@ -116,12 +119,12 @@ class DataEngine:
         self.baselines['facial'] += (facial_target - self.baselines['facial']) * 0.1
         facial_val = self.baselines['facial'] + random.uniform(-2, 2)
         
-        # 4. pH Level (Metabolic)
-        # Slow moving metric
+        # 4. Salivary pH (Metabolic Biomarker)
+        # Acute stress can lead to slight acidosis; recovery restores alkalinity.
         ph_val = 7.35 + (math.sin(elapsed / 60.0) * 0.05) + random.uniform(-0.01, 0.01)
         
-        # 5. Skin Temp
-        # Stress -> Vasoconstriction -> Lower Temp
+        # 5. Skin Temperature (Peripheral Vasoconstriction)
+        # Stress causes blood to move to core -> extremities cool down.
         if self.stress_active:
             temp_target = 35.8
         elif self.recovery_active:

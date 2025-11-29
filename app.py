@@ -338,6 +338,61 @@ def toggle_live_mode():
     st.session_state.live_mode = not st.session_state.live_mode
 
 # ==========================================
+# GLOBAL NAVIGATION
+# ==========================================
+def set_page(page):
+    st.session_state.page = page
+
+def render_navbar():
+    """Renders the global navigation bar on every page."""
+    st.markdown("""
+    <style>
+    .nav-btn {
+        background: transparent !important;
+        border: none !important;
+        color: #94a3b8 !important;
+        font-weight: 600 !important;
+        font-size: 0.9rem !important;
+        padding: 0.5rem 1rem !important;
+        transition: color 0.2s !important;
+    }
+    .nav-btn:hover {
+        color: #ffffff !important;
+    }
+    .nav-btn-active {
+        color: #00f2fe !important;
+        border-bottom: 2px solid #00f2fe !important;
+    }
+    /* Hide default button styles for nav items */
+    div[data-testid="stHorizontalBlock"] button {
+        background-color: transparent;
+        border: none;
+        color: #94a3b8;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    # Navigation Items
+    nav_items = ["Dashboard", "Monitor", "Training", "Digital Twin", "Journal", "Research", "Community"]
+    
+    # Container for Nav
+    with st.container():
+        st.markdown('<div class="nav-container" style="display: flex; justify-content: center; gap: 10px; padding: 10px; background: rgba(255,255,255,0.02); border-radius: 16px; margin-bottom: 20px;">', unsafe_allow_html=True)
+        cols = st.columns(len(nav_items))
+        for i, item in enumerate(nav_items):
+            with cols[i]:
+                # Highlight active page
+                is_active = (st.session_state.page == item)
+                label = f"**{item}**" if is_active else item
+                if st.button(label, key=f"nav_{item}", use_container_width=True):
+                    set_page(item)
+                    st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
+
+# Render Navbar GLOBALLY
+render_navbar()
+
+# ==========================================
 # MAIN LAYOUT ROUTING
 # ==========================================
 
@@ -354,19 +409,6 @@ else:
     # ==========================================
     # DASHBOARD LAYOUT
     # ==========================================
-    
-    # --- NAVIGATION BAR ---
-    st.markdown("""
-    <div class="nav-container">
-        <a href="#" class="nav-item active">Dashboard</a>
-        <a href="#" class="nav-item">Monitor</a>
-        <a href="#" class="nav-item">Training</a>
-        <a href="#" class="nav-item">Digital Twin</a>
-        <a href="#" class="nav-item">Journal</a>
-        <a href="#" class="nav-item">Research</a>
-        <a href="#" class="nav-item">Community</a>
-    </div>
-    """, unsafe_allow_html=True)
     
     # --- HEADER ---
     c1, c2 = st.columns([3, 1])
