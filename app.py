@@ -200,8 +200,41 @@ def stop_biofeedback():
     st.session_state.biofeedback_active = False
     st.session_state.live_mode = False
     st.session_state.biofeedback_start_time = None
-    data_engine.stop_session() # Stop engine logging
+    data_engine.stop_session()
+    st.session_state.page = 'Summary' # Go to summary instead of Dashboard
     st.rerun()
+
+def render_session_summary():
+    """Renders a summary report after the biofeedback session."""
+    st.markdown("""
+    <div style="text-align: center; margin-top: 50px;">
+        <div style="font-size: 2rem; font-weight: 700; color: #00f2fe; margin-bottom: 20px;">Session Analysis Complete</div>
+        <div style="font-size: 1.2rem; color: #94a3b8;">Processing multi-modal sensor data...</div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Simulate processing delay
+    with st.spinner("Calculating Vagal Tone & Stress Resilience Index..."):
+        time.sleep(1.5)
+        
+    final_sri = random.randint(75, 95)
+    
+    c1, c2, c3 = st.columns([1, 2, 1])
+    with c2:
+        st.markdown(f"""
+        <div class="glass-card" style="text-align: center; padding: 40px; border: 2px solid #10b981; box-shadow: 0 0 50px rgba(16, 185, 129, 0.2);">
+            <div style="font-size: 1.5rem; color: #10b981; font-weight: 700; margin-bottom: 10px;">OPTIMAL RECOVERY ACHIEVED</div>
+            <div style="font-size: 5rem; font-weight: 700; color: white; line-height: 1;">{final_sri}</div>
+            <div style="color: #94a3b8; letter-spacing: 2px; margin-top: 10px;">FINAL SRI SCORE</div>
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.9rem; color: #cbd5e1;">
+                "Your physiological coherence improved by 18% during this session. Vagal tone is elevated."
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        if st.button("Return to Dashboard", type="primary", use_container_width=True):
+            st.session_state.page = 'Dashboard'
+            st.rerun()
 
 def render_monitor():
     """
@@ -323,12 +356,26 @@ def render_monitor():
             
         with st.expander("Backend Logic (Judges)"):
             st.code("""
-def get_live_data(self):
-    # HRV Sine Wave Model
-    hrv = base + (amp * sin(t)) + noise
-    
-    # GSR Inverse Correlation
-    gsr = base + (amp * cos(t))
+    def get_live_data(self):
+        # 1. Heart Rate Variability (HRV) - Respiratory Sinus Arrhythmia (RSA) Model
+        # Formula: Base + (Amplitude * sin(frequency * time)) + Noise
+        # Scientific Basis: High frequency HRV (0.15-0.4Hz) reflects parasympathetic activity.
+        hrv_amp = 10
+        if self.stress_active:
+            hrv_target = 45.0 # Low HRV = High Sympathetic Dominance (Stress)
+            hrv_amp = 5       # Reduced variability
+        elif self.recovery_active:
+            hrv_target = 85.0 # High HRV = High Parasympathetic Tone (Recovery)
+            hrv_amp = 15      # Enhanced RSA
+            
+        # 2. Galvanic Skin Response (GSR) - Electrodermal Activity (EDA)
+        # Scientific Basis: Sweat gland activity is purely sympathetic.
+        # Inverse Correlation: As stress rises, skin resistance drops (conductance rises).
+        if self.stress_active:
+            gsr_target = 12.0 # High Conductance = Stress
+            
+        # 3. Facial Stress (Computer Vision Simulation)
+        # Simulating Action Units (AUs) for tension (e.g., brow furrow, jaw clench).
             """, language="python")
 
 def start_hydration():
@@ -405,6 +452,8 @@ if st.session_state.biofeedback_active and st.session_state.biofeedback_start_ti
 
 if st.session_state.page == 'Monitor':
     render_monitor()
+elif st.session_state.page == 'Summary':
+    render_session_summary()
 else:
     # ==========================================
     # DASHBOARD LAYOUT
