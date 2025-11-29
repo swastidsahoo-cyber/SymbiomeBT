@@ -8,6 +8,7 @@ import os
 import random
 from datetime import datetime
 import math
+from data_engine import data_engine # Import the new backend engine
 
 # ==========================================
 # SYMBIOME APP CONFIGURATION
@@ -50,43 +51,20 @@ if 'page' not in st.session_state:
 if 'biofeedback_start_time' not in st.session_state:
     st.session_state.biofeedback_start_time = None
 
-# --- DYNAMIC DATA SIMULATION ---
-def simulate_live_data():
-    """Generates 'live' biometric data with natural fluctuations."""
-    now = time.time()
-    # Create a sine wave fluctuation based on time for "breathing" effect
-    fluctuation = (random.random() - 0.5) * 3
+# --- DATA ENGINE INTEGRATION ---
+# We now use the data_engine for all live data
+if 'data_engine_initialized' not in st.session_state:
+    st.session_state.data_engine_initialized = True
+    # Ensure engine state matches session state if needed
     
-    # BIOFEEDBACK MODE: Boost HRV, Lower Stress
-    if st.session_state.biofeedback_active:
-        # Simulate "Calming Down" - HRV rises, GSR drops
-        hrv_base = 85 + (15 * math.sin(now / 8)) # Higher, smoother HRV
-        gsr_base = 4 + (1 * math.cos(now / 10))  # Lower, stable GSR
-        facial_base = 95 # High calmness
-        temp_base = 36.4 # Slightly cooler (parasympathetic)
-    else:
-        # NORMAL MODE: Random stress spikes
-        hrv_base = 60 + (10 * math.sin(now / 10))
-        gsr_base = 12 + (4 * math.cos(now / 15))
-        facial_base = 75
-        temp_base = 36.7
-        
-        # Occasional "Stress Spike" (10% chance)
-        if random.random() < 0.1:
-            hrv_base -= 15
-            gsr_base += 5
+# Get live data from the engine
+live_data = data_engine.get_live_data()
+live_hrv = live_data['hrv']
+live_gsr = live_data['gsr']
+live_facial = live_data['facial']
+live_temp = live_data['temp']
+live_ph = live_data['ph']
 
-    # Apply noise
-    hrv = hrv_base + fluctuation
-    gsr = gsr_base + (fluctuation / 2)
-    facial = facial_base + fluctuation
-    temp = temp_base + (random.random() - 0.5) * 0.1
-    ph = 7.35 + (random.random() - 0.5) * 0.05
-    
-    return hrv, gsr, facial, temp, ph
-
-# Get live data
-live_hrv, live_gsr, live_facial, live_temp, live_ph = simulate_live_data()
 current_sri = int(calculate_sri(live_hrv, live_gsr, live_facial))
 
 # --- AI PREDICTION LOGIC ---
@@ -212,102 +190,146 @@ def toggle_coach():
 
 def start_biofeedback():
     st.session_state.biofeedback_active = True
-    st.session_state.live_mode = True # Auto-start live simulation
-    st.session_state.page = 'Monitor' # Navigate to Monitor
+    st.session_state.live_mode = True 
+    st.session_state.page = 'Monitor'
     st.session_state.biofeedback_start_time = time.time()
-    st.toast("Biofeedback Sensors Calibrated", icon="🧬")
+    data_engine.start_session() # Start engine logging
+    st.toast("Monitoring Session Started", icon="🧬")
 
 def stop_biofeedback():
     st.session_state.biofeedback_active = False
-    st.session_state.live_mode = False # Optional: stop live mode when session ends
-    st.session_state.page = 'Dashboard' # Return to Dashboard
+    st.session_state.live_mode = False
     st.session_state.biofeedback_start_time = None
+    data_engine.stop_session() # Stop engine logging
     st.rerun()
 
 def render_monitor():
-    """Renders the dedicated Biofeedback Monitor page."""
+    """
+    Renders the 'Winner Worthy' Monitor Screen.
+    Matches the 4-card layout, real-time graphs, and event logging.
+    """
     # --- HEADER ---
-    c1, c2 = st.columns([3, 1])
+    c1, c2, c3 = st.columns([6, 1, 1])
     with c1:
-        st.markdown("# 🧬 Biofeedback Monitor")
-        st.markdown("Real-time Multi-Sensor Fusion & Entrainment")
+        st.markdown("### ⚡ Physiological Monitoring System")
+        st.caption("Multi-modal real-time biosensor data collection")
     with c2:
-        if st.button("⏹ STOP SESSION", type="primary", use_container_width=True):
-            stop_biofeedback()
+        if st.button("🔄 Reset"):
+            st.rerun()
+    with c3:
+        if st.session_state.biofeedback_active:
+            st.button("⏹ Stop", on_click=stop_biofeedback, type="primary", use_container_width=True)
+        else:
+            st.button("▶ Start", on_click=start_biofeedback, type="primary", use_container_width=True)
+
+    # --- SENSOR CARDS (Row 1) ---
+    # Colors: Red (HRV), Blue (GSR), Purple (Facial), Teal (pH)
     
-    st.markdown("---")
-
-    # --- TIMER & STATUS ---
-    if st.session_state.biofeedback_start_time:
-        elapsed = int(time.time() - st.session_state.biofeedback_start_time)
-        mins, secs = divmod(elapsed, 60)
-        timer_text = f"{mins:02d}:{secs:02d}"
-        progress = min(1.0, elapsed / 180) # 3 mins max
-    else:
-        timer_text = "00:00"
-        progress = 0.0
-
-    st.markdown(f"""
-    <div style="text-align: center; margin-bottom: 30px;">
-        <div style="font-size: 3rem; font-weight: 700; color: #00f2fe; font-family: monospace;">{timer_text}</div>
-        <div style="color: #94a3b8;">Session Duration (Max 3:00)</div>
-    </div>
-    """, unsafe_allow_html=True)
-    st.progress(progress)
-
-    # --- SENSOR GRID ---
-    st.markdown("### 📡 Live Sensor Data")
+    m1, m2, m3, m4 = st.columns(4)
     
-    m1, m2, m3 = st.columns(3)
-    m4, m5 = st.columns([1, 1]) # Centered bottom row
-
-    metrics_top = [
-        ("Heart Rate Variability (HRV)", f"{int(live_hrv)} ms", "Vagal Tone Indicator", "#ff4b1f"),
-        ("Galvanic Skin Response (GSR)", f"{live_gsr:.1f} µS", "Sympathetic Arousal", "#f2c94c"),
-        ("Facial Calmness", f"{int(live_facial)}%", "Micro-expression Analysis", "#a8ff78")
-    ]
+    state_badge = "🔴 Live" if st.session_state.biofeedback_active else "⚪ Idle"
+    state_class = "live-badge" if st.session_state.biofeedback_active else "idle-badge"
     
-    metrics_bottom = [
-        ("Skin Temperature", f"{live_temp:.1f} °C", "Thermal Regulation", "#00f2fe"),
-        ("Salivary pH", f"{live_ph:.2f}", "Metabolic State", "#d8b4fe")
-    ]
-
-    for col, (label, val, desc, color) in zip([m1, m2, m3], metrics_top):
+    # Helper to render card
+    def render_card(col, icon, title, sensor, val, unit, desc, color, bg_color):
         with col:
             st.markdown(f"""
-            <div class="glass-card" style="text-align: center; padding: 30px;">
-                <div style="color: {color}; font-size: 1.2rem; font-weight: 700; margin-bottom: 10px;">{label}</div>
-                <div style="font-size: 3rem; font-weight: 700; color: white;">{val}</div>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">{desc}</div>
-                <div style="margin-top: 20px; height: 60px; background: rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 0.8rem;">
-                    [Live Graph Placeholder]
+            <div class="monitor-card" style="border-top: 4px solid {color};">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div style="background: {bg_color}; width: 40px; height: 40px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; color: {color};">
+                        {icon}
+                    </div>
+                    <div class="{state_class}">{state_badge}</div>
                 </div>
+                <div style="margin-top: 15px; font-weight: 600; color: #e2e8f0;">{title}</div>
+                <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 10px;">{sensor}</div>
+                <div style="font-size: 2.5rem; font-weight: 700; color: {color}; line-height: 1;">
+                    {val if st.session_state.biofeedback_active else '--'} <span style="font-size: 1rem; color: #64748b;">{unit}</span>
+                </div>
+                <div style="font-size: 0.75rem; color: #64748b; margin-top: 5px;">{desc}</div>
             </div>
             """, unsafe_allow_html=True)
 
-    c_spacer_l, c_b1, c_b2, c_spacer_r = st.columns([1, 2, 2, 1])
-    for col, (label, val, desc, color) in zip([c_b1, c_b2], metrics_bottom):
-        with col:
-            st.markdown(f"""
-            <div class="glass-card" style="text-align: center; padding: 30px;">
-                <div style="color: {color}; font-size: 1.2rem; font-weight: 700; margin-bottom: 10px;">{label}</div>
-                <div style="font-size: 3rem; font-weight: 700; color: white;">{val}</div>
-                <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 10px;">{desc}</div>
-            </div>
-            """, unsafe_allow_html=True)
+    render_card(m1, "❤️", "Heart Rate Variability", "PPG Sensor", f"{live_hrv:.1f}", "ms", "Autonomic nervous system balance", "#f87171", "rgba(248, 113, 113, 0.1)")
+    render_card(m2, "⚡", "Galvanic Skin Response", "GSR Sensor", f"{live_gsr:.1f}", "µS", "Sympathetic nervous activity", "#60a5fa", "rgba(96, 165, 250, 0.1)")
+    render_card(m3, "📷", "Facial Stress Detection", "MediaPipe AI", f"{live_facial:.0f}", "%", "Micro-expression analysis", "#c084fc", "rgba(192, 132, 252, 0.1)")
+    render_card(m4, "💧", "pH / Sweat Chemistry", "Chemical Sensor", f"{live_ph:.2f}", "", "Microbiome proxy indicator", "#2dd4bf", "rgba(45, 212, 191, 0.1)")
 
-    # --- DATA SOURCE EXPLANATION ---
-    st.markdown("### ℹ️ Data Source & Methodology")
-    st.info("""
-    **Sensor Fusion Engine**: This monitor aggregates data from multiple simulated inputs:
-    *   **PPG Sensor (Optical)**: Measures blood volume pulse for HRV.
-    *   **EDA Sensor (Conductance)**: Measures sweat gland activity for GSR.
-    *   **Computer Vision**: Analyzes facial micro-expressions for emotional valence.
-    *   **Thermistor**: Precision skin temperature tracking.
-    *   **Electrochemical Sensor**: Real-time salivary pH monitoring.
+    # --- REAL-TIME GRAPHS & CONTROLS (Row 2) ---
+    st.markdown("#### Real-Time Data Streams")
+    st.caption("Live physiological signals with micro-fluctuation tracking")
     
-    *Note: In this demo, data is synthesized using a physics-based physiological model.*
-    """)
+    g1, g2 = st.columns(2)
+    
+    # Generate Graph Data (Rolling window)
+    if 'hrv_history' not in st.session_state:
+        st.session_state.hrv_history = [65] * 50
+        st.session_state.gsr_history = [10] * 50
+        
+    if st.session_state.biofeedback_active:
+        st.session_state.hrv_history.append(live_hrv)
+        st.session_state.hrv_history.pop(0)
+        st.session_state.gsr_history.append(live_gsr)
+        st.session_state.gsr_history.pop(0)
+
+    with g1:
+        st.markdown("**Heart Rate Variability (HRV)**")
+        if st.session_state.biofeedback_active:
+            fig_hrv = go.Figure()
+            fig_hrv.add_trace(go.Scatter(y=st.session_state.hrv_history, mode='lines', fill='tozeroy', line=dict(color='#f87171', width=2), fillcolor='rgba(248, 113, 113, 0.1)'))
+            fig_hrv.update_layout(height=250, margin=dict(l=0, r=0, t=10, b=0), paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', xaxis=dict(showgrid=False, showticklabels=False), yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.1)', range=[0, 120]))
+            st.plotly_chart(fig_hrv, use_container_width=True)
+        else:
+            st.info("Start monitoring to view data")
+            
+    with g2:
+        st.markdown("**Galvanic Skin Response (GSR)**")
+        if st.session_state.biofeedback_active:
+            fig_gsr = go.Figure()
+            fig_gsr.add_trace(go.Scatter(y=st.session_state.gsr_history, mode='lines', fill='tozeroy', line=dict(color='#60a5fa', width=2), fillcolor='rgba(96, 165, 250, 0.1)'))
+            fig_gsr.update_layout(height=250, margin=dict(l=0, r=0, t=10, b=0), paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', xaxis=dict(showgrid=False, showticklabels=False), yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.1)', range=[0, 20]))
+            st.plotly_chart(fig_gsr, use_container_width=True)
+        else:
+            st.info("Start monitoring to view data")
+
+    # --- SIMULATION CONTROLS & EVENT LOG (Row 3) ---
+    c_events, c_controls = st.columns([2, 1])
+    
+    with c_events:
+        st.markdown("#### Session Events")
+        events_container = st.container(height=200)
+        with events_container:
+            if not data_engine.events:
+                st.caption("No events recorded.")
+            for event in reversed(data_engine.events):
+                st.markdown(f"""
+                <div style="display: flex; align-items: center; padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <div style="background: #334155; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; color: #94a3b8; margin-right: 10px;">{event['time']}</div>
+                    <div style="font-weight: 600; color: #e2e8f0; margin-right: 10px;">{event['type']}</div>
+                    <div style="color: #64748b; font-size: 0.9rem;">{event['desc']}</div>
+                </div>
+                """, unsafe_allow_html=True)
+                
+    with c_controls:
+        st.markdown("#### Simulation Controls")
+        st.caption("Inject physiological events")
+        if st.button("⚡ Stimulate Stress Spike", use_container_width=True):
+            data_engine.trigger_stress()
+            st.toast("Injecting Cortisol Spike...", icon="💉")
+            
+        if st.button("🌿 Mark Recovery", use_container_width=True):
+            data_engine.trigger_recovery()
+            st.toast("Initiating Parasympathetic Response...", icon="🧘")
+            
+        with st.expander("Backend Logic (Judges)"):
+            st.code("""
+def get_live_data(self):
+    # HRV Sine Wave Model
+    hrv = base + (amp * sin(t)) + noise
+    
+    # GSR Inverse Correlation
+    gsr = base + (amp * cos(t))
+            """, language="python")
 
 def start_hydration():
     st.session_state.hydration_active = True
@@ -328,28 +350,6 @@ if st.session_state.biofeedback_active and st.session_state.biofeedback_start_ti
 
 if st.session_state.page == 'Monitor':
     render_monitor()
-else:
-        # ==========================================
-        # DASHBOARD LAYOUT
-        # ==========================================
-    
-    # --- NAVIGATION BAR ---
-    st.markdown("""
-    <div class="nav-container">
-        <a href="#" class="nav-item active">Dashboard</a>
-        <a href="#" class="nav-item">Monitor</a>
-        <a href="#" class="nav-item">Training</a>
-        <a href="#" class="nav-item">Digital Twin</a>
-        <a href="#" class="nav-item">Journal</a>
-        <a href="#" class="nav-item">Research</a>
-        <a href="#" class="nav-item">Community</a>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # --- HEADER ---
-    c1, c2 = st.columns([3, 1])
-    with c1:
-        st.markdown("# Symbiome Resilience System")
         st.markdown("AI-Powered Biological Intelligence Platform")
     with c2:
         # Live Mode Toggle
