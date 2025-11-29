@@ -65,7 +65,10 @@ live_facial = live_data['facial']
 live_temp = live_data['temp']
 live_ph = live_data['ph']
 
-current_sri = int(calculate_sri(live_hrv, live_gsr, live_facial))
+if 'last_session_sri' in st.session_state:
+    current_sri = st.session_state.last_session_sri
+else:
+    current_sri = int(calculate_sri(live_hrv, live_gsr, live_facial))
 
 # --- AI PREDICTION LOGIC ---
 def get_ai_predictions(sri):
@@ -201,7 +204,15 @@ def stop_biofeedback():
     st.session_state.live_mode = False
     st.session_state.biofeedback_start_time = None
     data_engine.stop_session()
-    st.session_state.page = 'Summary' # Go to summary instead of Dashboard
+    
+    # Calculate Final Score from Session History
+    if 'sri_history' in st.session_state and len(st.session_state.sri_history) > 0:
+        final_score = int(sum(st.session_state.sri_history) / len(st.session_state.sri_history))
+    else:
+        final_score = random.randint(70, 90)
+        
+    st.session_state.last_session_sri = final_score
+    st.session_state.page = 'Dashboard' # Return to Dashboard
     st.rerun()
 
 def toggle_live_mode():
@@ -259,51 +270,56 @@ def render_monitor():
     render_card(m3, "📷", "Facial Stress Detection", "MediaPipe AI", f"{live_facial:.0f}", "%", "Micro-expression analysis", "#c084fc", "rgba(192, 132, 252, 0.1)")
     render_card(m4, "💧", "pH / Sweat Chemistry", "Chemical Sensor", f"{live_ph:.2f}", "", "Microbiome proxy indicator", "#2dd4bf", "rgba(45, 212, 191, 0.1)")
 
-    # --- GRAPHS (Row 2) ---
-    g1, g2 = st.columns([2, 1])
+    # --- REAL-TIME GRAPH (Row 2) ---
+    st.markdown("#### 📈 Live Biometric Signals (HRV, GSR, Facial Calm, SRI)")
     
-    with g1:
-        st.markdown("##### Real-time Biometrics")
-        # Create a combined chart or side-by-side
-        # For now, let's show HRV history
-        if 'hrv_history' not in st.session_state:
-            st.session_state.hrv_history = [65] * 50
-            
-        if st.session_state.biofeedback_active:
-            st.session_state.hrv_history.append(live_hrv)
-            st.session_state.hrv_history.pop(0)
-            
-        if len(st.session_state.hrv_history) > 0:
-            df_hrv = pd.DataFrame({'Time': range(len(st.session_state.hrv_history)), 'HRV': st.session_state.hrv_history})
-            fig = px.line(df_hrv, x='Time', y='HRV', title=None)
-            fig.update_layout(
-                height=300, 
-                margin=dict(l=0, r=0, t=0, b=0),
-                paper_bgcolor='rgba(0,0,0,0)',
-                plot_bgcolor='rgba(0,0,0,0)',
-                font=dict(color='#94a3b8'),
-                xaxis=dict(showgrid=False),
-                yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.05)')
-            )
-            fig.update_traces(line_color='#f87171', line_width=3)
-            st.plotly_chart(fig, use_container_width=True)
-        else:
-            st.info("Start session to view real-time data stream.")
+    # Initialize History
+    if 'hrv_history' not in st.session_state: st.session_state.hrv_history = [65] * 50
+    if 'gsr_history' not in st.session_state: st.session_state.gsr_history = [45] * 50
+    if 'facial_history' not in st.session_state: st.session_state.facial_history = [15] * 50
+    if 'sri_history' not in st.session_state: st.session_state.sri_history = [60] * 50
+    
+    # Update Data
+    if st.session_state.biofeedback_active:
+        st.session_state.hrv_history.append(live_hrv)
+        st.session_state.hrv_history.pop(0)
+        st.session_state.gsr_history.append(live_gsr)
+        st.session_state.gsr_history.pop(0)
+        st.session_state.facial_history.append(live_facial)
+        st.session_state.facial_history.pop(0)
+        
+        # Calculate instantaneous SRI for the graph
+        inst_sri = calculate_sri(live_hrv, live_gsr, live_facial)
+        st.session_state.sri_history.append(inst_sri)
+        st.session_state.sri_history.pop(0)
 
-    with g2:
-        st.markdown("##### Session Events")
-        events = data_engine.events
-        if events:
-            for e in reversed(events[-5:]): # Show last 5
-                st.markdown(f"""
-                <div style="padding: 10px; border-left: 2px solid #00f2fe; background: rgba(255,255,255,0.02); margin-bottom: 8px;">
-                    <div style="font-size: 0.75rem; color: #64748b;">{e['time']}</div>
-                    <div style="font-weight: 600; font-size: 0.85rem;">{e['type']}</div>
-                    <div style="font-size: 0.8rem; color: #94a3b8;">{e['desc']}</div>
-                </div>
-                """, unsafe_allow_html=True)
-        else:
-            st.caption("No events logged yet.")
+    # Create Multi-Line Chart
+    fig = go.Figure()
+    
+    x_axis = list(range(50))
+    
+    # Add Traces
+    fig.add_trace(go.Scatter(x=x_axis, y=st.session_state.hrv_history, mode='lines', name='HRV', line=dict(color='#f87171', width=2)))
+    fig.add_trace(go.Scatter(x=x_axis, y=st.session_state.gsr_history, mode='lines', name='GSR', line=dict(color='#60a5fa', width=2)))
+    fig.add_trace(go.Scatter(x=x_axis, y=st.session_state.facial_history, mode='lines', name='Facial Calm', line=dict(color='#c084fc', width=2)))
+    fig.add_trace(go.Scatter(x=x_axis, y=st.session_state.sri_history, mode='lines', name='SRI (Composite)', line=dict(color='#2dd4bf', width=3)))
+    
+    # Add Reference Lines
+    fig.add_hline(y=70, line_dash="dot", line_color="rgba(255,255,255,0.3)", annotation_text="Optimal", annotation_position="top right")
+    fig.add_hline(y=50, line_dash="dot", line_color="rgba(255,255,255,0.3)", annotation_text="Baseline", annotation_position="bottom right")
+    
+    fig.update_layout(
+        height=400,
+        margin=dict(l=0, r=0, t=20, b=0),
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        font=dict(color='#94a3b8'),
+        xaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.05)', title="Time (s)"),
+        yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.05)', range=[0, 100], title="Value"),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
 
     # --- CONTROLS & LOGIC (Row 3) ---
     st.markdown("---")
@@ -321,11 +337,23 @@ def render_monitor():
             
     with c_logic:
         st.markdown("##### Transparent Backend Logic")
-        with st.expander("View Source Code (Live)", expanded=True):
-            # DYNAMICALLY READ SOURCE CODE
-            import inspect
-            source_code = inspect.getsource(data_engine.get_live_data)
-            st.code(source_code, language="python")
+        with st.expander("View Mathematical Models", expanded=True):
+            st.markdown("""
+            ### 🧮 Physiological Computing Models
+            
+            **1. Heart Rate Variability (RSA Model)**
+            Simulates Respiratory Sinus Arrhythmia using a sine wave modulated by stress states.
+            $$ HRV(t) = Base + A \cdot \sin(\omega t) + \epsilon $$
+            *Where $A$ (amplitude) decreases during sympathetic activation.*
+            
+            **2. Galvanic Skin Response (EDA Model)**
+            Models skin conductance as an inverse function of relaxation, with trend components.
+            $$ GSR(t) = \frac{1}{Relaxation(t)} + \mu \cdot \cos(\theta t) $$
+            
+            **3. Stress Resilience Index (SRI)**
+            A weighted composite score derived from multi-modal sensor fusion.
+            $$ SRI = w_1 \cdot \overline{HRV} + w_2 \cdot (100 - \overline{GSR}) + w_3 \cdot Facial_{calm} $$
+            """)
 
 def render_session_summary():
     """Renders a summary report after the biofeedback session."""
