@@ -204,6 +204,129 @@ def stop_biofeedback():
     st.session_state.page = 'Summary' # Go to summary instead of Dashboard
     st.rerun()
 
+def toggle_live_mode():
+    st.session_state.live_mode = not st.session_state.live_mode
+
+def render_monitor():
+    """
+    Renders the 'Winner Worthy' Monitor Screen.
+    Matches the 4-card layout, real-time graphs, and event logging.
+    """
+    # --- HEADER ---
+    c1, c2, c3 = st.columns([6, 1, 1])
+    with c1:
+        st.markdown("### ⚡ Physiological Monitoring System")
+        st.caption("Multi-modal real-time biosensor data collection")
+    with c2:
+        if st.button("🔄 Reset"):
+            st.rerun()
+    with c3:
+        if st.session_state.biofeedback_active:
+            st.button("⏹ Stop", on_click=stop_biofeedback, type="primary", use_container_width=True)
+        else:
+            st.button("▶ Start", on_click=start_biofeedback, type="primary", use_container_width=True)
+
+    # --- SENSOR CARDS (Row 1) ---
+    # Colors: Red (HRV), Blue (GSR), Purple (Facial), Teal (pH)
+    
+    m1, m2, m3, m4 = st.columns(4)
+    
+    state_badge = "🔴 Live" if st.session_state.biofeedback_active else "⚪ Idle"
+    state_class = "live-badge" if st.session_state.biofeedback_active else "idle-badge"
+    
+    # Helper to render card
+    def render_card(col, icon, title, sensor, val, unit, desc, color, bg_color):
+        with col:
+            st.markdown(f"""
+            <div class="monitor-card" style="border-top: 4px solid {color};">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div style="background: {bg_color}; width: 40px; height: 40px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; color: {color};">
+                        {icon}
+                    </div>
+                    <div class="{state_class}">{state_badge}</div>
+                </div>
+                <div style="margin-top: 15px; font-weight: 600; color: #e2e8f0;">{title}</div>
+                <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 10px;">{sensor}</div>
+                <div style="font-size: 2.5rem; font-weight: 700; color: {color}; line-height: 1;">
+                    {val if st.session_state.biofeedback_active else '--'} <span style="font-size: 1rem; color: #64748b;">{unit}</span>
+                </div>
+                <div style="font-size: 0.75rem; color: #64748b; margin-top: 5px;">{desc}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+    render_card(m1, "❤️", "Heart Rate Variability", "PPG Sensor", f"{live_hrv:.1f}", "ms", "Autonomic nervous system balance", "#f87171", "rgba(248, 113, 113, 0.1)")
+    render_card(m2, "⚡", "Galvanic Skin Response", "GSR Sensor", f"{live_gsr:.1f}", "µS", "Sympathetic nervous activity", "#60a5fa", "rgba(96, 165, 250, 0.1)")
+    render_card(m3, "📷", "Facial Stress Detection", "MediaPipe AI", f"{live_facial:.0f}", "%", "Micro-expression analysis", "#c084fc", "rgba(192, 132, 252, 0.1)")
+    render_card(m4, "💧", "pH / Sweat Chemistry", "Chemical Sensor", f"{live_ph:.2f}", "", "Microbiome proxy indicator", "#2dd4bf", "rgba(45, 212, 191, 0.1)")
+
+    # --- GRAPHS (Row 2) ---
+    g1, g2 = st.columns([2, 1])
+    
+    with g1:
+        st.markdown("##### Real-time Biometrics")
+        # Create a combined chart or side-by-side
+        # For now, let's show HRV history
+        if 'hrv_history' not in st.session_state:
+            st.session_state.hrv_history = [65] * 50
+            
+        if st.session_state.biofeedback_active:
+            st.session_state.hrv_history.append(live_hrv)
+            st.session_state.hrv_history.pop(0)
+            
+        if len(st.session_state.hrv_history) > 0:
+            df_hrv = pd.DataFrame({'Time': range(len(st.session_state.hrv_history)), 'HRV': st.session_state.hrv_history})
+            fig = px.line(df_hrv, x='Time', y='HRV', title=None)
+            fig.update_layout(
+                height=300, 
+                margin=dict(l=0, r=0, t=0, b=0),
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)',
+                font=dict(color='#94a3b8'),
+                xaxis=dict(showgrid=False),
+                yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.05)')
+            )
+            fig.update_traces(line_color='#f87171', line_width=3)
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.info("Start session to view real-time data stream.")
+
+    with g2:
+        st.markdown("##### Session Events")
+        events = data_engine.events
+        if events:
+            for e in reversed(events[-5:]): # Show last 5
+                st.markdown(f"""
+                <div style="padding: 10px; border-left: 2px solid #00f2fe; background: rgba(255,255,255,0.02); margin-bottom: 8px;">
+                    <div style="font-size: 0.75rem; color: #64748b;">{e['time']}</div>
+                    <div style="font-weight: 600; font-size: 0.85rem;">{e['type']}</div>
+                    <div style="font-size: 0.8rem; color: #94a3b8;">{e['desc']}</div>
+                </div>
+                """, unsafe_allow_html=True)
+        else:
+            st.caption("No events logged yet.")
+
+    # --- CONTROLS & LOGIC (Row 3) ---
+    st.markdown("---")
+    c_ctrl, c_logic = st.columns([1, 2])
+    
+    with c_ctrl:
+        st.markdown("##### Simulation Controls")
+        if st.button("⚡ Stimulate Stress Spike", use_container_width=True):
+            data_engine.trigger_stress()
+            st.toast("Injecting Cortisol/Adrenaline Response...", icon="💉")
+            
+        if st.button("🌿 Mark Recovery", use_container_width=True):
+            data_engine.trigger_recovery()
+            st.toast("Initiating Parasympathetic Activation...", icon="🧘")
+            
+    with c_logic:
+        st.markdown("##### Transparent Backend Logic")
+        with st.expander("View Source Code (Live)", expanded=True):
+            # DYNAMICALLY READ SOURCE CODE
+            import inspect
+            source_code = inspect.getsource(data_engine.get_live_data)
+            st.code(source_code, language="python")
+
 def render_session_summary():
     """Renders a summary report after the biofeedback session."""
     st.markdown("""
