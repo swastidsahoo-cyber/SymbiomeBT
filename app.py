@@ -213,7 +213,6 @@ def stop_biofeedback():
         
     st.session_state.last_session_sri = final_score
     st.session_state.page = 'Dashboard' # Return to Dashboard
-    st.rerun()
 
 def toggle_live_mode():
     st.session_state.live_mode = not st.session_state.live_mode
