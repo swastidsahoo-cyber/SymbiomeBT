@@ -220,57 +220,118 @@ def toggle_live_mode():
 def render_monitor():
     """
     Renders the 'Winner Worthy' Monitor Screen.
-    Matches the 4-card layout, real-time graphs, and event logging.
+    Matches the provided screenshots exactly.
     """
-    # --- HEADER ---
-    c1, c2, c3 = st.columns([6, 1, 1])
-    with c1:
-        st.markdown("### ⚡ Physiological Monitoring System")
-        st.caption("Multi-modal real-time biosensor data collection")
-    with c2:
-        if st.button("🔄 Reset"):
-            st.rerun()
-    with c3:
-        if st.session_state.biofeedback_active:
-            st.button("⏹ Stop", on_click=stop_biofeedback, type="primary", use_container_width=True)
-        else:
-            st.button("▶ Start", on_click=start_biofeedback, type="primary", use_container_width=True)
+    # --- HEADER SECTION (Screenshot 1) ---
+    # "Live Monitoring Session" | Timer | Recovery Button
+    
+    # Get duration
+    duration = data_engine.get_session_duration()
+    
+    # Top Bar Container
+    with st.container():
+        c_head_1, c_head_2, c_head_3 = st.columns([6, 1, 1])
+        with c_head_1:
+            st.markdown("""
+            <div style="line-height: 1.2;">
+                <div style="font-size: 1.5rem; font-weight: 700; color: white;">Live Monitoring Session</div>
+                <div style="font-size: 0.9rem; color: #94a3b8;">Real-time biometric data collection</div>
+            </div>
+            """, unsafe_allow_html=True)
+        with c_head_2:
+            st.markdown(f"""
+            <div style="background: #0f172a; border: 1px solid #1e293b; border-radius: 6px; padding: 8px 16px; text-align: center; color: #e2e8f0; font-family: monospace; font-weight: 600;">
+                ⏱ {duration}
+            </div>
+            """, unsafe_allow_html=True)
+        with c_head_3:
+             if st.session_state.biofeedback_active:
+                st.button("✅ Complete", on_click=stop_biofeedback, type="primary", use_container_width=True)
+             else:
+                st.button("▶ Start", on_click=start_biofeedback, type="primary", use_container_width=True)
 
-    # --- SENSOR CARDS (Row 1) ---
-    # Colors: Red (HRV), Blue (GSR), Purple (Facial), Teal (pH)
+    st.markdown("---")
+
+    # --- SRI HERO SECTION (Screenshot 1) ---
+    # Large Red/Green Circle | Status Text | Controls
+    
+    # Calculate SRI Color & Status
+    inst_sri = calculate_sri(live_hrv, live_gsr, live_facial)
+    if inst_sri < 50:
+        sri_color = "#ef4444" # Red
+        sri_status = "High Stress"
+        sri_bg = "rgba(239, 68, 68, 0.2)"
+    elif inst_sri < 75:
+        sri_color = "#f59e0b" # Orange
+        sri_status = "Moderate Load"
+        sri_bg = "rgba(245, 158, 11, 0.2)"
+    else:
+        sri_color = "#10b981" # Green
+        sri_status = "Optimal State"
+        sri_bg = "rgba(16, 185, 129, 0.2)"
+
+    c_hero, c_controls = st.columns([2, 3])
+    
+    with c_hero:
+        st.markdown(f"""
+        <div style="display: flex; align-items: center; gap: 20px; background: #0f172a; padding: 20px; border-radius: 16px; border: 1px solid #1e293b;">
+            <div style="
+                width: 80px; height: 80px; 
+                border-radius: 50%; 
+                background: {sri_color}; 
+                display: flex; justify-content: center; align-items: center;
+                font-size: 1.8rem; font-weight: 700; color: white;
+                box-shadow: 0 0 20px {sri_bg};
+            ">
+                {int(inst_sri)}
+            </div>
+            <div>
+                <div style="font-size: 0.85rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Real-time SRI</div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: white;">{sri_status}</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+    with c_controls:
+        # Control Buttons (Styled like screenshot)
+        st.markdown('<div style="height: 10px;"></div>', unsafe_allow_html=True) # Spacer
+        cc1, cc2, cc3 = st.columns(3)
+        with cc1:
+            if st.button("⚡ Simulate Stress", use_container_width=True):
+                data_engine.trigger_stress()
+                st.toast("Stress Spike Simulated", icon="⚡")
+        with cc2:
+            if st.button("🌿 Mark Recovery", use_container_width=True):
+                data_engine.trigger_recovery()
+                st.toast("Recovery Protocol Initiated", icon="🌿")
+        with cc3:
+            st.button("🏷️ Add Annotation", use_container_width=True)
+
+    # --- SENSOR CARDS (Screenshot 1) ---
+    # Dark cards with colored headers/borders
+    st.markdown('<div style="height: 20px;"></div>', unsafe_allow_html=True) # Spacer
     
     m1, m2, m3, m4 = st.columns(4)
     
-    state_badge = "🔴 Live" if st.session_state.biofeedback_active else "⚪ Idle"
-    state_class = "live-badge" if st.session_state.biofeedback_active else "idle-badge"
-    
-    # Helper to render card
-    def render_card(col, icon, title, sensor, val, unit, desc, color, bg_color):
+    def render_dark_card(col, title, val, unit, color):
         with col:
             st.markdown(f"""
-            <div class="monitor-card" style="border-top: 4px solid {color};">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                    <div style="background: {bg_color}; width: 40px; height: 40px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; color: {color};">
-                        {icon}
-                    </div>
-                    <div class="{state_class}">{state_badge}</div>
+            <div style="background: #0f172a; border: 1px solid #1e293b; border-radius: 12px; padding: 15px; border-left: 4px solid {color};">
+                <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 5px;">{title}</div>
+                <div style="font-size: 2rem; font-weight: 700; color: white;">
+                    {val} <span style="font-size: 1rem; color: #64748b;">{unit}</span>
                 </div>
-                <div style="margin-top: 15px; font-weight: 600; color: #e2e8f0;">{title}</div>
-                <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 10px;">{sensor}</div>
-                <div style="font-size: 2.5rem; font-weight: 700; color: {color}; line-height: 1;">
-                    {val if st.session_state.biofeedback_active else '--'} <span style="font-size: 1rem; color: #64748b;">{unit}</span>
-                </div>
-                <div style="font-size: 0.75rem; color: #64748b; margin-top: 5px;">{desc}</div>
             </div>
             """, unsafe_allow_html=True)
 
-    render_card(m1, "❤️", "Heart Rate Variability", "PPG Sensor", f"{live_hrv:.1f}", "ms", "Autonomic nervous system balance", "#f87171", "rgba(248, 113, 113, 0.1)")
-    render_card(m2, "⚡", "Galvanic Skin Response", "GSR Sensor", f"{live_gsr:.1f}", "µS", "Sympathetic nervous activity", "#60a5fa", "rgba(96, 165, 250, 0.1)")
-    render_card(m3, "📷", "Facial Stress Detection", "MediaPipe AI", f"{live_facial:.0f}", "%", "Micro-expression analysis", "#c084fc", "rgba(192, 132, 252, 0.1)")
-    render_card(m4, "💧", "pH / Sweat Chemistry", "Chemical Sensor", f"{live_ph:.2f}", "", "Microbiome proxy indicator", "#2dd4bf", "rgba(45, 212, 191, 0.1)")
+    render_dark_card(m1, "Heart Rate Variability", f"{live_hrv:.1f}", "ms", "#f87171")
+    render_dark_card(m2, "Skin Conductance", f"{live_gsr:.1f}", "µS", "#60a5fa")
+    render_dark_card(m3, "Skin Temperature", f"{live_temp:.1f}", "°C", "#c084fc")
+    render_dark_card(m4, "Sweat pH", f"{live_ph:.2f}", "pH", "#2dd4bf")
 
-    # --- REAL-TIME GRAPH (Row 2) ---
-    st.markdown("#### 📈 Live Biometric Signals (HRV, GSR, Facial Calm, SRI)")
+    # --- LIVE GRAPH (Screenshot 1) ---
+    st.markdown('<div style="height: 20px;"></div>', unsafe_allow_html=True) # Spacer
+    st.markdown("#### 📉 Live Biometric Signals (HRV, GSR, Facial Calm, SRI)")
     
     # Initialize History
     if 'hrv_history' not in st.session_state: st.session_state.hrv_history = [65] * 50
@@ -286,18 +347,14 @@ def render_monitor():
         st.session_state.gsr_history.pop(0)
         st.session_state.facial_history.append(live_facial)
         st.session_state.facial_history.pop(0)
-        
-        # Calculate instantaneous SRI for the graph
-        inst_sri = calculate_sri(live_hrv, live_gsr, live_facial)
         st.session_state.sri_history.append(inst_sri)
         st.session_state.sri_history.pop(0)
 
     # Create Multi-Line Chart
     fig = go.Figure()
-    
     x_axis = list(range(50))
     
-    # Add Traces
+    # Add Traces (Matching Screenshot Colors)
     fig.add_trace(go.Scatter(x=x_axis, y=st.session_state.hrv_history, mode='lines', name='HRV', line=dict(color='#f87171', width=2)))
     fig.add_trace(go.Scatter(x=x_axis, y=st.session_state.gsr_history, mode='lines', name='GSR', line=dict(color='#60a5fa', width=2)))
     fig.add_trace(go.Scatter(x=x_axis, y=st.session_state.facial_history, mode='lines', name='Facial Calm', line=dict(color='#c084fc', width=2)))
@@ -308,7 +365,7 @@ def render_monitor():
     fig.add_hline(y=50, line_dash="dot", line_color="rgba(255,255,255,0.3)", annotation_text="Baseline", annotation_position="bottom right")
     
     fig.update_layout(
-        height=400,
+        height=350,
         margin=dict(l=0, r=0, t=20, b=0),
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
@@ -317,42 +374,69 @@ def render_monitor():
         yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.05)', range=[0, 100], title="Value"),
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
     )
-    
     st.plotly_chart(fig, use_container_width=True)
 
-    # --- CONTROLS & LOGIC (Row 3) ---
-    st.markdown("---")
-    c_ctrl, c_logic = st.columns([1, 2])
+    # --- SESSION EVENTS (Screenshot 0) ---
+    st.markdown('<div style="height: 10px;"></div>', unsafe_allow_html=True) # Spacer
+    st.markdown("#### Session Events")
     
-    with c_ctrl:
-        st.markdown("##### Simulation Controls")
-        if st.button("⚡ Stimulate Stress Spike", use_container_width=True):
-            data_engine.trigger_stress()
-            st.toast("Injecting Cortisol/Adrenaline Response...", icon="💉")
-            
-        if st.button("🌿 Mark Recovery", use_container_width=True):
-            data_engine.trigger_recovery()
-            st.toast("Initiating Parasympathetic Activation...", icon="🧘")
-            
-    with c_logic:
-        st.markdown("##### Transparent Backend Logic")
-        with st.expander("View Mathematical Models", expanded=True):
-            st.markdown("""
-            ### 🧮 Physiological Computing Models
-            
-            **1. Heart Rate Variability (RSA Model)**
-            Simulates Respiratory Sinus Arrhythmia using a sine wave modulated by stress states.
-            $$ HRV(t) = Base + A \cdot \sin(\omega t) + \epsilon $$
-            *Where $A$ (amplitude) decreases during sympathetic activation.*
-            
-            **2. Galvanic Skin Response (EDA Model)**
-            Models skin conductance as an inverse function of relaxation, with trend components.
-            $$ GSR(t) = \frac{1}{Relaxation(t)} + \mu \cdot \cos(\theta t) $$
-            
-            **3. Stress Resilience Index (SRI)**
-            A weighted composite score derived from multi-modal sensor fusion.
-            $$ SRI = w_1 \cdot \overline{HRV} + w_2 \cdot (100 - \overline{GSR}) + w_3 \cdot Facial_{calm} $$
-            """)
+    events = data_engine.events
+    if events:
+        # Reverse to show newest first
+        for e in reversed(events[-5:]):
+            # Determine badge color based on event type
+            if "Stress" in e['type']:
+                badge_bg = "#7f1d1d" # Dark Red
+                badge_text = "#fca5a5"
+            elif "Recovery" in e['type']:
+                badge_bg = "#064e3b" # Dark Green
+                badge_text = "#6ee7b7"
+            else:
+                badge_bg = "#1e293b" # Slate
+                badge_text = "#94a3b8"
+                
+            st.markdown(f"""
+            <div style="
+                display: flex; align-items: center; gap: 15px; 
+                background: #0f172a; border: 1px solid #1e293b; 
+                padding: 10px 15px; border-radius: 8px; margin-bottom: 8px;
+            ">
+                <div style="
+                    background: {badge_bg}; color: {badge_text}; 
+                    padding: 4px 8px; border-radius: 4px; 
+                    font-size: 0.75rem; font-family: monospace; font-weight: 700;
+                ">
+                    {e['time']}
+                </div>
+                <div style="font-weight: 600; color: #e2e8f0; font-size: 0.9rem;">{e['type']}</div>
+            </div>
+            """, unsafe_allow_html=True)
+    else:
+        st.markdown("""
+        <div style="background: #0f172a; border: 1px solid #1e293b; padding: 15px; border-radius: 8px; color: #64748b; font-style: italic;">
+            Waiting for session start...
+        </div>
+        """, unsafe_allow_html=True)
+
+    # --- LOGIC EXPANDER ---
+    st.markdown("---")
+    with st.expander("View Mathematical Models", expanded=False):
+        st.markdown("""
+        ### 🧮 Physiological Computing Models
+        
+        **1. Heart Rate Variability (RSA Model)**
+        Simulates Respiratory Sinus Arrhythmia using a sine wave modulated by stress states.
+        $$ HRV(t) = Base + A \cdot \sin(\omega t) + \epsilon $$
+        *Where $A$ (amplitude) decreases during sympathetic activation.*
+        
+        **2. Galvanic Skin Response (EDA Model)**
+        Models skin conductance as an inverse function of relaxation, with trend components.
+        $$ GSR(t) = \frac{1}{Relaxation(t)} + \mu \cdot \cos(\theta t) $$
+        
+        **3. Stress Resilience Index (SRI)**
+        A weighted composite score derived from multi-modal sensor fusion.
+        $$ SRI = w_1 \cdot \overline{HRV} + w_2 \cdot (100 - \overline{GSR}) + w_3 \cdot Facial_{calm} $$
+        """)
 
 def render_session_summary():
     """Renders a summary report after the biofeedback session."""

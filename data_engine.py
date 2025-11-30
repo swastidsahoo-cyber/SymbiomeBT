@@ -65,66 +65,73 @@ class DataEngine:
         self.recovery_active = True
         self.log_event("Recovery Marker", "User initiated recovery protocol")
 
+    def get_session_duration(self):
+        """Returns formatted session duration (MM:SS)."""
+        if not self.start_time:
+            return "00:00"
+        elapsed = int(time.time() - self.start_time)
+        mins, secs = divmod(elapsed, 60)
+        return f"{mins:02d}:{secs:02d}"
+
     def get_live_data(self):
         """
         Generates live data point based on time and current state.
-        Prioritizes external CSV data if available, otherwise uses physics-based simulation.
+        Uses complex wave superposition and Gaussian noise for realism.
         """
         if not self.is_running:
             return {k: v for k, v in self.baselines.items()}
             
         elapsed = time.time() - self.start_time
         
-        # 1. Heart Rate Variability (HRV) - Respiratory Sinus Arrhythmia (RSA) Model
-        # We simulate the natural fluctuation of heart rate with breathing (RSA).
-        # Formula: Base + (Amplitude * sin(frequency * time)) + Noise
-        # Scientific Basis: High frequency HRV (0.15-0.4Hz) reflects parasympathetic activity.
+        # 1. Heart Rate Variability (RSA Model)
+        # Superposition of respiratory (0.25Hz) and Mayer waves (0.1Hz) + Noise
         hrv_amp = 10
         if self.stress_active:
-            hrv_target = 45.0 # Low HRV = High Sympathetic Dominance (Stress)
-            hrv_amp = 5       # Reduced variability
+            hrv_target = 45.0
+            hrv_amp = 4
         elif self.recovery_active:
-            hrv_target = 85.0 # High HRV = High Parasympathetic Tone (Recovery)
-            hrv_amp = 15      # Enhanced RSA
+            hrv_target = 85.0
+            hrv_amp = 18
         else:
-            hrv_target = 65.0 # Baseline
+            hrv_target = 65.0
             
-        # Smooth transition to target (Simple Low-pass filter)
         self.baselines['hrv'] += (hrv_target - self.baselines['hrv']) * 0.05
+        # Complex wave: RSA (fast) + Mayer (slow) + Jitter
+        hrv_val = self.baselines['hrv'] + \
+                  (hrv_amp * math.sin(elapsed * 1.5)) + \
+                  (hrv_amp * 0.5 * math.sin(elapsed * 0.6)) + \
+                  random.gauss(0, 1.5)
         
-        hrv_val = self.baselines['hrv'] + (hrv_amp * math.sin(elapsed / 3.0)) + random.uniform(-2, 2)
-        
-        # 2. Galvanic Skin Response (GSR) - Electrodermal Activity (EDA)
-        # Scientific Basis: Sweat gland activity is purely sympathetic.
-        # Inverse Correlation: As stress rises, skin resistance drops (conductance rises).
+        # 2. Galvanic Skin Response (GSR)
+        # Slow moving tonic component + rapid phasic bursts
         if self.stress_active:
-            gsr_target = 12.0 # High Conductance = Stress
+            gsr_target = 12.0
         elif self.recovery_active:
-            gsr_target = 4.0 # Low Conductance = Calm
+            gsr_target = 4.0
         else:
             gsr_target = 8.0
             
-        self.baselines['gsr'] += (gsr_target - self.baselines['gsr']) * 0.05
-        gsr_val = self.baselines['gsr'] + (0.5 * math.cos(elapsed / 5.0)) + random.uniform(-0.2, 0.2)
+        self.baselines['gsr'] += (gsr_target - self.baselines['gsr']) * 0.02
+        # GSR has less high-freq noise, more drift
+        gsr_val = self.baselines['gsr'] + \
+                  (0.3 * math.cos(elapsed * 0.2)) + \
+                  random.gauss(0, 0.1)
         
-        # 3. Facial Stress (Computer Vision Simulation)
-        # Simulating Action Units (AUs) for tension (e.g., brow furrow, jaw clench).
+        # 3. Facial Stress
         if self.stress_active:
-            facial_target = 85.0 # High Tension
+            facial_target = 85.0
         elif self.recovery_active:
-            facial_target = 5.0 # Relaxed
+            facial_target = 5.0
         else:
             facial_target = 15.0
             
         self.baselines['facial'] += (facial_target - self.baselines['facial']) * 0.1
-        facial_val = self.baselines['facial'] + random.uniform(-2, 2)
+        facial_val = self.baselines['facial'] + random.gauss(0, 2.0)
         
-        # 4. Salivary pH (Metabolic Biomarker)
-        # Acute stress can lead to slight acidosis; recovery restores alkalinity.
-        ph_val = 7.35 + (math.sin(elapsed / 60.0) * 0.05) + random.uniform(-0.01, 0.01)
+        # 4. pH Level
+        ph_val = 7.35 + (math.sin(elapsed * 0.1) * 0.02) + random.gauss(0, 0.005)
         
-        # 5. Skin Temperature (Peripheral Vasoconstriction)
-        # Stress causes blood to move to core -> extremities cool down.
+        # 5. Temperature
         if self.stress_active:
             temp_target = 35.8
         elif self.recovery_active:
@@ -132,8 +139,8 @@ class DataEngine:
         else:
             temp_target = 36.6
             
-        self.baselines['temp'] += (temp_target - self.baselines['temp']) * 0.02
-        temp_val = self.baselines['temp'] + random.uniform(-0.05, 0.05)
+        self.baselines['temp'] += (temp_target - self.baselines['temp']) * 0.01
+        temp_val = self.baselines['temp'] + random.gauss(0, 0.02)
 
         return {
             'hrv': max(10, min(120, hrv_val)),
