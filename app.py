@@ -432,7 +432,6 @@ def render_navbar():
                 label = f"**{item}**" if is_active else item
                 if st.button(label, key=f"nav_{item}", use_container_width=True):
                     set_page(item)
-                    st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
 
 # Render Navbar GLOBALLY
@@ -467,7 +466,6 @@ else:
         # Live Mode Toggle
         if st.button(f"{'🔴 STOP LIVE' if st.session_state.live_mode else '🟢 GO LIVE'}", use_container_width=True):
             toggle_live_mode()
-            st.rerun()
         
         if st.session_state.live_mode:
             st.caption("Live Monitoring Active: Auto-refreshing...")
