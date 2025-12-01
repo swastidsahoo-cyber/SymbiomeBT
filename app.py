@@ -644,7 +644,8 @@ def render_training():
     # --- GARDEN & ACHIEVEMENTS (Screenshot 3) ---
     with col_garden:
         # Garden Visualization
-        st.markdown(f"""
+        # Garden Visualization
+        garden_html = f"""
 <div style="background: #0f172a; border: 1px solid #1e293b; border-radius: 16px; padding: 20px; height: 100%;">
     <div style="color: white; font-weight: 600; margin-bottom: 15px;">🌱 Your Resilience Garden</div>
     
@@ -703,7 +704,8 @@ def render_training():
         
     </div>
 </div>
-        """, unsafe_allow_html=True)
+"""
+        st.markdown(garden_html, unsafe_allow_html=True)
 
     # --- BACKEND LOGIC TRANSPARENCY ---
     st.markdown("---")
