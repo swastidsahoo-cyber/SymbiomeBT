@@ -580,46 +580,8 @@ def render_training():
         st.markdown("""
         <div style="background: #020617; border: 1px solid #1e293b; border-radius: 16px; padding: 30px; height: 550px; display: flex; flex-direction: column; justify-content: space-between; position: relative;">
             <div style="display: flex; align-items: center; gap: 10px; color: white; font-weight: 600; font-size: 1.1rem;">
-                <span style="color: #00f2fe;">◎</span> Breathing Synchronization
+                <span style="color: #00f2fe;">◎</span> Breathing Synchronization <span style="font-size: 0.7rem; color: #64748b; margin-left: auto;">v2.0</span>
             </div>
-            <style>
-            /* TARGETED BUTTON STYLING */
-            /* Start Button - White, Big, Bold */
-            div.stButton > button[kind="primary"] {
-                width: 100% !important;
-                height: 56px !important;
-                background-color: #ffffff !important;
-                color: #0f172a !important;
-                font-size: 1.1rem !important;
-                font-weight: 700 !important;
-                border-radius: 12px !important;
-                border: none !important;
-                box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1) !important;
-                transition: all 0.2s ease !important;
-            }
-            div.stButton > button[kind="primary"]:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2) !important;
-                background-color: #f8fafc !important;
-            }
-            
-            /* Complete Button - Dark, Subtle */
-            div.stButton > button[kind="secondary"] {
-                width: 100% !important;
-                height: 56px !important;
-                background-color: rgba(30, 41, 59, 0.5) !important;
-                color: #94a3b8 !important;
-                font-size: 1rem !important;
-                font-weight: 600 !important;
-                border-radius: 12px !important;
-                border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            }
-            div.stButton > button[kind="secondary"]:hover {
-                background-color: rgba(30, 41, 59, 0.8) !important;
-                color: white !important;
-                border-color: rgba(255, 255, 255, 0.2) !important;
-            }
-            </style>
         """, unsafe_allow_html=True)
         
         # Breathing State Logic
