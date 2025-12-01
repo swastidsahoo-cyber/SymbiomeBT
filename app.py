@@ -521,11 +521,6 @@ def render_navbar():
 # Render Navbar GLOBALLY
 render_navbar()
 
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# Render Navbar GLOBALLY
-render_navbar()
-
 # ==========================================
 # TRAINING / GAMIFICATION LOGIC
 # ==========================================
