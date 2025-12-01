@@ -582,26 +582,51 @@ def render_training():
             <div style="display: flex; align-items: center; gap: 10px; color: white; font-weight: 600;">
                 <span style="color: #00f2fe;">◎</span> Breathing Synchronization
             </div>
+            <style>
+            /* Custom Button Styling for Start Training */
+            div.stButton > button[kind="primary"] {
+                width: 100%;
+                height: 60px;
+                background-color: white !important;
+                color: black !important;
+                font-size: 1.2rem !important;
+                font-weight: 700 !important;
+                border-radius: 12px !important;
+                border: none !important;
+                transition: transform 0.2s;
+            }
+            div.stButton > button[kind="primary"]:hover {
+                transform: scale(1.02);
+                background-color: #f8fafc !important;
+            }
+            </style>
         """, unsafe_allow_html=True)
         
         # Breathing State Logic
         if 'training_active' not in st.session_state: st.session_state.training_active = False
+        if 'session_xp' not in st.session_state: st.session_state.session_xp = 0
         
         if st.session_state.training_active:
-            # Simple 4-4-4 Box Breathing Simulation
-            cycle_time = time.time() % 12 # 12 second cycle
-            if cycle_time < 4:
+            # 3-3-3 Breathing Cycle (9 seconds total)
+            cycle_time = time.time() % 9 
+            if cycle_time < 3:
                 breath_state = "INHALE"
                 breath_class = "breathe-inhale"
-                timer = 4 - int(cycle_time)
-            elif cycle_time < 8:
+                timer = 3 - int(cycle_time)
+            elif cycle_time < 6:
                 breath_state = "HOLD"
                 breath_class = "breathe-hold"
-                timer = 8 - int(cycle_time)
+                timer = 6 - int(cycle_time)
             else:
                 breath_state = "EXHALE"
                 breath_class = "breathe-exhale"
-                timer = 12 - int(cycle_time)
+                timer = 9 - int(cycle_time)
+                
+            # Gamification: Increment XP and Garden Growth
+            st.session_state.session_xp += 0.5 # Add XP gradually
+            user_data['xp'] = int(user_data['xp'] + st.session_state.session_xp)
+            # Simulate garden growth based on session time
+            user_data['garden_growth'] = min(100, int(user_data['garden_growth'] + (st.session_state.session_xp / 10)))
                 
             # Auto-refresh for animation
             time.sleep(1)
@@ -609,7 +634,8 @@ def render_training():
         else:
             breath_state = "READY"
             breath_class = ""
-            timer = ""
+            timer = "4" # Start at 4 or 3? User said "Start Training", usually starts with Inhale.
+            st.session_state.session_xp = 0 # Reset session XP
 
         st.markdown(f"""
             <div class="breathing-circle-container">
@@ -624,7 +650,7 @@ def render_training():
         if st.session_state.training_active:
              if st.button("Complete Session", use_container_width=True):
                  st.session_state.training_active = False
-                 st.toast("Session Complete! +50 XP", icon="🎉")
+                 st.toast(f"Session Complete! +{int(st.session_state.session_xp)} XP", icon="🎉")
                  st.rerun()
         else:
              if st.button("▶ Start Training", type="primary", use_container_width=True):
@@ -632,11 +658,11 @@ def render_training():
                  st.rerun()
 
         # Stats Row
-        st.markdown("""
+        st.markdown(f"""
             <div style="display: flex; justify-content: space-between; margin-top: 20px; text-align: center;">
-                <div><div style="color: #00f2fe; font-size: 1.5rem; font-weight: 700;">30</div><div style="color: #64748b; font-size: 0.8rem;">Score</div></div>
-                <div><div style="color: #c084fc; font-size: 1.5rem; font-weight: 700;">2x</div><div style="color: #64748b; font-size: 0.8rem;">Combo</div></div>
-                <div><div style="color: #facc15; font-size: 1.5rem; font-weight: 700;">+30</div><div style="color: #64748b; font-size: 0.8rem;">XP</div></div>
+                <div><div style="color: #00f2fe; font-size: 1.5rem; font-weight: 700;">{int(st.session_state.session_xp * 2)}</div><div style="color: #64748b; font-size: 0.8rem;">Score</div></div>
+                <div><div style="color: #c084fc; font-size: 1.5rem; font-weight: 700;">{min(5, 1 + int(st.session_state.session_xp / 20))}x</div><div style="color: #64748b; font-size: 0.8rem;">Combo</div></div>
+                <div><div style="color: #facc15; font-size: 1.5rem; font-weight: 700;">+{int(st.session_state.session_xp)}</div><div style="color: #64748b; font-size: 0.8rem;">XP</div></div>
             </div>
         </div>
         """, unsafe_allow_html=True)
