@@ -572,9 +572,7 @@ def render_training():
     </div>
     """, unsafe_allow_html=True)
         
-        # Show CSV Data
-        st.caption("Current User Data (Editable CSV):")
-        st.dataframe(pd.DataFrame([user_data]))
+
 
 
 # ==========================================
