@@ -645,67 +645,60 @@ def render_training():
     with col_garden:
         # Garden Visualization
         # Garden Visualization
-        import textwrap
-        garden_html = textwrap.dedent(f"""
-            <div style="background: #0f172a; border: 1px solid #1e293b; border-radius: 16px; padding: 20px; height: 100%;">
-                <div style="color: white; font-weight: 600; margin-bottom: 15px;">🌱 Your Resilience Garden</div>
-                
-                <div class="garden-container">
-                    <!-- Procedurally placed plants based on growth level -->
-                    <div class="garden-plant" style="left: 10%;">🌿</div>
-                    <div class="garden-plant" style="left: 30%; font-size: 1.5rem;">🌸</div>
-                    <div class="garden-plant" style="left: 50%; bottom: 40px;">🌳</div>
-                    <div class="garden-plant" style="left: 70%;">🌻</div>
-                    <div class="garden-plant" style="left: 85%; font-size: 1.2rem;">🍄</div>
-                    
-                    <!-- Fireflies/Particles -->
-                    <div style="position: absolute; top: 20px; left: 20px; width: 4px; height: 4px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 10px #4ade80;"></div>
-                    <div style="position: absolute; top: 50px; right: 40px; width: 4px; height: 4px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 10px #4ade80;"></div>
-                </div>
-                
-                <div style="margin-top: 15px;">
-                    <div style="display: flex; justify-content: space-between; color: #94a3b8; font-size: 0.8rem; margin-bottom: 5px;">
-                        <span>Garden Growth</span>
-                        <span>{user_data['garden_growth']}%</span>
-                    </div>
-                    <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px;">
-                        <div style="width: {user_data['garden_growth']}%; height: 100%; background: #10b981; border-radius: 3px;"></div>
-                    </div>
-                    <div style="font-size: 0.7rem; color: #64748b; margin-top: 5px; text-align: center;">Each successful session grows your symbiotic ecosystem</div>
-                </div>
-                
-                <div style="margin-top: 30px;">
-                    <div style="color: white; font-weight: 600; margin-bottom: 15px;">Today's Achievements</div>
-                    
-                    <!-- Achievement 1 -->
-                    <div class="achievement-card">
-                        <div class="achievement-icon" style="color: #f43f5e;">🎯</div>
-                        <div style="flex: 1;">
-                            <div style="color: white; font-weight: 600; font-size: 0.9rem;">Perfect Breath</div>
-                            <div style="color: #94a3b8; font-size: 0.8rem;">Complete 10 breath cycles</div>
-                            <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); margin-top: 8px; border-radius: 2px;">
-                                <div style="width: 40%; height: 100%; background: #cbd5e1; border-radius: 2px;"></div>
-                            </div>
-                        </div>
-                        <div style="color: #64748b; font-size: 0.8rem;">4/10</div>
-                    </div>
-                    
-                    <!-- Achievement 2 -->
-                    <div class="achievement-card">
-                        <div class="achievement-icon" style="color: #f59e0b;">⚡</div>
-                        <div style="flex: 1;">
-                            <div style="color: white; font-weight: 600; font-size: 0.9rem;">Quick Learner</div>
-                            <div style="color: #94a3b8; font-size: 0.8rem;">Earn 100 XP in one session</div>
-                            <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); margin-top: 8px; border-radius: 2px;">
-                                <div style="width: 60%; height: 100%; background: #cbd5e1; border-radius: 2px;"></div>
-                            </div>
-                        </div>
-                        <div style="color: #64748b; font-size: 0.8rem;">60/100</div>
-                    </div>
-                    
-                </div>
-            </div>
-        """)
+        # Garden Visualization
+        garden_html = f"""
+<div style="background: #0f172a; border: 1px solid #1e293b; border-radius: 16px; padding: 20px; height: 100%;">
+<div style="color: white; font-weight: 600; margin-bottom: 15px;">🌱 Your Resilience Garden</div>
+<div class="garden-container">
+<!-- Procedurally placed plants based on growth level -->
+<div class="garden-plant" style="left: 10%;">🌿</div>
+<div class="garden-plant" style="left: 30%; font-size: 1.5rem;">🌸</div>
+<div class="garden-plant" style="left: 50%; bottom: 40px;">🌳</div>
+<div class="garden-plant" style="left: 70%;">🌻</div>
+<div class="garden-plant" style="left: 85%; font-size: 1.2rem;">🍄</div>
+<!-- Fireflies/Particles -->
+<div style="position: absolute; top: 20px; left: 20px; width: 4px; height: 4px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 10px #4ade80;"></div>
+<div style="position: absolute; top: 50px; right: 40px; width: 4px; height: 4px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 10px #4ade80;"></div>
+</div>
+<div style="margin-top: 15px;">
+<div style="display: flex; justify-content: space-between; color: #94a3b8; font-size: 0.8rem; margin-bottom: 5px;">
+<span>Garden Growth</span>
+<span>{user_data['garden_growth']}%</span>
+</div>
+<div style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px;">
+<div style="width: {user_data['garden_growth']}%; height: 100%; background: #10b981; border-radius: 3px;"></div>
+</div>
+<div style="font-size: 0.7rem; color: #64748b; margin-top: 5px; text-align: center;">Each successful session grows your symbiotic ecosystem</div>
+</div>
+<div style="margin-top: 30px;">
+<div style="color: white; font-weight: 600; margin-bottom: 15px;">Today's Achievements</div>
+<!-- Achievement 1 -->
+<div class="achievement-card">
+<div class="achievement-icon" style="color: #f43f5e;">🎯</div>
+<div style="flex: 1;">
+<div style="color: white; font-weight: 600; font-size: 0.9rem;">Perfect Breath</div>
+<div style="color: #94a3b8; font-size: 0.8rem;">Complete 10 breath cycles</div>
+<div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); margin-top: 8px; border-radius: 2px;">
+<div style="width: 40%; height: 100%; background: #cbd5e1; border-radius: 2px;"></div>
+</div>
+</div>
+<div style="color: #64748b; font-size: 0.8rem;">4/10</div>
+</div>
+<!-- Achievement 2 -->
+<div class="achievement-card">
+<div class="achievement-icon" style="color: #f59e0b;">⚡</div>
+<div style="flex: 1;">
+<div style="color: white; font-weight: 600; font-size: 0.9rem;">Quick Learner</div>
+<div style="color: #94a3b8; font-size: 0.8rem;">Earn 100 XP in one session</div>
+<div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); margin-top: 8px; border-radius: 2px;">
+<div style="width: 60%; height: 100%; background: #cbd5e1; border-radius: 2px;"></div>
+</div>
+</div>
+<div style="color: #64748b; font-size: 0.8rem;">60/100</div>
+</div>
+</div>
+</div>
+"""
         st.markdown(garden_html, unsafe_allow_html=True)
 
     # --- BACKEND LOGIC TRANSPARENCY ---
