@@ -568,25 +568,9 @@ def render_training():
                 <div class="xp-bar-fill" style="width: {(user_data['xp']/6000)*100}%;"></div>
             </div>
             <div style="font-size: 0.75rem; color: #64748b; margin-top: 5px;">5600 XP until Level 6</div>
-        ### 🎮 Gamification Backend Logic
-        
-        **1. Breath Coherence Scoring**
-        We calculate a coherence score based on the user's synchronization with the visual pacer.
-        $$ Score = \frac{1}{N} \sum_{i=1}^{N} (1 - |t_{user} - t_{target}|) \times 100 $$
-        
-        **2. XP Growth Algorithm**
-        Level progression follows a logarithmic difficulty curve to ensure sustained engagement.
-        $$ XP_{req} = Base \times (Level)^{1.5} $$
-        
-        **3. Procedural Garden Generation**
-        The garden ecosystem evolves based on cumulative resilience points (RP).
-        *   **Stage 1 (0-20%)**: Basic flora (Grass, Sprouts)
-        *   **Stage 2 (20-50%)**: Flowering plants (Sunflowers, Roses)
-        *   **Stage 3 (50-100%)**: Complex ecosystem (Trees, Fireflies)
-        
-        **4. Data Persistence**
-        All progress is stored in `data/user_progress.csv` to allow for longitudinal analysis.
-        """)
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
         
         # Show CSV Data
         st.caption("Current User Data (Editable CSV):")
