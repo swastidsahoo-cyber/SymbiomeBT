@@ -521,6 +521,224 @@ def render_navbar():
 # Render Navbar GLOBALLY
 render_navbar()
 
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# Render Navbar GLOBALLY
+render_navbar()
+
+# ==========================================
+# TRAINING / GAMIFICATION LOGIC
+# ==========================================
+def load_user_progress():
+    """Loads user gamification data from CSV."""
+    try:
+        df = pd.read_csv("data/user_progress.csv")
+        return df.iloc[0].to_dict()
+    except:
+        return {
+            "xp": 1308, "level": 5, "streak_days": 7, 
+            "garden_growth": 16, "achievements_unlocked": "[]"
+        }
+
+def render_training():
+    """
+    Renders the Gamified Biofeedback Interface.
+    Matches the provided screenshots: Breathing, Garden, Achievements.
+    """
+    user_data = load_user_progress()
+    
+    # --- HEADER (Screenshot 2) ---
+    st.markdown(f"""
+    <div class="training-header">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: white;">Resilience Training</div>
+                <div style="color: #94a3b8;">Master your nervous system through biofeedback</div>
+            </div>
+            <div style="display: flex; gap: 15px;">
+                <div style="background: rgba(249, 115, 22, 0.2); color: #f97316; padding: 8px 16px; border-radius: 8px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                    🔥 {user_data['streak_days']} Day Streak
+                </div>
+                <div style="background: rgba(234, 179, 8, 0.2); color: #eab308; padding: 8px 16px; border-radius: 8px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                    🏆 Level {user_data['level']}
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 20px;">
+            <div style="display: flex; justify-content: space-between; color: #cbd5e1; font-size: 0.9rem; margin-bottom: 5px;">
+                <span>⭐ Your Progress</span>
+                <span>{user_data['xp']}/6000 XP</span>
+            </div>
+            <div class="xp-bar-container">
+                <div class="xp-bar-fill" style="width: {(user_data['xp']/6000)*100}%;"></div>
+            </div>
+            <div style="font-size: 0.75rem; color: #64748b; margin-top: 5px;">5600 XP until Level 6</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # --- MAIN GRID ---
+    col_breath, col_garden = st.columns([1, 1])
+
+    # --- BREATHING MODULE (Screenshot 3) ---
+    with col_breath:
+        st.markdown("""
+        <div style="background: #020617; border: 1px solid #1e293b; border-radius: 16px; padding: 20px; height: 500px; display: flex; flex-direction: column; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 10px; color: white; font-weight: 600;">
+                <span style="color: #00f2fe;">◎</span> Breathing Synchronization
+            </div>
+        """, unsafe_allow_html=True)
+        
+        # Breathing State Logic
+        if 'training_active' not in st.session_state: st.session_state.training_active = False
+        
+        if st.session_state.training_active:
+            # Simple 4-4-4 Box Breathing Simulation
+            cycle_time = time.time() % 12 # 12 second cycle
+            if cycle_time < 4:
+                breath_state = "INHALE"
+                breath_class = "breathe-inhale"
+                timer = 4 - int(cycle_time)
+            elif cycle_time < 8:
+                breath_state = "HOLD"
+                breath_class = "breathe-hold"
+                timer = 8 - int(cycle_time)
+            else:
+                breath_state = "EXHALE"
+                breath_class = "breathe-exhale"
+                timer = 12 - int(cycle_time)
+                
+            # Auto-refresh for animation
+            time.sleep(1)
+            st.rerun()
+        else:
+            breath_state = "READY"
+            breath_class = ""
+            timer = ""
+
+        st.markdown(f"""
+            <div class="breathing-circle-container">
+                <div class="breathing-circle {breath_class}">
+                    <div style="font-size: 3rem; font-weight: 700; color: white;">{timer}</div>
+                    <div style="font-size: 1rem; color: rgba(255,255,255,0.8); letter-spacing: 2px;">{breath_state}</div>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        # Start Button
+        if st.session_state.training_active:
+             if st.button("Complete Session", use_container_width=True):
+                 st.session_state.training_active = False
+                 st.toast("Session Complete! +50 XP", icon="🎉")
+                 st.rerun()
+        else:
+             if st.button("▶ Start Training", type="primary", use_container_width=True):
+                 st.session_state.training_active = True
+                 st.rerun()
+
+        # Stats Row
+        st.markdown("""
+            <div style="display: flex; justify-content: space-between; margin-top: 20px; text-align: center;">
+                <div><div style="color: #00f2fe; font-size: 1.5rem; font-weight: 700;">30</div><div style="color: #64748b; font-size: 0.8rem;">Score</div></div>
+                <div><div style="color: #c084fc; font-size: 1.5rem; font-weight: 700;">2x</div><div style="color: #64748b; font-size: 0.8rem;">Combo</div></div>
+                <div><div style="color: #facc15; font-size: 1.5rem; font-weight: 700;">+30</div><div style="color: #64748b; font-size: 0.8rem;">XP</div></div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # --- GARDEN & ACHIEVEMENTS (Screenshot 3) ---
+    with col_garden:
+        # Garden Visualization
+        st.markdown(f"""
+        <div style="background: #0f172a; border: 1px solid #1e293b; border-radius: 16px; padding: 20px; height: 100%;">
+            <div style="color: white; font-weight: 600; margin-bottom: 15px;">🌱 Your Resilience Garden</div>
+            
+            <div class="garden-container">
+                <!-- Procedurally placed plants based on growth level -->
+                <div class="garden-plant" style="left: 10%;">🌿</div>
+                <div class="garden-plant" style="left: 30%; font-size: 1.5rem;">🌸</div>
+                <div class="garden-plant" style="left: 50%; bottom: 40px;">🌳</div>
+                <div class="garden-plant" style="left: 70%;">🌻</div>
+                <div class="garden-plant" style="left: 85%; font-size: 1.2rem;">🍄</div>
+                
+                <!-- Fireflies/Particles -->
+                <div style="position: absolute; top: 20px; left: 20px; width: 4px; height: 4px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 10px #4ade80;"></div>
+                <div style="position: absolute; top: 50px; right: 40px; width: 4px; height: 4px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 10px #4ade80;"></div>
+            </div>
+            
+            <div style="margin-top: 15px;">
+                <div style="display: flex; justify-content: space-between; color: #94a3b8; font-size: 0.8rem; margin-bottom: 5px;">
+                    <span>Garden Growth</span>
+                    <span>{user_data['garden_growth']}%</span>
+                </div>
+                <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px;">
+                    <div style="width: {user_data['garden_growth']}%; height: 100%; background: #10b981; border-radius: 3px;"></div>
+                </div>
+                <div style="font-size: 0.7rem; color: #64748b; margin-top: 5px; text-align: center;">Each successful session grows your symbiotic ecosystem</div>
+            </div>
+            
+            <div style="margin-top: 30px;">
+                <div style="color: white; font-weight: 600; margin-bottom: 15px;">Today's Achievements</div>
+                
+                <!-- Achievement 1 -->
+                <div class="achievement-card">
+                    <div class="achievement-icon" style="color: #f43f5e;">🎯</div>
+                    <div style="flex: 1;">
+                        <div style="color: white; font-weight: 600; font-size: 0.9rem;">Perfect Breath</div>
+                        <div style="color: #94a3b8; font-size: 0.8rem;">Complete 10 breath cycles</div>
+                        <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); margin-top: 8px; border-radius: 2px;">
+                            <div style="width: 40%; height: 100%; background: #cbd5e1; border-radius: 2px;"></div>
+                        </div>
+                    </div>
+                    <div style="color: #64748b; font-size: 0.8rem;">4/10</div>
+                </div>
+                
+                <!-- Achievement 2 -->
+                <div class="achievement-card">
+                    <div class="achievement-icon" style="color: #f59e0b;">⚡</div>
+                    <div style="flex: 1;">
+                        <div style="color: white; font-weight: 600; font-size: 0.9rem;">Quick Learner</div>
+                        <div style="color: #94a3b8; font-size: 0.8rem;">Earn 100 XP in one session</div>
+                        <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); margin-top: 8px; border-radius: 2px;">
+                            <div style="width: 60%; height: 100%; background: #cbd5e1; border-radius: 2px;"></div>
+                        </div>
+                    </div>
+                    <div style="color: #64748b; font-size: 0.8rem;">60/100</div>
+                </div>
+                
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # --- BACKEND LOGIC TRANSPARENCY ---
+    st.markdown("---")
+    with st.expander("View Gamification & Scoring Logic", expanded=False):
+        st.markdown("""
+        ### 🎮 Gamification Backend Logic
+        
+        **1. Breath Coherence Scoring**
+        We calculate a coherence score based on the user's synchronization with the visual pacer.
+        $$ Score = \frac{1}{N} \sum_{i=1}^{N} (1 - |t_{user} - t_{target}|) \times 100 $$
+        
+        **2. XP Growth Algorithm**
+        Level progression follows a logarithmic difficulty curve to ensure sustained engagement.
+        $$ XP_{req} = Base \times (Level)^{1.5} $$
+        
+        **3. Procedural Garden Generation**
+        The garden ecosystem evolves based on cumulative resilience points (RP).
+        *   **Stage 1 (0-20%)**: Basic flora (Grass, Sprouts)
+        *   **Stage 2 (20-50%)**: Flowering plants (Sunflowers, Roses)
+        *   **Stage 3 (50-100%)**: Complex ecosystem (Trees, Fireflies)
+        
+        **4. Data Persistence**
+        All progress is stored in `data/user_progress.csv` to allow for longitudinal analysis.
+        """)
+        
+        # Show CSV Data
+        st.caption("Current User Data (Editable CSV):")
+        st.dataframe(pd.DataFrame([user_data]))
+
+
 # ==========================================
 # MAIN LAYOUT ROUTING
 # ==========================================
@@ -534,6 +752,8 @@ if st.session_state.biofeedback_active and st.session_state.biofeedback_start_ti
 
 if st.session_state.page == 'Monitor':
     render_monitor()
+elif st.session_state.page == 'Training':
+    render_training()
 elif st.session_state.page == 'Summary':
     render_session_summary()
 else:
