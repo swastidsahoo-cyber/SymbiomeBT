@@ -578,26 +578,46 @@ def render_training():
     # --- BREATHING MODULE (Screenshot 3) ---
     with col_breath:
         st.markdown("""
-        <div style="background: #020617; border: 1px solid #1e293b; border-radius: 16px; padding: 20px; height: 500px; display: flex; flex-direction: column; justify-content: space-between;">
-            <div style="display: flex; align-items: center; gap: 10px; color: white; font-weight: 600;">
+        <div style="background: #020617; border: 1px solid #1e293b; border-radius: 16px; padding: 30px; height: 550px; display: flex; flex-direction: column; justify-content: space-between; position: relative;">
+            <div style="display: flex; align-items: center; gap: 10px; color: white; font-weight: 600; font-size: 1.1rem;">
                 <span style="color: #00f2fe;">◎</span> Breathing Synchronization
             </div>
             <style>
-            /* Custom Button Styling for Start Training */
+            /* TARGETED BUTTON STYLING */
+            /* Start Button - White, Big, Bold */
             div.stButton > button[kind="primary"] {
-                width: 100%;
-                height: 60px;
-                background-color: white !important;
-                color: black !important;
-                font-size: 1.2rem !important;
+                width: 100% !important;
+                height: 56px !important;
+                background-color: #ffffff !important;
+                color: #0f172a !important;
+                font-size: 1.1rem !important;
                 font-weight: 700 !important;
                 border-radius: 12px !important;
                 border: none !important;
-                transition: transform 0.2s;
+                box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1) !important;
+                transition: all 0.2s ease !important;
             }
             div.stButton > button[kind="primary"]:hover {
-                transform: scale(1.02);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2) !important;
                 background-color: #f8fafc !important;
+            }
+            
+            /* Complete Button - Dark, Subtle */
+            div.stButton > button[kind="secondary"] {
+                width: 100% !important;
+                height: 56px !important;
+                background-color: rgba(30, 41, 59, 0.5) !important;
+                color: #94a3b8 !important;
+                font-size: 1rem !important;
+                font-weight: 600 !important;
+                border-radius: 12px !important;
+                border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            }
+            div.stButton > button[kind="secondary"]:hover {
+                background-color: rgba(30, 41, 59, 0.8) !important;
+                color: white !important;
+                border-color: rgba(255, 255, 255, 0.2) !important;
             }
             </style>
         """, unsafe_allow_html=True)
@@ -605,6 +625,15 @@ def render_training():
         # Breathing State Logic
         if 'training_active' not in st.session_state: st.session_state.training_active = False
         if 'session_xp' not in st.session_state: st.session_state.session_xp = 0
+        
+        # Callbacks
+        def start_training_session():
+            st.session_state.training_active = True
+            st.session_state.session_xp = 0
+            
+        def complete_training_session():
+            st.session_state.training_active = False
+            st.toast(f"Session Complete! +{int(st.session_state.session_xp)} XP", icon="🎉")
         
         if st.session_state.training_active:
             # 3-3-3 Breathing Cycle (9 seconds total)
@@ -622,50 +651,46 @@ def render_training():
                 breath_class = "breathe-exhale"
                 timer = 9 - int(cycle_time)
                 
-            # Gamification: Increment XP and Garden Growth
-            st.session_state.session_xp += 0.5 # Add XP gradually
-            user_data['xp'] = int(user_data['xp'] + st.session_state.session_xp)
-            # Simulate garden growth based on session time
-            user_data['garden_growth'] = min(100, int(user_data['garden_growth'] + (st.session_state.session_xp / 10)))
+            # Gamification
+            st.session_state.session_xp += 0.5 
+            user_data['xp'] = int(user_data['xp'] + 0.5)
+            if int(st.session_state.session_xp) % 10 == 0: # Slow down garden growth
+                user_data['garden_growth'] = min(100, user_data['garden_growth'] + 1)
                 
-            # Auto-refresh for animation
+            # Auto-refresh
             time.sleep(1)
             st.rerun()
         else:
             breath_state = "READY"
             breath_class = ""
-            timer = "4" # Start at 4 or 3? User said "Start Training", usually starts with Inhale.
-            st.session_state.session_xp = 0 # Reset session XP
+            timer = "4" 
 
+        # Breathing Circle
         st.markdown(f"""
-            <div class="breathing-circle-container">
+            <div class="breathing-circle-container" style="height: 350px;">
                 <div class="breathing-circle {breath_class}">
-                    <div style="font-size: 3rem; font-weight: 700; color: white;">{timer}</div>
-                    <div style="font-size: 1rem; color: rgba(255,255,255,0.8); letter-spacing: 2px;">{breath_state}</div>
+                    <div style="font-size: 3.5rem; font-weight: 700; color: white; line-height: 1;">{timer}</div>
+                    <div style="font-size: 1rem; color: rgba(255,255,255,0.9); letter-spacing: 3px; font-weight: 600; margin-top: 5px;">{breath_state}</div>
                 </div>
             </div>
         """, unsafe_allow_html=True)
         
-        # Start Button
-        if st.session_state.training_active:
-             if st.button("Complete Session", use_container_width=True):
-                 st.session_state.training_active = False
-                 st.toast(f"Session Complete! +{int(st.session_state.session_xp)} XP", icon="🎉")
-                 st.rerun()
-        else:
-             if st.button("▶ Start Training", type="primary", use_container_width=True):
-                 st.session_state.training_active = True
-                 st.rerun()
-
-        # Stats Row
+        # Stats Row (Only show when active or just finished)
         st.markdown(f"""
-            <div style="display: flex; justify-content: space-between; margin-top: 20px; text-align: center;">
-                <div><div style="color: #00f2fe; font-size: 1.5rem; font-weight: 700;">{int(st.session_state.session_xp * 2)}</div><div style="color: #64748b; font-size: 0.8rem;">Score</div></div>
-                <div><div style="color: #c084fc; font-size: 1.5rem; font-weight: 700;">{min(5, 1 + int(st.session_state.session_xp / 20))}x</div><div style="color: #64748b; font-size: 0.8rem;">Combo</div></div>
-                <div><div style="color: #facc15; font-size: 1.5rem; font-weight: 700;">+{int(st.session_state.session_xp)}</div><div style="color: #64748b; font-size: 0.8rem;">XP</div></div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px; padding: 0 20px;">
+                <div style="text-align: center;"><div style="color: #00f2fe; font-size: 1.5rem; font-weight: 700;">{int(st.session_state.session_xp * 2)}</div><div style="color: #64748b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">Score</div></div>
+                <div style="text-align: center;"><div style="color: #c084fc; font-size: 1.5rem; font-weight: 700;">{min(5, 1 + int(st.session_state.session_xp / 20))}x</div><div style="color: #64748b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">Combo</div></div>
+                <div style="text-align: center;"><div style="color: #facc15; font-size: 1.5rem; font-weight: 700;">+{int(st.session_state.session_xp)}</div><div style="color: #64748b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">XP</div></div>
             </div>
-        </div>
         """, unsafe_allow_html=True)
+        
+        # Buttons
+        if st.session_state.training_active:
+             st.button("Complete Session", type="secondary", use_container_width=True, on_click=complete_training_session)
+        else:
+             st.button("Start Training", type="primary", use_container_width=True, on_click=start_training_session)
+
+        st.markdown("</div>", unsafe_allow_html=True)
 
     # --- GARDEN & ACHIEVEMENTS (Screenshot 3) ---
     with col_garden:
