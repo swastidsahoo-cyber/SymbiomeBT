@@ -696,45 +696,69 @@ def render_training():
         # 1. LOGIC FIRST (Calculate state before rendering)
         if 'training_active' not in st.session_state: st.session_state.training_active = False
         if 'session_xp' not in st.session_state: st.session_state.session_xp = 0
+        if 'completed_cycles' not in st.session_state: st.session_state.completed_cycles = 0
+        if 'garden_plants' not in st.session_state: st.session_state.garden_plants = []
+        if 'start_time' not in st.session_state: st.session_state.start_time = None
         
         # Callbacks
         def start_training_session():
             st.session_state.training_active = True
             st.session_state.session_xp = 0
+            st.session_state.completed_cycles = 0
+            st.session_state.garden_plants = [] # Reset garden for session
+            st.session_state.start_time = time.time()
             
         def complete_training_session():
             st.session_state.training_active = False
             st.toast(f"Session Complete! +{int(st.session_state.session_xp)} XP", icon="🎉")
         
-        if st.session_state.training_active:
-            # 3-3-3 Breathing Cycle (9 seconds total)
-            cycle_time = time.time() % 9 
-            if cycle_time < 3:
+        # Breathing Logic
+        breath_state = "READY"
+        breath_class = ""
+        timer = "4"
+        
+        if st.session_state.training_active and st.session_state.start_time:
+            elapsed = time.time() - st.session_state.start_time
+            cycle_duration = 9 # 3s Inhale, 3s Hold, 3s Exhale
+            current_cycle = int(elapsed / cycle_duration)
+            phase_time = elapsed % cycle_duration
+            
+            # Check for cycle completion (Gamification Trigger)
+            if current_cycle > st.session_state.completed_cycles:
+                st.session_state.completed_cycles = current_cycle
+                st.session_state.session_xp += 10 # +10 XP per cycle
+                user_data['xp'] += 10
+                
+                # Grow a flower!
+                plant_types = ['🌿', '🌸', '🌳', '🌻', '🍄', '🌷', '🪷']
+                new_plant = {
+                    'type': random.choice(plant_types),
+                    'left': random.randint(5, 90),
+                    'size': random.uniform(1.0, 2.0),
+                    'bottom': random.randint(10, 50)
+                }
+                st.session_state.garden_plants.append(new_plant)
+                
+                # Update Garden Growth % (Cap at 100%)
+                user_data['garden_growth'] = min(100, user_data['garden_growth'] + 2)
+            
+            # Determine Breathing Phase
+            if phase_time < 3:
                 breath_state = "INHALE"
                 breath_class = "breathe-inhale"
-                timer = 3 - int(cycle_time)
-            elif cycle_time < 6:
+                timer = f"{3 - int(phase_time)}"
+            elif phase_time < 6:
                 breath_state = "HOLD"
                 breath_class = "breathe-hold"
-                timer = 6 - int(cycle_time)
+                timer = f"{6 - int(phase_time)}"
             else:
                 breath_state = "EXHALE"
                 breath_class = "breathe-exhale"
-                timer = 9 - int(cycle_time)
+                timer = f"{9 - int(phase_time)}"
                 
-            # Gamification
-            st.session_state.session_xp += 0.5 
-            user_data['xp'] = int(user_data['xp'] + 0.5)
-            if int(st.session_state.session_xp) % 10 == 0: # Slow down garden growth
-                user_data['garden_growth'] = min(100, user_data['garden_growth'] + 1)
-                
-            # Auto-refresh
-            time.sleep(1)
+            # Auto-refresh for animation
+            time.sleep(0.1) 
             st.rerun()
-        else:
-            breath_state = "READY"
-            breath_class = ""
-            timer = "4" 
 
         # 2. RENDER HEADER + CIRCLE + STATS TOGETHER (Eliminates spacing)
         st.markdown(f"""
@@ -752,7 +776,7 @@ def render_training():
 
 <div style="display: flex; justify-content: space-between; margin-top: 10px; margin-bottom: 15px; padding: 0 30px;">
 <div style="text-align: center;"><div style="color: #00f2fe; font-size: 1.8rem; font-weight: 700;">{int(st.session_state.session_xp * 2)}</div><div style="color: #64748b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">Score</div></div>
-<div style="text-align: center;"><div style="color: #c084fc; font-size: 1.8rem; font-weight: 700;">{min(5, 1 + int(st.session_state.session_xp / 20))}x</div><div style="color: #64748b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">Combo</div></div>
+<div style="text-align: center;"><div style="color: #c084fc; font-size: 1.8rem; font-weight: 700;">{max(1, st.session_state.completed_cycles)}x</div><div style="color: #64748b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">Combo</div></div>
 <div style="text-align: center;"><div style="color: #facc15; font-size: 1.8rem; font-weight: 700;">+{int(st.session_state.session_xp)}</div><div style="color: #64748b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">XP</div></div>
 </div>
         """, unsafe_allow_html=True)
@@ -767,17 +791,17 @@ def render_training():
 
     # --- GARDEN & ACHIEVEMENTS (Screenshot 3) ---
     with col_garden:
+        # Dynamic Garden HTML Generation
+        plants_html = ""
+        for plant in st.session_state.garden_plants:
+            plants_html += f'<div class="garden-plant" style="left: {plant["left"]}%; bottom: {plant["bottom"]}px; font-size: {plant["size"]}rem;">{plant["type"]}</div>'
+            
         # Garden Visualization
         garden_html = f"""
 <div style="background: #0f172a; border: 1px solid #1e293b; border-radius: 16px; padding: 20px; height: 100%;">
 <div style="color: white; font-weight: 600; margin-bottom: 15px;">🌱 Your Resilience Garden</div>
 <div class="garden-container">
-<!-- Procedurally placed plants based on growth level -->
-<div class="garden-plant" style="left: 10%;">🌿</div>
-<div class="garden-plant" style="left: 30%; font-size: 1.5rem;">🌸</div>
-<div class="garden-plant" style="left: 50%; bottom: 40px;">🌳</div>
-<div class="garden-plant" style="left: 70%;">🌻</div>
-<div class="garden-plant" style="left: 85%; font-size: 1.2rem;">🍄</div>
+{plants_html}
 <!-- Fireflies/Particles -->
 <div style="position: absolute; top: 20px; left: 20px; width: 4px; height: 4px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 10px #4ade80;"></div>
 <div style="position: absolute; top: 50px; right: 40px; width: 4px; height: 4px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 10px #4ade80;"></div>
@@ -801,10 +825,10 @@ def render_training():
 <div style="color: white; font-weight: 600; font-size: 0.9rem;">Perfect Breath</div>
 <div style="color: #94a3b8; font-size: 0.8rem;">Complete 10 breath cycles</div>
 <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); margin-top: 8px; border-radius: 2px;">
-<div style="width: 40%; height: 100%; background: #cbd5e1; border-radius: 2px;"></div>
+<div style="width: {min(100, st.session_state.completed_cycles * 10)}%; height: 100%; background: #f43f5e; border-radius: 2px;"></div>
 </div>
 </div>
-<div style="color: #64748b; font-size: 0.8rem;">4/10</div>
+<div style="color: #64748b; font-size: 0.8rem;">{st.session_state.completed_cycles}/10</div>
 </div>
 <!-- Achievement 2 -->
 <div class="achievement-card">
@@ -813,10 +837,10 @@ def render_training():
 <div style="color: white; font-weight: 600; font-size: 0.9rem;">Quick Learner</div>
 <div style="color: #94a3b8; font-size: 0.8rem;">Earn 100 XP in one session</div>
 <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); margin-top: 8px; border-radius: 2px;">
-<div style="width: 60%; height: 100%; background: #cbd5e1; border-radius: 2px;"></div>
+<div style="width: {min(100, st.session_state.session_xp)}%; height: 100%; background: #f59e0b; border-radius: 2px;"></div>
 </div>
 </div>
-<div style="color: #64748b; font-size: 0.8rem;">60/100</div>
+<div style="color: #64748b; font-size: 0.8rem;">{int(st.session_state.session_xp)}/100</div>
 </div>
 </div>
 </div>
