@@ -580,8 +580,9 @@ def render_training():
         display: flex;
         justify-content: center;
         align-items: center;
-        min-height: 300px;
-        margin-top: 30px; /* Move down a bit */
+        min-height: 320px; /* Reduced to eliminate black space */
+        margin-top: 30px;
+        margin-bottom: -20px; /* Pull stats closer */
         position: relative;
     }
     .breathing-circle {
