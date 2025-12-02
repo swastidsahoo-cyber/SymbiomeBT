@@ -572,15 +572,96 @@ def render_training():
     </div>
     """, unsafe_allow_html=True)
 
+    # --- INJECT CRITICAL CSS (Fixes "Nothing like my UI" issue) ---
+    st.markdown("""
+    <style>
+    /* Flattened Selectors for Reliability */
+    .breathing-circle-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 350px;
+        position: relative;
+    }
+    .breathing-circle {
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        background: #00f2fe;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 0 40px rgba(0, 242, 254, 0.4);
+        transition: all 3s ease-in-out;
+    }
+    .breathing-circle.breathe-inhale {
+        transform: scale(1.0);
+        background: #00f2fe;
+        box-shadow: 0 0 40px rgba(0, 242, 254, 0.4);
+    }
+    .breathing-circle.breathe-hold {
+        transform: scale(1.15);
+        background: #00f2fe;
+        box-shadow: 0 0 80px rgba(0, 242, 254, 0.8);
+        border: 4px solid white;
+    }
+    .breathing-circle.breathe-exhale {
+        transform: scale(0.85);
+        background: #0f172a;
+        border: 2px solid #00f2fe;
+        box-shadow: 0 0 20px rgba(0, 242, 254, 0.1);
+    }
+    .garden-container {
+        height: 350px;
+        background: linear-gradient(180deg, #0f172a 0%, #064e3b 100%);
+        border-radius: 16px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .garden-plant {
+        position: absolute;
+        bottom: 20px;
+        font-size: 2rem;
+        animation: grow-up 1s ease-out;
+    }
+    @keyframes grow-up {
+        0% { transform: scale(0) translateY(20px); opacity: 0; }
+        100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    .achievement-card {
+        background: rgba(30, 41, 59, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .achievement-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.2rem;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
     # --- MAIN GRID ---
-    col_breath, col_garden = st.columns([1, 1])
+    col_breath, col_garden = st.columns([1, 1], gap="large")
 
     # --- BREATHING MODULE (Screenshot 3) ---
     with col_breath:
         st.markdown("""
-        <div style="background: #020617; border: 1px solid #1e293b; border-radius: 16px; padding: 30px; height: 550px; display: flex; flex-direction: column; justify-content: space-between; position: relative;">
+        <div style="background: #020617; border: 1px solid #1e293b; border-radius: 16px; padding: 30px; height: 600px; display: flex; flex-direction: column; justify-content: space-between; position: relative;">
             <div style="display: flex; align-items: center; gap: 10px; color: white; font-weight: 600; font-size: 1.1rem;">
-                <span style="color: #00f2fe;">◎</span> Breathing Synchronization <span style="font-size: 0.7rem; color: #64748b; margin-left: auto;">v2.0</span>
+                <span style="color: #00f2fe;">◎</span> Breathing Synchronization
             </div>
         """, unsafe_allow_html=True)
         
