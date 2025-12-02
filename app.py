@@ -579,9 +579,9 @@ def render_training():
     .breathing-circle-container {
         display: flex;
         justify-content: center;
-        align-items: center; /* CENTERED */
+        align-items: center;
         min-height: 300px;
-        margin-top: 0px; /* Reset margin */
+        margin-top: 30px; /* Move down a bit */
         position: relative;
     }
     .breathing-circle {
