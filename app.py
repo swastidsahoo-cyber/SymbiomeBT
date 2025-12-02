@@ -819,30 +819,63 @@ def render_training():
 </div>
 <div style="margin-top: 30px;">
 <div style="color: white; font-weight: 600; margin-bottom: 15px;">Today's Achievements</div>
-<!-- Achievement 1 -->
-<div class="achievement-card">
-<div class="achievement-icon" style="color: #f43f5e;">🎯</div>
+"""
+        
+        # Progressive Achievement System
+        achievements = [
+            # Tier 1 - Beginner
+            {'id': 'first_breath', 'name': 'First Breath', 'desc': 'Complete 3 breath cycles', 'icon': '🌱', 'color': '#10b981', 'goal': 3, 'current': st.session_state.completed_cycles},
+            {'id': 'breath_master', 'name': 'Breath Master', 'desc': 'Complete 10 breath cycles', 'icon': '🎯', 'color': '#f43f5e', 'goal': 10, 'current': st.session_state.completed_cycles},
+            {'id': 'zen_warrior', 'name': 'Zen Warrior', 'desc': 'Complete 25 breath cycles', 'icon': '🧘', 'color': '#8b5cf6', 'goal': 25, 'current': st.session_state.completed_cycles},
+            
+            # Tier 2 - XP Based
+            {'id': 'quick_learner', 'name': 'Quick Learner', 'desc': 'Earn 50 XP in one session', 'icon': '⚡', 'color': '#f59e0b', 'goal': 50, 'current': st.session_state.session_xp},
+            {'id': 'xp_hunter', 'name': 'XP Hunter', 'desc': 'Earn 100 XP in one session', 'icon': '💎', 'color': '#06b6d4', 'goal': 100, 'current': st.session_state.session_xp},
+            {'id': 'xp_legend', 'name': 'XP Legend', 'desc': 'Earn 200 XP in one session', 'icon': '👑', 'color': '#eab308', 'goal': 200, 'current': st.session_state.session_xp},
+            
+            # Tier 3 - Garden Based
+            {'id': 'gardener', 'name': 'Gardener', 'desc': 'Grow garden to 25%', 'icon': '🌿', 'color': '#22c55e', 'goal': 25, 'current': user_data['garden_growth']},
+            {'id': 'garden_master', 'name': 'Garden Master', 'desc': 'Grow garden to 50%', 'icon': '🌳', 'color': '#16a34a', 'goal': 50, 'current': user_data['garden_growth']},
+            {'id': 'ecosystem_god', 'name': 'Ecosystem God', 'desc': 'Grow garden to 100%', 'icon': '🌺', 'color': '#ec4899', 'goal': 100, 'current': user_data['garden_growth']},
+        ]
+        
+        # Filter to show only the next 2 incomplete achievements
+        active_achievements = []
+        for ach in achievements:
+            if ach['current'] < ach['goal']:
+                active_achievements.append(ach)
+                if len(active_achievements) == 2:
+                    break
+        
+        # If all are complete, show the last 2 completed ones
+        if len(active_achievements) == 0:
+            active_achievements = achievements[-2:]
+        
+        # Render active achievements
+        for ach in active_achievements:
+            progress_pct = min(100, int((ach['current'] / ach['goal']) * 100))
+            is_complete = ach['current'] >= ach['goal']
+            
+            border_style = f"border: 2px solid {ach['color']};" if is_complete else ""
+            complete_badge = '<div style="position: absolute; top: 10px; right: 10px; background: #10b981; color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 700;">✓ COMPLETE</div>' if is_complete else ''
+            
+            garden_html += f"""
+<!-- Achievement: {ach['name']} -->
+<div class="achievement-card" style="{border_style} position: relative;">
+{complete_badge}
+<div class="achievement-icon" style="color: {ach['color']};">{ach['icon']}</div>
 <div style="flex: 1;">
-<div style="color: white; font-weight: 600; font-size: 0.9rem;">Perfect Breath</div>
-<div style="color: #94a3b8; font-size: 0.8rem;">Complete 10 breath cycles</div>
+<div style="color: white; font-weight: 600; font-size: 0.9rem;">{ach['name']}</div>
+<div style="color: #94a3b8; font-size: 0.8rem;">{ach['desc']}</div>
 <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); margin-top: 8px; border-radius: 2px;">
-<div style="width: {min(100, st.session_state.completed_cycles * 10)}%; height: 100%; background: #f43f5e; border-radius: 2px;"></div>
+<div style="width: {progress_pct}%; height: 100%; background: {ach['color']}; border-radius: 2px;"></div>
 </div>
 </div>
-<div style="color: #64748b; font-size: 0.8rem;">{st.session_state.completed_cycles}/10</div>
+<div style="color: #64748b; font-size: 0.8rem;">{int(ach['current'])}/{ach['goal']}</div>
 </div>
-<!-- Achievement 2 -->
-<div class="achievement-card">
-<div class="achievement-icon" style="color: #f59e0b;">⚡</div>
-<div style="flex: 1;">
-<div style="color: white; font-weight: 600; font-size: 0.9rem;">Quick Learner</div>
-<div style="color: #94a3b8; font-size: 0.8rem;">Earn 100 XP in one session</div>
-<div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); margin-top: 8px; border-radius: 2px;">
-<div style="width: {min(100, st.session_state.session_xp)}%; height: 100%; background: #f59e0b; border-radius: 2px;"></div>
-</div>
-</div>
-<div style="color: #64748b; font-size: 0.8rem;">{int(st.session_state.session_xp)}/100</div>
-</div>
+"""
+        
+        garden_html += """
 </div>
 </div>
 """
