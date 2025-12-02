@@ -823,6 +823,59 @@ def render_training():
 """
         st.markdown(garden_html, unsafe_allow_html=True)
 
+    # --- CHALLENGES SECTION (Bottom of screen) ---
+    st.markdown("""
+    <div style="margin-top: 30px;">
+        <div style="color: white; font-size: 1.2rem; font-weight: 700; margin-bottom: 20px;">🎯 Daily Challenges</div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Challenge Cards
+    col_c1, col_c2, col_c3 = st.columns(3)
+    
+    with col_c1:
+        st.markdown("""
+<div style="background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 12px; padding: 20px; position: relative;">
+<div style="position: absolute; top: 10px; right: 10px; background: rgba(234, 179, 8, 0.2); color: #eab308; padding: 4px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 700;">Medium</div>
+<div style="color: white; font-weight: 700; font-size: 1rem; margin-bottom: 8px; margin-top: 10px;">Calm Under Pressure</div>
+<div style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 15px;">Maintain SRI > 60 during mental math</div>
+<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 15px;">
+<span style="color: #eab308; font-size: 1.2rem;">⭐</span>
+<span style="color: #eab308; font-weight: 700;">50 XP</span>
+</div>
+<button style="background: transparent; border: 1px solid #eab308; color: #eab308; padding: 10px 20px; border-radius: 8px; width: 100%; font-weight: 600; cursor: pointer;">Start</button>
+</div>
+        """, unsafe_allow_html=True)
+    
+    with col_c2:
+        st.markdown("""
+<div style="background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 20px; position: relative;">
+<div style="position: absolute; top: 10px; right: 10px; background: rgba(239, 68, 68, 0.2); color: #ef4444; padding: 4px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 700;">Hard</div>
+<div style="color: white; font-weight: 700; font-size: 1rem; margin-bottom: 8px; margin-top: 10px;">Stress Master</div>
+<div style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 15px;">Recover from stress spike in < 3 min</div>
+<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 15px;">
+<span style="color: #eab308; font-size: 1.2rem;">⭐</span>
+<span style="color: #eab308; font-weight: 700;">75 XP</span>
+</div>
+<button style="background: transparent; border: 1px solid #ef4444; color: #ef4444; padding: 10px 20px; border-radius: 8px; width: 100%; font-weight: 600; cursor: pointer;">Start</button>
+</div>
+        """, unsafe_allow_html=True)
+    
+    with col_c3:
+        st.markdown("""
+<div style="background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 20px; position: relative;">
+<div style="position: absolute; top: 10px; right: 10px; background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 4px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 700;">Easy</div>
+<div style="color: white; font-weight: 700; font-size: 1rem; margin-bottom: 8px; margin-top: 10px;">Consistency King</div>
+<div style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 15px;">Complete 7 sessions this week</div>
+<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 15px;">
+<span style="color: #eab308; font-size: 1.2rem;">⭐</span>
+<span style="color: #eab308; font-weight: 700;">200 XP</span>
+</div>
+<button style="background: transparent; border: 1px solid #10b981; color: #10b981; padding: 10px 20px; border-radius: 8px; width: 100%; font-weight: 600; cursor: pointer;">Start</button>
+</div>
+        """, unsafe_allow_html=True)
+
+
 # ==========================================
 # MAIN LAYOUT ROUTING
 # ==========================================
