@@ -715,7 +715,7 @@ def render_training():
         # Breathing Logic
         breath_state = "READY"
         breath_class = ""
-        timer = "4"
+        timer = "3"
         
         if st.session_state.training_active and st.session_state.start_time:
             elapsed = time.time() - st.session_state.start_time
@@ -742,19 +742,22 @@ def render_training():
                 # Update Garden Growth % (Cap at 100%)
                 user_data['garden_growth'] = min(100, user_data['garden_growth'] + 2)
             
-            # Determine Breathing Phase
+            # Determine Breathing Phase (Timer counts DOWN from 3 to 1)
             if phase_time < 3:
                 breath_state = "INHALE"
                 breath_class = "breathe-inhale"
-                timer = f"{3 - int(phase_time)}"
+                timer = str(3 - int(phase_time))  # 3, 2, 1
+                if timer == "0": timer = "1"  # Never show 0
             elif phase_time < 6:
                 breath_state = "HOLD"
                 breath_class = "breathe-hold"
-                timer = f"{6 - int(phase_time)}"
+                timer = str(3 - int(phase_time - 3))  # 3, 2, 1
+                if timer == "0": timer = "1"
             else:
                 breath_state = "EXHALE"
                 breath_class = "breathe-exhale"
-                timer = f"{9 - int(phase_time)}"
+                timer = str(3 - int(phase_time - 6))  # 3, 2, 1
+                if timer == "0": timer = "1"
                 
             # Auto-refresh for animation
             time.sleep(0.1) 
