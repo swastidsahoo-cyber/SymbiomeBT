@@ -579,9 +579,9 @@ def render_training():
     .breathing-circle-container {
         display: flex;
         justify-content: center;
-        align-items: flex-start; /* Aligns to top */
+        align-items: flex-start;
         min-height: 300px;
-        margin-top: -20px; /* Pull up aggressively */
+        margin-top: -60px; /* Pull up VERY aggressively */
         position: relative;
     }
     .breathing-circle {
@@ -658,15 +658,9 @@ def render_training():
     col_breath, col_garden = st.columns([1, 1], gap="large")
 
     # --- BREATHING MODULE (Screenshot 3) ---
+    # --- BREATHING MODULE (Screenshot 3) ---
     with col_breath:
-        st.markdown("""
-        <div style="background: #000000; border: 1px solid #1e293b; border-radius: 16px; padding: 40px; height: 650px; display: flex; flex-direction: column; justify-content: flex-start; position: relative;">
-            <div style="display: flex; align-items: center; gap: 10px; color: white; font-weight: 600; font-size: 1.1rem; margin-bottom: 20px;">
-                <span style="color: #00f2fe;">◎</span> Breathing Synchronization
-            </div>
-        """, unsafe_allow_html=True)
-        
-        # Breathing State Logic
+        # 1. LOGIC FIRST (Calculate state before rendering)
         if 'training_active' not in st.session_state: st.session_state.training_active = False
         if 'session_xp' not in st.session_state: st.session_state.session_xp = 0
         
@@ -709,8 +703,13 @@ def render_training():
             breath_class = ""
             timer = "4" 
 
-        # Breathing Circle
+        # 2. RENDER HEADER + CIRCLE TOGETHER (Guarantees Alignment)
         st.markdown(f"""
+        <div style="background: #000000; border: 1px solid #1e293b; border-radius: 16px; padding: 40px; height: 650px; display: flex; flex-direction: column; justify-content: flex-start; position: relative;">
+            <div style="display: flex; align-items: center; gap: 10px; color: white; font-weight: 600; font-size: 1.1rem; margin-bottom: 0px;">
+                <span style="color: #00f2fe;">◎</span> Breathing Synchronization
+            </div>
+            
             <div class="breathing-circle-container">
                 <div class="breathing-circle {breath_class}">
                     <div style="font-size: 5rem; font-weight: 700; color: white; line-height: 1;">{timer}</div>
