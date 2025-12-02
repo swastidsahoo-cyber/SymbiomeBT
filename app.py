@@ -654,6 +654,78 @@ def render_training():
     """, unsafe_allow_html=True)
 
     # --- MAIN GRID ---
+    col_breath, col_garden = st.columns([1, 1], gap="large")
+
+    # --- BREATHING MODULE (Screenshot 3) ---
+    with col_breath:
+        st.markdown("""
+        <div style="background: #000000; border: 1px solid #1e293b; border-radius: 16px; padding: 40px; height: 650px; display: flex; flex-direction: column; justify-content: flex-start; position: relative;">
+            <div style="display: flex; align-items: center; gap: 10px; color: white; font-weight: 600; font-size: 1.1rem; margin-bottom: 20px;">
+                <span style="color: #00f2fe;">◎</span> Breathing Synchronization
+            </div>
+        """, unsafe_allow_html=True)
+        
+        # Breathing State Logic
+        if 'training_active' not in st.session_state: st.session_state.training_active = False
+        if 'session_xp' not in st.session_state: st.session_state.session_xp = 0
+        
+        # Callbacks
+        def start_training_session():
+            st.session_state.training_active = True
+            st.session_state.session_xp = 0
+            
+        def complete_training_session():
+            st.session_state.training_active = False
+            st.toast(f"Session Complete! +{int(st.session_state.session_xp)} XP", icon="🎉")
+        
+        if st.session_state.training_active:
+            # 3-3-3 Breathing Cycle (9 seconds total)
+            cycle_time = time.time() % 9 
+            if cycle_time < 3:
+                breath_state = "INHALE"
+                breath_class = "breathe-inhale"
+                timer = 3 - int(cycle_time)
+            elif cycle_time < 6:
+                breath_state = "HOLD"
+                breath_class = "breathe-hold"
+                timer = 6 - int(cycle_time)
+            else:
+                breath_state = "EXHALE"
+                breath_class = "breathe-exhale"
+                timer = 9 - int(cycle_time)
+                
+            # Gamification
+            st.session_state.session_xp += 0.5 
+            user_data['xp'] = int(user_data['xp'] + 0.5)
+            if int(st.session_state.session_xp) % 10 == 0: # Slow down garden growth
+                user_data['garden_growth'] = min(100, user_data['garden_growth'] + 1)
+                
+            # Auto-refresh
+            time.sleep(1)
+            st.rerun()
+        else:
+            breath_state = "READY"
+            breath_class = ""
+            timer = "4" 
+
+        # Breathing Circle
+        st.markdown(f"""
+            <div class="breathing-circle-container">
+                <div class="breathing-circle {breath_class}">
+                    <div style="font-size: 5rem; font-weight: 700; color: white; line-height: 1;">{timer}</div>
+                    <div style="font-size: 1.2rem; color: rgba(255,255,255,0.9); letter-spacing: 2px; font-weight: 500; margin-top: 10px;">{breath_state}</div>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        # Spacer to push stats/button to bottom
+        st.markdown('<div style="flex-grow: 1;"></div>', unsafe_allow_html=True)
+        
+        # Stats Row (Only show when active or just finished)
+        st.markdown(f"""
+            <div style="display: flex; justify-content: space-between; margin-bottom: 30px; padding: 0 30px;">
+                <div style="text-align: center;"><div style="color: #00f2fe; font-size: 1.8rem; font-weight: 700;">{int(st.session_state.session_xp * 2)}</div><div style="color: #64748b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">Score</div></div>
+                <div style="text-align: center;"><div style="color: #c084fc; font-size: 1.8rem; font-weight: 700;">{min(5, 1 + int(st.session_state.session_xp / 20))}x</div><div style="color: #64748b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">Combo</div></div>
                 <div style="text-align: center;"><div style="color: #facc15; font-size: 1.8rem; font-weight: 700;">+{int(st.session_state.session_xp)}</div><div style="color: #64748b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">XP</div></div>
             </div>
         """, unsafe_allow_html=True)
