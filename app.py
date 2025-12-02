@@ -580,37 +580,37 @@ def render_training():
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 350px;
+        height: 400px; /* Increased height for larger circle */
         position: relative;
     }
     .breathing-circle {
-        width: 220px;
-        height: 220px;
+        width: 280px; /* Increased from 220px */
+        height: 280px; /* Increased from 220px */
         border-radius: 50%;
-        background: #00f2fe;
+        background: #00b4d8; /* Adjusted Cyan */
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        box-shadow: 0 0 40px rgba(0, 242, 254, 0.4);
+        box-shadow: 0 0 60px rgba(0, 242, 254, 0.3); /* Softer glow */
         transition: all 3s ease-in-out;
     }
     .breathing-circle.breathe-inhale {
         transform: scale(1.0);
-        background: #00f2fe;
-        box-shadow: 0 0 40px rgba(0, 242, 254, 0.4);
+        background: #00b4d8;
+        box-shadow: 0 0 60px rgba(0, 242, 254, 0.4);
     }
     .breathing-circle.breathe-hold {
-        transform: scale(1.15);
-        background: #00f2fe;
-        box-shadow: 0 0 80px rgba(0, 242, 254, 0.8);
+        transform: scale(1.1);
+        background: #00b4d8;
+        box-shadow: 0 0 100px rgba(0, 242, 254, 0.8);
         border: 4px solid white;
     }
     .breathing-circle.breathe-exhale {
         transform: scale(0.85);
         background: #0f172a;
-        border: 2px solid #00f2fe;
-        box-shadow: 0 0 20px rgba(0, 242, 254, 0.1);
+        border: 2px solid #00b4d8;
+        box-shadow: 0 0 30px rgba(0, 242, 254, 0.1);
     }
     .garden-container {
         height: 350px;
@@ -659,7 +659,7 @@ def render_training():
     # --- BREATHING MODULE (Screenshot 3) ---
     with col_breath:
         st.markdown("""
-        <div style="background: #020617; border: 1px solid #1e293b; border-radius: 16px; padding: 30px; height: 600px; display: flex; flex-direction: column; justify-content: space-between; position: relative;">
+        <div style="background: #000000; border: 1px solid #1e293b; border-radius: 16px; padding: 40px; height: 650px; display: flex; flex-direction: column; justify-content: space-between; position: relative;">
             <div style="display: flex; align-items: center; gap: 10px; color: white; font-weight: 600; font-size: 1.1rem;">
                 <span style="color: #00f2fe;">◎</span> Breathing Synchronization
             </div>
@@ -710,20 +710,20 @@ def render_training():
 
         # Breathing Circle
         st.markdown(f"""
-            <div class="breathing-circle-container" style="height: 350px;">
+            <div class="breathing-circle-container">
                 <div class="breathing-circle {breath_class}">
-                    <div style="font-size: 3.5rem; font-weight: 700; color: white; line-height: 1;">{timer}</div>
-                    <div style="font-size: 1rem; color: rgba(255,255,255,0.9); letter-spacing: 3px; font-weight: 600; margin-top: 5px;">{breath_state}</div>
+                    <div style="font-size: 5rem; font-weight: 700; color: white; line-height: 1;">{timer}</div>
+                    <div style="font-size: 1.2rem; color: rgba(255,255,255,0.9); letter-spacing: 2px; font-weight: 500; margin-top: 10px;">{breath_state}</div>
                 </div>
             </div>
         """, unsafe_allow_html=True)
         
         # Stats Row (Only show when active or just finished)
         st.markdown(f"""
-            <div style="display: flex; justify-content: space-between; margin-bottom: 20px; padding: 0 20px;">
-                <div style="text-align: center;"><div style="color: #00f2fe; font-size: 1.5rem; font-weight: 700;">{int(st.session_state.session_xp * 2)}</div><div style="color: #64748b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">Score</div></div>
-                <div style="text-align: center;"><div style="color: #c084fc; font-size: 1.5rem; font-weight: 700;">{min(5, 1 + int(st.session_state.session_xp / 20))}x</div><div style="color: #64748b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">Combo</div></div>
-                <div style="text-align: center;"><div style="color: #facc15; font-size: 1.5rem; font-weight: 700;">+{int(st.session_state.session_xp)}</div><div style="color: #64748b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">XP</div></div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 30px; padding: 0 30px;">
+                <div style="text-align: center;"><div style="color: #00f2fe; font-size: 1.8rem; font-weight: 700;">{int(st.session_state.session_xp * 2)}</div><div style="color: #64748b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">Score</div></div>
+                <div style="text-align: center;"><div style="color: #c084fc; font-size: 1.8rem; font-weight: 700;">{min(5, 1 + int(st.session_state.session_xp / 20))}x</div><div style="color: #64748b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">Combo</div></div>
+                <div style="text-align: center;"><div style="color: #facc15; font-size: 1.8rem; font-weight: 700;">+{int(st.session_state.session_xp)}</div><div style="color: #64748b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">XP</div></div>
             </div>
         """, unsafe_allow_html=True)
         
