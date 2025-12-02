@@ -693,26 +693,14 @@ def render_training():
     # --- BREATHING MODULE (Screenshot 3) ---
     # --- BREATHING MODULE (Screenshot 3) ---
     with col_breath:
-        # 1. LOGIC FIRST (Calculate state before rendering)
+        # 1. INITIALIZE SESSION STATE
         if 'training_active' not in st.session_state: st.session_state.training_active = False
         if 'session_xp' not in st.session_state: st.session_state.session_xp = 0
         if 'completed_cycles' not in st.session_state: st.session_state.completed_cycles = 0
         if 'garden_plants' not in st.session_state: st.session_state.garden_plants = []
         if 'start_time' not in st.session_state: st.session_state.start_time = None
         
-        # Callbacks
-        def start_training_session():
-            st.session_state.training_active = True
-            st.session_state.session_xp = 0
-            st.session_state.completed_cycles = 0
-            st.session_state.garden_plants = [] # Reset garden for session
-            st.session_state.start_time = time.time()
-            
-        def complete_training_session():
-            st.session_state.training_active = False
-            st.toast(f"Session Complete! +{int(st.session_state.session_xp)} XP", icon="🎉")
-        
-        # Breathing Logic
+        # 2. BREATHING LOGIC (Calculate state before rendering)
         breath_state = "READY"
         breath_class = ""
         timer = "3"
@@ -758,12 +746,8 @@ def render_training():
                 breath_class = "breathe-exhale"
                 timer = str(3 - int(phase_time - 6))  # 3, 2, 1
                 if timer == "0": timer = "1"
-                
-            # Auto-refresh for animation
-            time.sleep(0.1) 
-            st.rerun()
 
-        # 2. RENDER HEADER + CIRCLE + STATS TOGETHER (Eliminates spacing)
+        # 3. RENDER HEADER + CIRCLE + STATS TOGETHER (Eliminates spacing)
         st.markdown(f"""
 <div style="background: #000000; border: 1px solid #1e293b; border-radius: 16px; padding: 40px; height: 650px; display: flex; flex-direction: column; justify-content: flex-start; position: relative;">
 <div style="display: flex; align-items: center; gap: 10px; color: white; font-weight: 600; font-size: 1.1rem; margin-bottom: 0px;">
@@ -784,13 +768,27 @@ def render_training():
 </div>
         """, unsafe_allow_html=True)
         
-        # Buttons
+        # 4. BUTTONS (Handle clicks and trigger rerun)
         if st.session_state.training_active:
-             st.button("Complete Session", type="secondary", use_container_width=True, on_click=complete_training_session)
+            if st.button("Complete Session", type="secondary", use_container_width=True):
+                st.session_state.training_active = False
+                st.toast(f"Session Complete! +{int(st.session_state.session_xp)} XP", icon="🎉")
+                st.rerun()
         else:
-             st.button("Start Training", type="primary", use_container_width=True, on_click=start_training_session)
+            if st.button("Start Training", type="primary", use_container_width=True):
+                st.session_state.training_active = True
+                st.session_state.session_xp = 0
+                st.session_state.completed_cycles = 0
+                st.session_state.garden_plants = [] # Reset garden for session
+                st.session_state.start_time = time.time()
+                st.rerun()
 
         st.markdown("</div>", unsafe_allow_html=True)
+        
+        # 5. AUTO-REFRESH when training is active
+        if st.session_state.training_active:
+            time.sleep(0.1)
+            st.rerun()
 
     # --- GARDEN & ACHIEVEMENTS (Screenshot 3) ---
     with col_garden:
