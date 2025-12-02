@@ -581,7 +581,7 @@ def render_training():
         justify-content: center;
         align-items: flex-start; /* Aligns to top */
         min-height: 300px;
-        padding-top: 20px; /* Slight gap from header */
+        margin-top: -20px; /* Pull up aggressively */
         position: relative;
     }
     .breathing-circle {
