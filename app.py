@@ -750,12 +750,9 @@ def render_training():
 </div>
         """, unsafe_allow_html=True)
         
-        # Spacer to push stats/button to bottom
-        st.markdown('<div style="flex-grow: 1;"></div>', unsafe_allow_html=True)
-        
-        # Stats Row (Only show when active or just finished)
+        # Stats Row (moved up - no spacer)
         st.markdown(f"""
-            <div style="display: flex; justify-content: space-between; margin-bottom: 30px; padding: 0 30px;">
+            <div style="display: flex; justify-content: space-between; margin-top: 20px; margin-bottom: 15px; padding: 0 30px;">
                 <div style="text-align: center;"><div style="color: #00f2fe; font-size: 1.8rem; font-weight: 700;">{int(st.session_state.session_xp * 2)}</div><div style="color: #64748b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">Score</div></div>
                 <div style="text-align: center;"><div style="color: #c084fc; font-size: 1.8rem; font-weight: 700;">{min(5, 1 + int(st.session_state.session_xp / 20))}x</div><div style="color: #64748b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">Combo</div></div>
                 <div style="text-align: center;"><div style="color: #facc15; font-size: 1.8rem; font-weight: 700;">+{int(st.session_state.session_xp)}</div><div style="color: #64748b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">XP</div></div>
