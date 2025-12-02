@@ -566,19 +566,6 @@ def render_training():
             </div>
             <div class="xp-bar-container">
                 <div class="xp-bar-fill" style="width: {(user_data['xp']/6000)*100}%;"></div>
-            </div>
-            <div style="font-size: 0.75rem; color: #64748b; margin-top: 5px;">5600 XP until Level 6</div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-        
-
-
-
-# ==========================================
-# MAIN LAYOUT ROUTING
-# ==========================================
-
 # Auto-stop logic
 if st.session_state.biofeedback_active and st.session_state.biofeedback_start_time:
     elapsed = time.time() - st.session_state.biofeedback_start_time
