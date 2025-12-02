@@ -566,6 +566,156 @@ def render_training():
             </div>
             <div class="xp-bar-container">
                 <div class="xp-bar-fill" style="width: {(user_data['xp']/6000)*100}%;"></div>
+            </div>
+            <div style="font-size: 0.75rem; color: #64748b; margin-top: 5px;">5600 XP until Level 6</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # --- MAIN GRID ---
+    col_breath, col_garden = st.columns([1, 1])
+
+    # --- BREATHING MODULE (Screenshot 3) ---
+    with col_breath:
+        st.markdown("""
+        <div style="background: #020617; border: 1px solid #1e293b; border-radius: 16px; padding: 30px; height: 550px; display: flex; flex-direction: column; justify-content: space-between; position: relative;">
+            <div style="display: flex; align-items: center; gap: 10px; color: white; font-weight: 600; font-size: 1.1rem;">
+                <span style="color: #00f2fe;">◎</span> Breathing Synchronization <span style="font-size: 0.7rem; color: #64748b; margin-left: auto;">v2.0</span>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        # Breathing State Logic
+        if 'training_active' not in st.session_state: st.session_state.training_active = False
+        if 'session_xp' not in st.session_state: st.session_state.session_xp = 0
+        
+        # Callbacks
+        def start_training_session():
+            st.session_state.training_active = True
+            st.session_state.session_xp = 0
+            
+        def complete_training_session():
+            st.session_state.training_active = False
+            st.toast(f"Session Complete! +{int(st.session_state.session_xp)} XP", icon="🎉")
+        
+        if st.session_state.training_active:
+            # 3-3-3 Breathing Cycle (9 seconds total)
+            cycle_time = time.time() % 9 
+            if cycle_time < 3:
+                breath_state = "INHALE"
+                breath_class = "breathe-inhale"
+                timer = 3 - int(cycle_time)
+            elif cycle_time < 6:
+                breath_state = "HOLD"
+                breath_class = "breathe-hold"
+                timer = 6 - int(cycle_time)
+            else:
+                breath_state = "EXHALE"
+                breath_class = "breathe-exhale"
+                timer = 9 - int(cycle_time)
+                
+            # Gamification
+            st.session_state.session_xp += 0.5 
+            user_data['xp'] = int(user_data['xp'] + 0.5)
+            if int(st.session_state.session_xp) % 10 == 0: # Slow down garden growth
+                user_data['garden_growth'] = min(100, user_data['garden_growth'] + 1)
+                
+            # Auto-refresh
+            time.sleep(1)
+            st.rerun()
+        else:
+            breath_state = "READY"
+            breath_class = ""
+            timer = "4" 
+
+        # Breathing Circle
+        st.markdown(f"""
+            <div class="breathing-circle-container" style="height: 350px;">
+                <div class="breathing-circle {breath_class}">
+                    <div style="font-size: 3.5rem; font-weight: 700; color: white; line-height: 1;">{timer}</div>
+                    <div style="font-size: 1rem; color: rgba(255,255,255,0.9); letter-spacing: 3px; font-weight: 600; margin-top: 5px;">{breath_state}</div>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        # Stats Row (Only show when active or just finished)
+        st.markdown(f"""
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px; padding: 0 20px;">
+                <div style="text-align: center;"><div style="color: #00f2fe; font-size: 1.5rem; font-weight: 700;">{int(st.session_state.session_xp * 2)}</div><div style="color: #64748b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">Score</div></div>
+                <div style="text-align: center;"><div style="color: #c084fc; font-size: 1.5rem; font-weight: 700;">{min(5, 1 + int(st.session_state.session_xp / 20))}x</div><div style="color: #64748b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">Combo</div></div>
+                <div style="text-align: center;"><div style="color: #facc15; font-size: 1.5rem; font-weight: 700;">+{int(st.session_state.session_xp)}</div><div style="color: #64748b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">XP</div></div>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        # Buttons
+        if st.session_state.training_active:
+             st.button("Complete Session", type="secondary", use_container_width=True, on_click=complete_training_session)
+        else:
+             st.button("Start Training", type="primary", use_container_width=True, on_click=start_training_session)
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    # --- GARDEN & ACHIEVEMENTS (Screenshot 3) ---
+    with col_garden:
+        # Garden Visualization
+        garden_html = f"""
+<div style="background: #0f172a; border: 1px solid #1e293b; border-radius: 16px; padding: 20px; height: 100%;">
+<div style="color: white; font-weight: 600; margin-bottom: 15px;">🌱 Your Resilience Garden</div>
+<div class="garden-container">
+<!-- Procedurally placed plants based on growth level -->
+<div class="garden-plant" style="left: 10%;">🌿</div>
+<div class="garden-plant" style="left: 30%; font-size: 1.5rem;">🌸</div>
+<div class="garden-plant" style="left: 50%; bottom: 40px;">🌳</div>
+<div class="garden-plant" style="left: 70%;">🌻</div>
+<div class="garden-plant" style="left: 85%; font-size: 1.2rem;">🍄</div>
+<!-- Fireflies/Particles -->
+<div style="position: absolute; top: 20px; left: 20px; width: 4px; height: 4px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 10px #4ade80;"></div>
+<div style="position: absolute; top: 50px; right: 40px; width: 4px; height: 4px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 10px #4ade80;"></div>
+</div>
+<div style="margin-top: 15px;">
+<div style="display: flex; justify-content: space-between; color: #94a3b8; font-size: 0.8rem; margin-bottom: 5px;">
+<span>Garden Growth</span>
+<span>{user_data['garden_growth']}%</span>
+</div>
+<div style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px;">
+<div style="width: {user_data['garden_growth']}%; height: 100%; background: #10b981; border-radius: 3px;"></div>
+</div>
+<div style="font-size: 0.7rem; color: #64748b; margin-top: 5px; text-align: center;">Each successful session grows your symbiotic ecosystem</div>
+</div>
+<div style="margin-top: 30px;">
+<div style="color: white; font-weight: 600; margin-bottom: 15px;">Today's Achievements</div>
+<!-- Achievement 1 -->
+<div class="achievement-card">
+<div class="achievement-icon" style="color: #f43f5e;">🎯</div>
+<div style="flex: 1;">
+<div style="color: white; font-weight: 600; font-size: 0.9rem;">Perfect Breath</div>
+<div style="color: #94a3b8; font-size: 0.8rem;">Complete 10 breath cycles</div>
+<div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); margin-top: 8px; border-radius: 2px;">
+<div style="width: 40%; height: 100%; background: #cbd5e1; border-radius: 2px;"></div>
+</div>
+</div>
+<div style="color: #64748b; font-size: 0.8rem;">4/10</div>
+</div>
+<!-- Achievement 2 -->
+<div class="achievement-card">
+<div class="achievement-icon" style="color: #f59e0b;">⚡</div>
+<div style="flex: 1;">
+<div style="color: white; font-weight: 600; font-size: 0.9rem;">Quick Learner</div>
+<div style="color: #94a3b8; font-size: 0.8rem;">Earn 100 XP in one session</div>
+<div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); margin-top: 8px; border-radius: 2px;">
+<div style="width: 60%; height: 100%; background: #cbd5e1; border-radius: 2px;"></div>
+</div>
+</div>
+<div style="color: #64748b; font-size: 0.8rem;">60/100</div>
+</div>
+</div>
+</div>
+"""
+        st.markdown(garden_html, unsafe_allow_html=True)
+
+# ==========================================
+# MAIN LAYOUT ROUTING
+# ==========================================
+
 # Auto-stop logic
 if st.session_state.biofeedback_active and st.session_state.biofeedback_start_time:
     elapsed = time.time() - st.session_state.biofeedback_start_time
