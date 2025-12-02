@@ -705,17 +705,17 @@ def render_training():
 
         # 2. RENDER HEADER + CIRCLE TOGETHER (Guarantees Alignment)
         st.markdown(f"""
-        <div style="background: #000000; border: 1px solid #1e293b; border-radius: 16px; padding: 40px; height: 650px; display: flex; flex-direction: column; justify-content: flex-start; position: relative;">
-            <div style="display: flex; align-items: center; gap: 10px; color: white; font-weight: 600; font-size: 1.1rem; margin-bottom: 0px;">
-                <span style="color: #00f2fe;">◎</span> Breathing Synchronization
-            </div>
-            
-            <div class="breathing-circle-container">
-                <div class="breathing-circle {breath_class}">
-                    <div style="font-size: 5rem; font-weight: 700; color: white; line-height: 1;">{timer}</div>
-                    <div style="font-size: 1.2rem; color: rgba(255,255,255,0.9); letter-spacing: 2px; font-weight: 500; margin-top: 10px;">{breath_state}</div>
-                </div>
-            </div>
+<div style="background: #000000; border: 1px solid #1e293b; border-radius: 16px; padding: 40px; height: 650px; display: flex; flex-direction: column; justify-content: flex-start; position: relative;">
+<div style="display: flex; align-items: center; gap: 10px; color: white; font-weight: 600; font-size: 1.1rem; margin-bottom: 0px;">
+<span style="color: #00f2fe;">◎</span> Breathing Synchronization
+</div>
+
+<div class="breathing-circle-container">
+<div class="breathing-circle {breath_class}">
+<div style="font-size: 5rem; font-weight: 700; color: white; line-height: 1;">{timer}</div>
+<div style="font-size: 1.2rem; color: rgba(255,255,255,0.9); letter-spacing: 2px; font-weight: 500; margin-top: 10px;">{breath_state}</div>
+</div>
+</div>
         """, unsafe_allow_html=True)
         
         # Spacer to push stats/button to bottom
