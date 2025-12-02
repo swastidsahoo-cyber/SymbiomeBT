@@ -588,30 +588,62 @@ def render_training():
         width: 280px;
         height: 280px;
         border-radius: 50%;
-        background: #00b4d8;
+        background: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #00b4d8 100%);
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        box-shadow: 0 0 60px rgba(0, 242, 254, 0.3);
+        box-shadow: 
+            0 0 40px rgba(0, 242, 254, 0.6),
+            0 0 80px rgba(79, 172, 254, 0.4),
+            0 0 120px rgba(0, 180, 216, 0.3),
+            inset 0 0 60px rgba(255, 255, 255, 0.1);
         transition: all 3s ease-in-out;
+        position: relative;
+        overflow: hidden;
+    }
+    .breathing-circle::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+        animation: shimmer 4s infinite;
+    }
+    @keyframes shimmer {
+        0%, 100% { transform: translate(0, 0); opacity: 0.3; }
+        50% { transform: translate(10%, 10%); opacity: 0.6; }
     }
     .breathing-circle.breathe-inhale {
         transform: scale(1.0);
-        background: #00b4d8;
-        box-shadow: 0 0 60px rgba(0, 242, 254, 0.4);
+        background: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #00b4d8 100%);
+        box-shadow: 
+            0 0 50px rgba(0, 242, 254, 0.7),
+            0 0 100px rgba(79, 172, 254, 0.5),
+            0 0 150px rgba(0, 180, 216, 0.3),
+            inset 0 0 60px rgba(255, 255, 255, 0.15);
     }
     .breathing-circle.breathe-hold {
-        transform: scale(1.1);
-        background: #00b4d8;
-        box-shadow: 0 0 100px rgba(0, 242, 254, 0.8);
-        border: 4px solid white;
+        transform: scale(1.15);
+        background: linear-gradient(135deg, #00f2fe 0%, #00d4ff 50%, #00b4d8 100%);
+        box-shadow: 
+            0 0 60px rgba(0, 242, 254, 0.9),
+            0 0 120px rgba(0, 212, 255, 0.7),
+            0 0 180px rgba(0, 180, 216, 0.5),
+            0 0 240px rgba(79, 172, 254, 0.3),
+            inset 0 0 80px rgba(255, 255, 255, 0.2);
+        border: 3px solid rgba(255, 255, 255, 0.8);
     }
     .breathing-circle.breathe-exhale {
         transform: scale(0.85);
-        background: #0f172a;
+        background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0a2540 100%);
         border: 2px solid #00b4d8;
-        box-shadow: 0 0 30px rgba(0, 242, 254, 0.1);
+        box-shadow: 
+            0 0 30px rgba(0, 242, 254, 0.4),
+            0 0 60px rgba(0, 180, 216, 0.2),
+            inset 0 0 40px rgba(0, 242, 254, 0.1);
     }
     .garden-container {
         height: 350px;
