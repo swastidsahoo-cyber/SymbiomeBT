@@ -579,20 +579,21 @@ def render_training():
     .breathing-circle-container {
         display: flex;
         justify-content: center;
-        align-items: center;
-        height: 400px; /* Increased height for larger circle */
+        align-items: flex-start; /* Aligns to top */
+        min-height: 300px;
+        padding-top: 20px; /* Slight gap from header */
         position: relative;
     }
     .breathing-circle {
-        width: 280px; /* Increased from 220px */
-        height: 280px; /* Increased from 220px */
+        width: 280px;
+        height: 280px;
         border-radius: 50%;
-        background: #00b4d8; /* Adjusted Cyan */
+        background: #00b4d8;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        box-shadow: 0 0 60px rgba(0, 242, 254, 0.3); /* Softer glow */
+        box-shadow: 0 0 60px rgba(0, 242, 254, 0.3);
         transition: all 3s ease-in-out;
     }
     .breathing-circle.breathe-inhale {
