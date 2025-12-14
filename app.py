@@ -1378,8 +1378,8 @@ def render_passive_sentinel_inlined():
         st.session_state.typing_last_time = time.time()
     if 'typing_variability_score' not in st.session_state:
         st.session_state.typing_variability_score = 0
-    if 'real_typing_active' not in st.session_state:
-        st.session_state.real_typing_active = False
+    if 'typing_feedback_msg' not in st.session_state:
+        st.session_state.typing_feedback_msg = "Analyzing input patterns..."
 
     # Container for the input
     with st.container():
@@ -1411,12 +1411,15 @@ def render_passive_sentinel_inlined():
             if instant_speed > 8: # Super fast banging on keys
                 new_stress_contribution = 15
                 st.session_state.typing_variability_score = 90 # High jitter
+                st.session_state.typing_feedback_msg = f"⚡ <b>High Frenetic Activity ({instant_speed:.1f} cps)</b> detected. Stress Score <b>INCREASED</b> significantly."
             elif instant_speed > 4: # Normal-Fast
                 new_stress_contribution = 5
                 st.session_state.typing_variability_score = 45 # Moderate
+                st.session_state.typing_feedback_msg = f"⚠ <b>Moderate Pace ({instant_speed:.1f} cps)</b> detected. Stress Score <b>slighly increased</b>."
             else: # Slow/Calm
                 new_stress_contribution = -5 # Reducing stress
                 st.session_state.typing_variability_score = 10 # Low jitter
+                st.session_state.typing_feedback_msg = f"🍃 <b>Calm/Thoughtful Pace ({instant_speed:.1f} cps)</b> detected. Stress Score <b>DECREASING</b>."
 
             # Apply to main probability (with clamping)
             st.session_state.stress_probability = max(0, min(100, st.session_state.stress_probability + new_stress_contribution))
@@ -1439,8 +1442,13 @@ def render_passive_sentinel_inlined():
          st.markdown(f"""
         <div style="margin-top: 10px; background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 8px; padding: 10px; display: flex; align-items: center; gap: 10px;">
             <div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 5px #10b981;"></div>
-            <div style="color: #10b981; font-size: 0.85rem; font-weight: 600;">
-                LIVE DATA ACTIVE: Overriding simulation with your typing signal (Variability: {st.session_state.typing_variability_score}%)
+            <div>
+                <div style="color: #10b981; font-size: 0.85rem; font-weight: 600;">
+                    LIVE DATA ACTIVE: Overriding simulation
+                </div>
+                <div style="color: #6ee7b7; font-size: 0.8rem; margin-top: 2px;">
+                    {st.session_state.typing_feedback_msg}
+                </div>
             </div>
         </div>
         """, unsafe_allow_html=True)
