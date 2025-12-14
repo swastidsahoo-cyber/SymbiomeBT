@@ -1444,11 +1444,6 @@ if st.session_state.page == "Dashboard":
     with col1:
         st.title("Symbiome Operations Center")
         st.markdown(f"**System Status:** {ai_data['peak_perf']} | **Recovery:** {ai_data['recovery_trend']}")
-        
-        # EMERGENCY LINK
-        if st.button("🔔 LAUNCH PASSIVE SENTINEL", type="primary", use_container_width=True):
-            st.session_state.page = "🔔 SENTINEL"
-            st.rerun()
     with col2:
         if st.session_state.show_coach:
              st.info(f"💡 **AI Assistant:** {ai_data['insight']}")
