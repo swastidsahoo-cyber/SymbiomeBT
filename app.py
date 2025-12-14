@@ -244,6 +244,10 @@ def on_recovery_click_global():
 def on_annotate_click_global():
     st.toast("Annotation Added at " + time.strftime("%H:%M:%S"), icon="🏷️")
 
+def on_monitor_start_click_global():
+    start_biofeedback()
+    st.toast("Session Started", icon="🧬")
+
 def toggle_live_mode():
     st.session_state.live_mode = not st.session_state.live_mode
 
@@ -285,9 +289,7 @@ def render_monitor():
              if st.session_state.biofeedback_active:
                 st.button("✅ Complete", on_click=stop_biofeedback, type="primary", use_container_width=True)
              else:
-                if st.button("▶ Start", key="btn_monitor_start_header", type="primary", use_container_width=True):
-                    start_biofeedback()
-                    st.rerun()
+                st.button("▶ Start", key="btn_monitor_start_header", on_click=on_monitor_start_click_global, type="primary", use_container_width=True)
 
     st.markdown("---")
 
@@ -1991,6 +1993,18 @@ elif st.session_state.page == 'Dashboard':
     with st.sidebar:
         st.image("https://img.icons8.com/fluency/96/dna-helix.png", width=50)
         st.markdown("### Symbiome")
+        
+        # --- DEBUG STATUS ---
+        st.divider()
+        st.markdown("#### 🔧 Debug Status")
+        st.code(f"""
+        Page: {st.session_state.get('page')}
+        Active: {st.session_state.get('biofeedback_active')}
+        Engine Run: {data_engine.is_running}
+        Engine Start: {data_engine.start_time}
+        """)
+        st.divider()
+        # --------------------
         with st.expander("📄 Scientific Documentation"):
             try:
                 with open("science_whitepaper.md", "r") as f:
