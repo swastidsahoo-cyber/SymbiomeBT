@@ -1577,12 +1577,11 @@ elif st.session_state.page == 'Dashboard':
         else:
             # Using a target-like unicode symbol to match the mockup
             # Using a target-like unicode symbol to match the mockup
-            if st.button("◎ START BIOFEEDBACK SESSION", key="btn_start_monitor_main", type="primary", use_container_width=True):
-                try:
-                    start_biofeedback()
-                    st.rerun()
-                except Exception as e:
-                    st.error(f"Navigation Error: {e}")
+            def on_start_click_dashboard():
+                print("DEBUG: Dashboard Start Clicked")
+                start_biofeedback()
+            
+            st.button("◎ START BIOFEEDBACK SESSION", key="btn_start_monitor_main", on_click=on_start_click_dashboard, type="primary", use_container_width=True)
     
     # --- SECTION 2: REAL-TIME BIOMETRICS STRIP ---
     st.markdown("### ⚡ Real-Time Biological Readings")
