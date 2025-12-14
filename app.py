@@ -1671,10 +1671,20 @@ def render_passive_sentinel_inlined():
             <div style="margin-bottom: 10px; color: white; font-weight: 600;">Signal Contributors</div>
             """, unsafe_allow_html=True)
             
+            # Determine Typing Signal (Simulated vs Real)
+            if st.session_state.get('real_typing_active', False):
+                typing_val = "LIVE"
+                typing_trend = "↑" if st.session_state.typing_variability_score > 30 else "↓"
+                typing_color = "#ef4444" if st.session_state.typing_variability_score > 50 else "#10b981"
+            else:
+                typing_val = "Simulated"
+                typing_trend = "↑"
+                typing_color = "#ef4444"
+
             signals_data = [
                 {"icon": "💓", "val": "63 ms", "label": "HRV", "trend": "↓", "color": "#ef4444"},
                 {"icon": "🔊", "val": "46 dB", "label": "Noise", "trend": "↑", "color": "#f59e0b"},
-                {"icon": "⌨️", "val": "High", "label": "Typing", "trend": "↑", "color": "#ef4444"},
+                {"icon": "⌨️", "val": typing_val, "label": "Typing Var", "trend": typing_trend, "color": typing_color},
                 {"icon": "📱", "val": "Low", "label": "Motion", "trend": "→", "color": "#10b981"},
             ]
             
