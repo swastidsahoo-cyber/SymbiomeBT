@@ -507,9 +507,9 @@ def render_navbar():
     # Navigation Items
     nav_items = ["Dashboard", "🔔 SENTINEL", "Monitor", "Training", "Digital Twin", "Journal", "Research", "Community"]
     
-    # Container for Nav
+    # Container for Nav (Simplified)
     with st.container():
-        st.markdown('<div class="nav-container" style="display: flex; justify-content: center; gap: 10px; padding: 10px; background: rgba(255,255,255,0.02); border-radius: 16px; margin-bottom: 20px;">', unsafe_allow_html=True)
+        # st.markdown('<div class="nav-container" ...>', unsafe_allow_html=True)  <-- REMOVED TO FIX CLICK ISSUE
         cols = st.columns(len(nav_items))
         for i, item in enumerate(nav_items):
             with cols[i]:
@@ -518,7 +518,15 @@ def render_navbar():
                 label = f"**{item}**" if is_active else item
                 if st.button(label, key=f"nav_{item}", on_click=set_page, args=(item,), use_container_width=True):
                     pass # Handled by callback
-        st.markdown('</div>', unsafe_allow_html=True)
+        # st.markdown('</div>', unsafe_allow_html=True) <-- REMOVED
+
+    # Backup Sidebar Navigation (Just in case)
+    with st.sidebar:
+        st.markdown("### 🧭 Navigation")
+        selected_page = st.radio("Go to:", nav_items, index=nav_items.index(st.session_state.page) if st.session_state.page in nav_items else 0, key="sidebar_nav")
+        if selected_page != st.session_state.page:
+            set_page(selected_page)
+            st.rerun()
 
 # Render Navbar GLOBALLY
 render_navbar()
