@@ -962,6 +962,8 @@ elif st.session_state.page == 'Training':
     render_training()
 elif st.session_state.page == 'Summary':
     render_session_summary()
+elif st.session_state.page == 'SENTINEL':
+    render_passive_sentinel_inlined()
 elif st.session_state.page == 'Dashboard':
     # ==========================================
     # DASHBOARD LAYOUT
@@ -1840,6 +1842,101 @@ def render_passive_sentinel_inlined():
         with cols[2]:
             if st.button("Set High", key="hid_high"): st.session_state.sentinel_sensitivity = 'High'
     
+    # ==========================================
+    # ALGORITHM CALIBRATION (REAL DATA)
+    # ==========================================
+    st.markdown("### 🧪 Algorithm Calibration (Web Demo Mode)")
+    st.markdown("""
+    <div style='color: #94a3b8; margin-bottom: 15px; font-size: 0.9rem; line-height: 1.6;'>
+        <b>Note:</b> Web browsers block background keylogging for security. 
+        To test the Sentinel's <b>Real-Time Stress Detection</b> with <b>YOUR</b> actual data, 
+        use this secure calibration box. We analyze your typing cadence and variability in real-time 
+        to update the Stress Probability above.
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Initialize typing metrics in session state
+    if 'typing_last_len' not in st.session_state:
+        st.session_state.typing_last_len = 0
+    if 'typing_last_time' not in st.session_state:
+        st.session_state.typing_last_time = time.time()
+    if 'typing_variability_score' not in st.session_state:
+        st.session_state.typing_variability_score = 0
+    if 'real_typing_active' not in st.session_state:
+        st.session_state.real_typing_active = False
+
+    # Container for the input
+    with st.container():
+        user_text = st.text_area(
+            "Calibration Input",
+            placeholder="Type anything here (e.g. stream of consciousness, a quick journal entry) to test sensitivity... \nThe faster and more erratic you type, the higher the Stress Score will rise.",
+            height=120,
+            key="sentinel_calibration_input",
+            help="Your text is processed locally for cadence analysis only and is not stored."
+        )
+
+        # Real-time Analysis Logic
+        curr_len = len(user_text)
+        curr_time = time.time()
+        
+        if curr_len != st.session_state.typing_last_len:
+            # User is typing!
+            st.session_state.real_typing_active = True
+            
+            delta_char = abs(curr_len - st.session_state.typing_last_len)
+            delta_time = max(0.1, curr_time - st.session_state.typing_last_time)
+            
+            instant_speed = delta_char / delta_time # Chars per second
+            
+            # Simple "Stress" heuristic: Very fast bursts (>5 cps) OR Very erratic pauses imply stress
+            # We treat high speed as "High Arousal" -> Stress
+            
+            new_stress_contribution = 0
+            if instant_speed > 8: # Super fast banging on keys
+                new_stress_contribution = 15
+                st.session_state.typing_variability_score = 90 # High jitter
+            elif instant_speed > 4: # Normal-Fast
+                new_stress_contribution = 5
+                st.session_state.typing_variability_score = 45 # Moderate
+            else: # Slow/Calm
+                new_stress_contribution = -5 # Reducing stress
+                st.session_state.typing_variability_score = 10 # Low jitter
+
+            # Apply to main probability (with clamping)
+            st.session_state.stress_probability = max(0, min(100, st.session_state.stress_probability + new_stress_contribution))
+            
+            # Update history
+            st.session_state.typing_last_len = curr_len
+            st.session_state.typing_last_time = curr_time
+            
+            # Force rerun to show updated graph immediately
+            time.sleep(0.1) # Debounce slightly
+            st.rerun()
+            
+        elif curr_time - st.session_state.typing_last_time > 5:
+            # 5 seconds of no typing -> Reset "Active" status
+            st.session_state.real_typing_active = False
+
+    # Visual Feedback for Calibration
+    if st.session_state.real_typing_active:
+         st.markdown(f"""
+        <div style="margin-top: 10px; background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 8px; padding: 10px; display: flex; align-items: center; gap: 10px;">
+            <div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 5px #10b981;"></div>
+            <div style="color: #10b981; font-size: 0.85rem; font-weight: 600;">
+                LIVE DATA ACTIVE: Overriding simulation with your typing signal (Variability: {st.session_state.typing_variability_score}%)
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+         st.markdown(f"""
+        <div style="margin-top: 10px; background: rgba(148, 163, 184, 0.1); border: 1px solid #475569; border-radius: 8px; padding: 10px; display: flex; align-items: center; gap: 10px;">
+             <div style="width: 8px; height: 8px; background: #64748b; border-radius: 50%;"></div>
+            <div style="color: #94a3b8; font-size: 0.85rem;">
+                Awaiting input... (Stress Score currently running on passive simulation)
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
     # Auto-refresh if enabled
     if st.session_state.sentinel_enabled:
         time.sleep(1)
@@ -1847,47 +1944,7 @@ def render_passive_sentinel_inlined():
 
 # --- PAGE ROUTING ---
 
-if st.session_state.page == "Dashboard":
-    # Show main dashboard (existing code or summary)
-    # For now, we reuse the existing components as the dashboard for the prompt flow
-    # or simple provide the dashboard view.
-    # Given the previous file structure, the "Dashboard" was the default view logic 
-    # that existed before I wrapped it. 
-    # Let's ensure the previous logic renders here.
-    
-    # RENDER DASHBOARD COMPONENTS
-    # 1. Header & AI Data
-    col1, col2 = st.columns([2, 1])
-    with col1:
-        st.title("Symbiome Operations Center")
-        st.markdown(f"**System Status:** {ai_data['peak_perf']} | **Recovery:** {ai_data['recovery_trend']}")
-    with col2:
-        if st.session_state.show_coach:
-             st.info(f"💡 **AI Assistant:** {ai_data['insight']}")
-
-    # 2. Main Metrics (Reusing dark cards for Dashboard feel)
-    m1, m2, m3, m4 = st.columns(4)
-    with m1: st.metric("SRI Score", f"{current_sri}", f"{'↑' if current_sri > 50 else '↓'} 2.4%")
-    with m2: st.metric("Stress Risk", ai_data['stress_risk'], delta_color="inverse")
-    with m3: st.metric("Recovery Time", f"{int(ai_data['recovery'])} min", "-1m")
-    with m4: st.metric("Confidence", f"{ai_data['confidence']}%")
-    
-    # 3. Trends (User History)
-    st.markdown("### 📅 30-Day Resilience Trend")
-    try:
-        history_df = pd.read_csv("data/user_history.csv")
-        fig_hist = px.line(history_df, x='Date', y='Symbiome_Resilience_Score', template='plotly_dark')
-        fig_hist.update_traces(line_color='#00f2fe', line_width=3)
-        fig_hist.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=300)
-        st.plotly_chart(fig_hist, use_container_width=True)
-    except:
-        st.warning("Trend data unavailable. Run data_generator.py to initialize.")
-        
-elif st.session_state.page == "Monitor":
-    render_monitor()
-    render_session_summary()
-
-elif st.session_state.page == "Training":
+# End of application
     render_training()
 
 
