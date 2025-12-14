@@ -252,7 +252,9 @@ def render_monitor():
              if st.session_state.biofeedback_active:
                 st.button("✅ Complete", on_click=stop_biofeedback, type="primary", use_container_width=True)
              else:
-                st.button("▶ Start", on_click=start_biofeedback, type="primary", use_container_width=True)
+                if st.button("▶ Start", key="btn_monitor_start_header", type="primary", use_container_width=True):
+                    start_biofeedback()
+                    st.rerun()
 
     st.markdown("---")
 
@@ -1561,10 +1563,13 @@ elif st.session_state.page == 'Dashboard':
             st.button("⏹ STOP SESSION", on_click=stop_biofeedback, use_container_width=True)
         else:
             # Using a target-like unicode symbol to match the mockup
-            def on_start_click():
-                start_biofeedback()
-                st.rerun()
-            st.button("◎ START BIOFEEDBACK SESSION", on_click=on_start_click, type="primary", use_container_width=True)
+            # Using a target-like unicode symbol to match the mockup
+            if st.button("◎ START BIOFEEDBACK SESSION", key="btn_start_monitor_main", type="primary", use_container_width=True):
+                try:
+                    start_biofeedback()
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Navigation Error: {e}")
     
     # --- SECTION 2: REAL-TIME BIOMETRICS STRIP ---
     st.markdown("### ⚡ Real-Time Biological Readings")
