@@ -50,18 +50,13 @@ if 'live_mode' not in st.session_state:
     st.session_state.live_mode = False
 if 'page' not in st.session_state:
     st.session_state.page = 'Dashboard'  # Default to Dashboard
-print(f"DEBUG: GLOBAL RUN - Current Page: {st.session_state.get('page')}")
-# DEBUG: Visible State Tracker
-st.warning(f"DEBUG: Current Page = {st.session_state.get('page')} | Sentinel Enabled = {st.session_state.get('sentinel_enabled')}")
 if 'biofeedback_start_time' not in st.session_state:
     st.session_state.biofeedback_start_time = None
 
 # --- REDIRECT TOKEN LOGIC (Robust Navigation) ---
 if st.session_state.get('redirect_to_monitor'):
-    st.session_state.page = 'Monitor'
-    st.session_state.biofeedback_active = True
-    st.session_state.live_mode = True
-    st.session_state.biofeedback_start_time = time.time()
+    # Call the main start function to ensure Engine is started
+    start_biofeedback()
     st.session_state.redirect_to_monitor = False # Consume token
     st.rerun()
 
