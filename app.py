@@ -557,6 +557,9 @@ def render_training():
     """
     user_data = load_user_progress()
     
+    # DEBUG: Visible State Tracker
+    st.warning(f"DEBUG: Current Page = {st.session_state.get('page')} | Sentinel Enabled = {st.session_state.get('sentinel_enabled')}")
+
     # --- HEADER (Screenshot 2) ---
     st.markdown(f"""
     <div class="training-header">
