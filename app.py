@@ -1942,15 +1942,4 @@ def render_passive_sentinel_inlined():
         time.sleep(1)
         st.rerun()
 
-# --- PAGE ROUTING ---
-
 # End of application
-    render_training()
-
-
-
-elif st.session_state.page == "SENTINEL":
-    render_passive_sentinel_inlined()
-    
-else:
-    st.info(f"🚧 {st.session_state.page} module is under construction.")
