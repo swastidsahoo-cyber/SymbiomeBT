@@ -234,6 +234,13 @@ def render_monitor():
     Renders the 'Winner Worthy' Monitor Screen.
     Matches the provided screenshots exactly.
     """
+    # SELF-HEALING: Ensure session is actually active if requested
+    if st.session_state.get('auto_start_pending'):
+        print("DEBUG: Auto-Start Pending detected in Monitor. Forcing Start.")
+        start_biofeedback()
+        st.session_state.auto_start_pending = False
+        st.rerun() # Re-render to show Active UI
+
     # --- HEADER SECTION (Screenshot 1) ---
     # "Live Monitoring Session" | Timer | Recovery Button
     
