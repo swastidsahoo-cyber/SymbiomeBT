@@ -516,8 +516,9 @@ def render_navbar():
                 # Highlight active page
                 is_active = (st.session_state.page == item)
                 label = f"**{item}**" if is_active else item
-                if st.button(label, key=f"nav_{item}", on_click=set_page, args=(item,), use_container_width=True):
-                    pass # Handled by callback
+                if st.button(label, key=f"nav_{item}", use_container_width=True):
+                    st.session_state.page = item
+                    st.rerun()
         # st.markdown('</div>', unsafe_allow_html=True) <-- REMOVED
 
     # Backup Sidebar Navigation (Just in case)
