@@ -1428,50 +1428,6 @@ else:
             except FileNotFoundError:
                 st.error("Whitepaper file not found.")
 # --- PAGE ROUTING ---
-# --- PAGE ROUTING ---
-
-if st.session_state.page == "Dashboard":
-    # Show main dashboard (existing code or summary)
-    # For now, we reuse the existing components as the dashboard for the prompt flow
-    # or simple provide the dashboard view.
-    # Given the previous file structure, the "Dashboard" was the default view logic 
-    # that existed before I wrapped it. 
-    # Let's ensure the previous logic renders here.
-    
-    # RENDER DASHBOARD COMPONENTS
-    # 1. Header & AI Data
-    col1, col2 = st.columns([2, 1])
-    with col1:
-        st.title("Symbiome Operations Center")
-        st.markdown(f"**System Status:** {ai_data['peak_perf']} | **Recovery:** {ai_data['recovery_trend']}")
-    with col2:
-        if st.session_state.show_coach:
-             st.info(f"💡 **AI Assistant:** {ai_data['insight']}")
-
-    # 2. Main Metrics (Reusing dark cards for Dashboard feel)
-    m1, m2, m3, m4 = st.columns(4)
-    with m1: st.metric("SRI Score", f"{current_sri}", f"{'↑' if current_sri > 50 else '↓'} 2.4%")
-    with m2: st.metric("Stress Risk", ai_data['stress_risk'], delta_color="inverse")
-    with m3: st.metric("Recovery Time", f"{int(ai_data['recovery'])} min", "-1m")
-    with m4: st.metric("Confidence", f"{ai_data['confidence']}%")
-    
-    # 3. Trends (User History)
-    st.markdown("### 📅 30-Day Resilience Trend")
-    try:
-        history_df = pd.read_csv("data/user_history.csv")
-        fig_hist = px.line(history_df, x='Date', y='Symbiome_Resilience_Score', template='plotly_dark')
-        fig_hist.update_traces(line_color='#00f2fe', line_width=3)
-        fig_hist.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=300)
-        st.plotly_chart(fig_hist, use_container_width=True)
-    except:
-        st.warning("Trend data unavailable. Run data_generator.py to initialize.")
-        
-elif st.session_state.page == "Monitor":
-    render_monitor()
-    render_session_summary()
-
-elif st.session_state.page == "Training":
-    render_training()
 
 # ==========================================
 # PASSIVE SENTINEL - EXACT UI MATCH (INLINED)
@@ -1759,6 +1715,53 @@ def render_passive_sentinel_inlined():
     if st.session_state.sentinel_enabled:
         time.sleep(1)
         st.rerun()
+
+# --- PAGE ROUTING ---
+
+if st.session_state.page == "Dashboard":
+    # Show main dashboard (existing code or summary)
+    # For now, we reuse the existing components as the dashboard for the prompt flow
+    # or simple provide the dashboard view.
+    # Given the previous file structure, the "Dashboard" was the default view logic 
+    # that existed before I wrapped it. 
+    # Let's ensure the previous logic renders here.
+    
+    # RENDER DASHBOARD COMPONENTS
+    # 1. Header & AI Data
+    col1, col2 = st.columns([2, 1])
+    with col1:
+        st.title("Symbiome Operations Center")
+        st.markdown(f"**System Status:** {ai_data['peak_perf']} | **Recovery:** {ai_data['recovery_trend']}")
+    with col2:
+        if st.session_state.show_coach:
+             st.info(f"💡 **AI Assistant:** {ai_data['insight']}")
+
+    # 2. Main Metrics (Reusing dark cards for Dashboard feel)
+    m1, m2, m3, m4 = st.columns(4)
+    with m1: st.metric("SRI Score", f"{current_sri}", f"{'↑' if current_sri > 50 else '↓'} 2.4%")
+    with m2: st.metric("Stress Risk", ai_data['stress_risk'], delta_color="inverse")
+    with m3: st.metric("Recovery Time", f"{int(ai_data['recovery'])} min", "-1m")
+    with m4: st.metric("Confidence", f"{ai_data['confidence']}%")
+    
+    # 3. Trends (User History)
+    st.markdown("### 📅 30-Day Resilience Trend")
+    try:
+        history_df = pd.read_csv("data/user_history.csv")
+        fig_hist = px.line(history_df, x='Date', y='Symbiome_Resilience_Score', template='plotly_dark')
+        fig_hist.update_traces(line_color='#00f2fe', line_width=3)
+        fig_hist.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=300)
+        st.plotly_chart(fig_hist, use_container_width=True)
+    except:
+        st.warning("Trend data unavailable. Run data_generator.py to initialize.")
+        
+elif st.session_state.page == "Monitor":
+    render_monitor()
+    render_session_summary()
+
+elif st.session_state.page == "Training":
+    render_training()
+
+
 
 elif st.session_state.page == "SENTINEL":
     render_passive_sentinel_inlined()
