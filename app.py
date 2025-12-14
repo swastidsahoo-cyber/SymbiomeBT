@@ -13,6 +13,7 @@ from modules.passive_sentinel import render_passive_sentinel # Import Passive Se
 
 # ==========================================
 # SYMBIOME APP CONFIGURATION
+# Version: 2.1 - Passive Sentinel Active
 # ==========================================
 st.set_page_config(
     page_title="Symbiome | AI Resilience Platform",
