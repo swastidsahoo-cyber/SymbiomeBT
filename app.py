@@ -796,10 +796,7 @@ def render_training():
 
         st.markdown("</div>", unsafe_allow_html=True)
         
-        # 5. AUTO-REFRESH when training is active
-        if st.session_state.training_active:
-            time.sleep(0.1)
-            st.rerun()
+    # (Auto-refresh moved to end of function)
 
     # --- GARDEN & ACHIEVEMENTS (Screenshot 3) ---
     with col_garden:
@@ -891,6 +888,11 @@ def render_training():
 </div>
 """
         st.markdown(garden_html, unsafe_allow_html=True)
+
+    # 5. AUTO-REFRESH when training is active (MOVED HERE)
+    if st.session_state.training_active:
+        time.sleep(0.1)
+        st.rerun()
 
     # --- CHALLENGES SECTION (Bottom of screen) ---
     st.markdown("""
@@ -1932,7 +1934,7 @@ elif st.session_state.page == 'Dashboard':
     
     # --- AUTO-REFRESH LOGIC (MUST BE AT END) ---
     if st.session_state.live_mode:
-        time.sleep(2) # Refresh rate
+        time.sleep(0.5) # Faster refresh rate for Biofeedback
         st.rerun()
     
     # --- SIDEBAR ---
