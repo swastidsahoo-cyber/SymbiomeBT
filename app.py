@@ -959,7 +959,9 @@ def render_training():
 def render_passive_sentinel_inlined():
     """Renders Passive Sentinel matching the exact design screenshots."""
     # GUARD CLAUSE: Prevent running if page is not Sentinel
+    print(f"DEBUG: Sentinel Entry Check. Page={st.session_state.page}")
     if st.session_state.page != 'SENTINEL':
+        print("DEBUG: Sentinel BLOCKING Execution because page is not SENTINEL")
         return
 
     # Initialize session state (KEEPING DATA LOGIC SAME)
@@ -1471,10 +1473,11 @@ def render_passive_sentinel_inlined():
         </div>
         """, unsafe_allow_html=True)
     
-    # Auto-refresh if enabled
+    # Auto-refresh if enabled (DOUBLE CHECK PAGE STATE)
     if st.session_state.sentinel_enabled:
-        time.sleep(1)
-        st.rerun()
+        if st.session_state.page == 'SENTINEL':
+            time.sleep(1)
+            st.rerun()
 if st.session_state.biofeedback_active and st.session_state.biofeedback_start_time:
     elapsed = time.time() - st.session_state.biofeedback_start_time
     if elapsed > 180: # 3 minutes
@@ -1488,8 +1491,7 @@ elif st.session_state.page == 'Training':
 elif st.session_state.page == 'Summary':
     render_session_summary()
 elif st.session_state.page == 'SENTINEL':
-    # render_passive_sentinel_inlined()
-    pass
+    render_passive_sentinel_inlined()
 elif st.session_state.page == 'Dashboard':
     # ==========================================
     # DASHBOARD LAYOUT
