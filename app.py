@@ -318,15 +318,21 @@ def render_monitor():
         st.markdown('<div style="height: 10px;"></div>', unsafe_allow_html=True) # Spacer
         cc1, cc2, cc3 = st.columns(3)
         with cc1:
-            if st.button("⚡ Simulate Stress", use_container_width=True):
+        with cc1:
+            def on_stress_click():
                 data_engine.trigger_stress()
                 st.toast("Stress Spike Simulated", icon="⚡")
+            st.button("⚡ Simulate Stress", use_container_width=True, on_click=on_stress_click, key="btn_sim_stress")
+            
         with cc2:
-            if st.button("🌿 Mark Recovery", use_container_width=True):
+            def on_recovery_click():
                 data_engine.trigger_recovery()
                 st.toast("Recovery Protocol Initiated", icon="🌿")
+            st.button("🌿 Mark Recovery", use_container_width=True, on_click=on_recovery_click, key="btn_sim_recovery")
         with cc3:
-            st.button("🏷️ Add Annotation", use_container_width=True)
+            def on_annotate_click():
+                 st.toast("Annotation Added at " + time.strftime("%H:%M:%S"), icon="🏷️")
+            st.button("🏷️ Add Annotation", use_container_width=True, on_click=on_annotate_click, key="btn_annotate")
 
     # --- SENSOR CARDS (Screenshot 1) ---
     # Dark cards with colored headers/borders
