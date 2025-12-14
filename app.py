@@ -1742,22 +1742,37 @@ def render_passive_sentinel_inlined():
     with c_set1:
         st.markdown('<div style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Sensor Permissions</div>', unsafe_allow_html=True)
         
-        sensors = [
-            ("📷 Camera (PPG)", "Heart rate variability extraction"),
-            ("🎤 Microphone", "Ambient noise decibel metering"),
-            ("📱 Acceleration", "Physical agitation analysis"),
+        # Sensor data structure
+        sensors_config = [
+            ("camera", "📷 Camera (PPG)", "Heart rate variability extraction"),
+            ("mic", "🎤 Microphone", "Ambient noise decibel metering"),
+            ("motion", "📱 Acceleration", "Physical agitation analysis"),
+            ("notifs", "🔔 Notifications", "Frequency tracking (metadata only)")
         ]
         
-        for name, desc in sensors:
-            st.markdown(f"""
-            <div class="sentinel-card" style="padding: 12px 15px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
-                <div>
-                    <div style="color: white; font-weight: 600;">{name}</div>
-                    <div style="color: #64748b; font-size: 0.8rem;">{desc}</div>
-                </div>
-                <div style="color: #10b981; font-size: 1.2rem;">✓</div>
-            </div>
-            """, unsafe_allow_html=True)
+        # Initialize sensor states if missing
+        for sid, _, _ in sensors_config:
+            if f'sensor_{sid}' not in st.session_state:
+                st.session_state[f'sensor_{sid}'] = True
+
+        for sid, name, desc in sensors_config:
+            # Layout: Text description on left, Toggle on right
+            # We use a container with columns to align them perfectly
+            with st.container():
+                c_desc, c_toggle = st.columns([4, 1])
+                with c_desc:
+                    opacity = "1" if st.session_state[f'sensor_{sid}'] else "0.5"
+                    st.markdown(f"""
+                    <div style="opacity: {opacity}; transition: opacity 0.3s ease;">
+                        <div style="color: white; font-weight: 600; font-size: 0.95rem;">{name}</div>
+                        <div style="color: #64748b; font-size: 0.8rem;">{desc}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                with c_toggle:
+                    st.toggle("Toggle", value=st.session_state[f'sensor_{sid}'], key=f'sensor_{sid}', label_visibility="collapsed")
+            
+            # Divider
+            st.markdown("<div style='height: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px;'></div>", unsafe_allow_html=True)
             
     with c_set2:
         st.markdown('<div style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Alert Sensitivity</div>', unsafe_allow_html=True)
