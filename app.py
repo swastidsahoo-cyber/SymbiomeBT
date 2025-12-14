@@ -1385,7 +1385,7 @@ def render_passive_sentinel_inlined():
     with st.container():
         user_text = st.text_area(
             "Calibration Input",
-            placeholder="Type anything here (e.g. stream of consciousness, a quick journal entry) to test sensitivity... \nThe faster and more erratic you type, the higher the Stress Score will rise.",
+            placeholder="Type your thoughts here... \nIMPORTANT: Press Ctrl+Enter (or Command+Enter) to simulate the 'background check' and see the LIVE update.",
             height=120,
             key="sentinel_calibration_input",
             help="Your text is processed locally for cadence analysis only and is not stored."
@@ -1429,8 +1429,9 @@ def render_passive_sentinel_inlined():
             time.sleep(0.1) # Debounce slightly
             st.rerun()
             
-        elif curr_time - st.session_state.typing_last_time > 5:
-            # 5 seconds of no typing -> Reset "Active" status
+        elif curr_time - st.session_state.typing_last_time > 15:
+            # 15 seconds of no typing -> Reset "Active" status
+            # We increased this from 5s to allow for reading/thinking time
             st.session_state.real_typing_active = False
 
     # Visual Feedback for Calibration
