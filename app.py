@@ -53,8 +53,16 @@ if 'page' not in st.session_state:
 print(f"DEBUG: GLOBAL RUN - Current Page: {st.session_state.get('page')}")
 # DEBUG: Visible State Tracker
 st.warning(f"DEBUG: Current Page = {st.session_state.get('page')} | Sentinel Enabled = {st.session_state.get('sentinel_enabled')}")
-if 'biofeedback_start_time' not in st.session_state:
     st.session_state.biofeedback_start_time = None
+
+# --- REDIRECT TOKEN LOGIC (Robust Navigation) ---
+if st.session_state.get('redirect_to_monitor'):
+    st.session_state.page = 'Monitor'
+    st.session_state.biofeedback_active = True
+    st.session_state.live_mode = True
+    st.session_state.biofeedback_start_time = time.time()
+    st.session_state.redirect_to_monitor = False # Consume token
+    st.rerun()
 
 # --- DATA ENGINE INTEGRATION ---
 # We now use the data_engine for all live data
@@ -1578,10 +1586,10 @@ elif st.session_state.page == 'Dashboard':
             # Using a target-like unicode symbol to match the mockup
             # Using a target-like unicode symbol to match the mockup
             def on_start_click_dashboard():
-                print("DEBUG: Dashboard Start Clicked")
-                start_biofeedback()
-            
-            st.button("◎ START BIOFEEDBACK SESSION", key="btn_start_monitor_main", on_click=on_start_click_dashboard, type="primary", use_container_width=True)
+                # Set the Redirect Token to force navigation on next run
+                st.session_state['redirect_to_monitor'] = True
+                
+            st.button("◎ START BIOFEEDBACK SESSION", key="btn_start_monitor_token", on_click=on_start_click_dashboard, type="primary", use_container_width=True)
     
     # --- SECTION 2: REAL-TIME BIOMETRICS STRIP ---
     st.markdown("### ⚡ Real-Time Biological Readings")
