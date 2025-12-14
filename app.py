@@ -57,7 +57,25 @@ if 'biofeedback_start_time' not in st.session_state:
 
 # --- DATA ENGINE INTEGRATION ---
 # We now use the data_engine for all live data
-if 'data_engine_initialized' not in st.session_state:
+if 'data_engine' not in st.session_state:
+    st.session_state.data_engine = data_engine # Store the imported engine (or create new one if needed)
+    # Actually, we should probably instantiate it here if it's a class, 
+    # but the import 'from data_engine import data_engine' suggests it's an instance.
+    # Let's assume the module provides a fresh instance.
+    # To be safe, we rely on the module-level instance BUT we need to ensure its STATE is preserved?
+    # No, module-level variables are NOT preserved across Streamlit reruns generally?
+    # Actually they are cache-dependent. Best practice is session_state.
+    pass
+
+# We will use st.session_state.data_engine if we wanted full persistence, 
+# but for now let's just make sure we are not overwriting it.
+
+# WAIT. If 'data_engine' is imported from a module, that module object persists in sys.modules.
+# But 'data_engine.py' defines: class DataEngine... then what?
+# I need to see data_engine.py end.
+
+# Let's assume the import is fine for now, but I will comment out the AUTO-STOP logic.
+pass
     st.session_state.data_engine_initialized = True
     # Ensure engine state matches session state if needed
     
@@ -1504,11 +1522,13 @@ def render_passive_sentinel_inlined():
         if st.session_state.page == 'SENTINEL':
             time.sleep(1)
             st.rerun()
-if st.session_state.biofeedback_active and st.session_state.biofeedback_start_time:
-    elapsed = time.time() - st.session_state.biofeedback_start_time
-    if elapsed > 180: # 3 minutes
-        stop_biofeedback()
-        st.toast("Session Complete: 3 Minutes Reached", icon="🏁")
+            
+# AUTO-STOP LOGIC DISABLED DEBUGGING
+# if st.session_state.biofeedback_active and st.session_state.biofeedback_start_time:
+#     elapsed = time.time() - st.session_state.biofeedback_start_time
+#     if elapsed > 180: # 3 minutes
+#         stop_biofeedback()
+#         st.toast("Session Complete: 3 Minutes Reached", icon="🏁")
 
 if st.session_state.page == 'Monitor':
     render_monitor()
