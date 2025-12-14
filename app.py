@@ -222,6 +222,7 @@ def stop_biofeedback():
 # --- REDIRECT TOKEN CHECK (Post-Function Definition) ---
 if st.session_state.get('redirect_to_monitor'):
     start_biofeedback() # Now defined!
+    st.session_state.auto_start_pending = True # Signal for Monitor page to verify start
     st.session_state.redirect_to_monitor = False
     st.rerun()
 
