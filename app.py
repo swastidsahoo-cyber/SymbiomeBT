@@ -53,12 +53,7 @@ if 'page' not in st.session_state:
 if 'biofeedback_start_time' not in st.session_state:
     st.session_state.biofeedback_start_time = None
 
-# --- REDIRECT TOKEN LOGIC (Robust Navigation) ---
-if st.session_state.get('redirect_to_monitor'):
-    # Call the main start function to ensure Engine is started
-    start_biofeedback()
-    st.session_state.redirect_to_monitor = False # Consume token
-    st.rerun()
+# --- REDIRECT TOKEN LOGIC MOVED DOWN ---
 
 # --- DATA ENGINE INTEGRATION ---
 # We now use the data_engine for all live data
@@ -223,6 +218,12 @@ def stop_biofeedback():
         
     st.session_state.last_session_sri = final_score
     st.session_state.page = 'Dashboard' # Return to Dashboard
+
+# --- REDIRECT TOKEN CHECK (Post-Function Definition) ---
+if st.session_state.get('redirect_to_monitor'):
+    start_biofeedback() # Now defined!
+    st.session_state.redirect_to_monitor = False
+    st.rerun()
 
 def toggle_live_mode():
     st.session_state.live_mode = not st.session_state.live_mode
