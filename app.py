@@ -50,6 +50,7 @@ if 'live_mode' not in st.session_state:
     st.session_state.live_mode = False
 if 'page' not in st.session_state:
     st.session_state.page = 'SENTINEL'  # Default to Passive Sentinel to show the feature
+print(f"DEBUG: GLOBAL RUN - Current Page: {st.session_state.get('page')}")
 if 'biofeedback_start_time' not in st.session_state:
     st.session_state.biofeedback_start_time = None
 
@@ -194,6 +195,7 @@ def toggle_coach():
     st.session_state.show_coach = not st.session_state.show_coach
 
 def start_biofeedback():
+    print("DEBUG: start_biofeedback called!")
     st.session_state.biofeedback_active = True
     st.session_state.live_mode = True 
     st.session_state.page = 'Monitor'
@@ -954,7 +956,10 @@ def render_training():
 # ==========================================
 def render_passive_sentinel_inlined():
     """Renders Passive Sentinel matching the exact design screenshots."""
-    
+    # GUARD CLAUSE: Prevent running if page is not Sentinel
+    if st.session_state.page != 'SENTINEL':
+        return
+
     # Initialize session state (KEEPING DATA LOGIC SAME)
     if 'sentinel_enabled' not in st.session_state:
         st.session_state.sentinel_enabled = False
