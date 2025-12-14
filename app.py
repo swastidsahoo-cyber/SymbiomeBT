@@ -318,7 +318,6 @@ def render_monitor():
         st.markdown('<div style="height: 10px;"></div>', unsafe_allow_html=True) # Spacer
         cc1, cc2, cc3 = st.columns(3)
         with cc1:
-        with cc1:
             def on_stress_click():
                 data_engine.trigger_stress()
                 st.toast("Stress Spike Simulated", icon="⚡")
