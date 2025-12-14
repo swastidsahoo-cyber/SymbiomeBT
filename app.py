@@ -252,7 +252,13 @@ def render_monitor():
     # "Live Monitoring Session" | Timer | Recovery Button
     
     # Get duration
-    duration = data_engine.get_session_duration()
+    # Get duration (Use Session State for reliability)
+    if st.session_state.biofeedback_start_time:
+        elapsed_sec = int(time.time() - st.session_state.biofeedback_start_time)
+        mins, secs = divmod(elapsed_sec, 60)
+        duration = f"{mins:02d}:{secs:02d}"
+    else:
+        duration = "00:00"
     
     # Top Bar Container
     with st.container():
@@ -1532,7 +1538,10 @@ def render_passive_sentinel_inlined():
 #         stop_biofeedback()
 #         st.toast("Session Complete: 3 Minutes Reached", icon="🏁")
 
-if st.session_state.page == 'Monitor':
+if st.session_state.get('biofeedback_active', False):
+    # FORCE MONITOR IF ACTIVE (Overrides any erroneous page state)
+    render_monitor()
+elif st.session_state.page == 'Monitor':
     render_monitor()
 elif st.session_state.page == 'Training':
     render_training()
