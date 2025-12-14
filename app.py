@@ -518,6 +518,7 @@ def render_navbar():
                 label = f"**{item}**" if is_active else item
                 if st.button(label, key=f"nav_{item}", use_container_width=True):
                     set_page(item)
+                    st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
 
 # Render Navbar GLOBALLY
