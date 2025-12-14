@@ -226,6 +226,17 @@ if st.session_state.get('redirect_to_monitor'):
     st.session_state.redirect_to_monitor = False
     st.rerun()
 
+def on_stress_click_global():
+    data_engine.trigger_stress()
+    st.toast("Stress Spike Simulated", icon="⚡")
+
+def on_recovery_click_global():
+    data_engine.trigger_recovery()
+    st.toast("Recovery Protocol Initiated", icon="🌿")
+
+def on_annotate_click_global():
+    st.toast("Annotation Added at " + time.strftime("%H:%M:%S"), icon="🏷️")
+
 def toggle_live_mode():
     st.session_state.live_mode = not st.session_state.live_mode
 
