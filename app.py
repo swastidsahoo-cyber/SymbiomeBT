@@ -1488,7 +1488,8 @@ elif st.session_state.page == 'Training':
 elif st.session_state.page == 'Summary':
     render_session_summary()
 elif st.session_state.page == 'SENTINEL':
-    render_passive_sentinel_inlined()
+    # render_passive_sentinel_inlined()
+    pass
 elif st.session_state.page == 'Dashboard':
     # ==========================================
     # DASHBOARD LAYOUT
