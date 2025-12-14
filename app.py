@@ -1484,6 +1484,11 @@ def render_passive_sentinel_inlined():
             time.sleep(1)
             st.rerun()
 if st.session_state.biofeedback_active and st.session_state.biofeedback_start_time:
+    # FORCE PAGE TO MONITOR IF ACTIVE (Fixes Dashboard sticky issue)
+    if st.session_state.page != 'Monitor':
+        st.session_state.page = 'Monitor'
+        st.rerun()
+
     elapsed = time.time() - st.session_state.biofeedback_start_time
     if elapsed > 180: # 3 minutes
         stop_biofeedback()
