@@ -1347,9 +1347,134 @@ def render_passive_sentinel_inlined():
                     transform: translateX(-50%);
                     transition: left 0.3s ease;
                 "></div>
-# Orphaned Sentinel code deleted
+            </div>
+            <div style="font-size: 0.85rem; color: #94a3b8; line-height: 1.5; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
+                {
+                    'Alerts only for confirmed stress patterns (>90% confidence). Best for minimal interruptions.' if sensitivity_val == 1 else
+                    'Standard detection balancing accuracy and speed. Analysis includes minor behavioral deviations.' if sensitivity_val == 2 else
+                    'Proactive mode. Alerts on earliest possible signs. May increase frequency of notifications.'
+                }
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Hidden buttons to actually change state
+        cols = st.columns(3)
+        with cols[0]:
+            if st.button("Set Low", key="hid_low"): st.session_state.sentinel_sensitivity = 'Low'
+        with cols[1]:
+            if st.button("Set Med", key="hid_med"): st.session_state.sentinel_sensitivity = 'Medium'
+        with cols[2]:
+            if st.button("Set High", key="hid_high"): st.session_state.sentinel_sensitivity = 'High'
+    
+    # ==========================================
+    # ALGORITHM CALIBRATION (REAL DATA)
+    # ==========================================
+    st.markdown("### 🧪 Algorithm Calibration (Web Demo Mode)")
+    st.markdown("""
+    <div style='color: #94a3b8; margin-bottom: 15px; font-size: 0.9rem; line-height: 1.6;'>
+        <b>Note:</b> Web browsers block background keylogging for security. 
+        To test the Sentinel's <b>Real-Time Stress Detection</b> with <b>YOUR</b> actual data, 
+        use this secure calibration box. We analyze your typing cadence and variability in real-time 
+        to update the Stress Probability above.
+    </div>
+    """, unsafe_allow_html=True)
 
-    # Auto-refresh logic removed (was orphaned global code)
+    # Initialize typing metrics in session state
+    if 'typing_last_len' not in st.session_state:
+        st.session_state.typing_last_len = 0
+    if 'typing_last_time' not in st.session_state:
+        st.session_state.typing_last_time = time.time()
+    if 'typing_variability_score' not in st.session_state:
+        st.session_state.typing_variability_score = 0
+    if 'typing_feedback_msg' not in st.session_state:
+        st.session_state.typing_feedback_msg = "Analyzing input patterns..."
+
+    # Container for the input
+    with st.container():
+        user_text = st.text_area(
+            "Calibration Input",
+            placeholder="Type your thoughts here... \nIMPORTANT: Press Ctrl+Enter (or Command+Enter) to simulate the 'background check' and see the LIVE update.",
+            height=120,
+            key="sentinel_calibration_input",
+            help="Your text is processed locally for cadence analysis only and is not stored."
+        )
+
+        # Real-time Analysis Logic
+        curr_len = len(user_text)
+        curr_time = time.time()
+        
+        if curr_len != st.session_state.typing_last_len:
+            # User is typing!
+            st.session_state.real_typing_active = True
+            
+            delta_char = abs(curr_len - st.session_state.typing_last_len)
+            delta_time = max(0.1, curr_time - st.session_state.typing_last_time)
+            
+            instant_speed = delta_char / delta_time # Chars per second
+            
+            # Simple "Stress" heuristic: Very fast bursts (>5 cps) OR Very erratic pauses imply stress
+            # We treat high speed as "High Arousal" -> Stress
+            
+            new_stress_contribution = 0
+            if instant_speed > 8: # Super fast banging on keys
+                new_stress_contribution = 15
+                st.session_state.typing_variability_score = 90 # High jitter
+                st.session_state.typing_feedback_msg = f"⚡ <b>High Frenetic Activity ({instant_speed:.1f} cps)</b> detected. Stress Score <b>INCREASED</b> significantly."
+            elif instant_speed > 4: # Normal-Fast
+                new_stress_contribution = 5
+                st.session_state.typing_variability_score = 45 # Moderate
+                st.session_state.typing_feedback_msg = f"⚠ <b>Moderate Pace ({instant_speed:.1f} cps)</b> detected. Stress Score <b>slighly increased</b>."
+            else: # Slow/Calm
+                new_stress_contribution = -5 # Reducing stress
+                st.session_state.typing_variability_score = 10 # Low jitter
+                st.session_state.typing_feedback_msg = f"🍃 <b>Calm/Thoughtful Pace ({instant_speed:.1f} cps)</b> detected. Stress Score <b>DECREASING</b>."
+
+            # Apply to main probability (with clamping)
+            st.session_state.stress_probability = max(0, min(100, st.session_state.stress_probability + new_stress_contribution))
+            
+            # Update history
+            st.session_state.typing_last_len = curr_len
+            st.session_state.typing_last_time = curr_time
+            
+            # Force rerun to show updated graph immediately
+            time.sleep(0.1) # Debounce slightly
+            st.rerun()
+            
+        elif curr_time - st.session_state.typing_last_time > 15:
+            # 15 seconds of no typing -> Reset "Active" status
+            # We increased this from 5s to allow for reading/thinking time
+            st.session_state.real_typing_active = False
+
+    # Visual Feedback for Calibration
+    if st.session_state.real_typing_active:
+         st.markdown(f"""
+        <div style="margin-top: 10px; background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 8px; padding: 10px; display: flex; align-items: center; gap: 10px;">
+            <div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 5px #10b981;"></div>
+            <div>
+                <div style="color: #10b981; font-size: 0.85rem; font-weight: 600;">
+                    LIVE DATA ACTIVE: Overriding simulation
+                </div>
+                <div style="color: #6ee7b7; font-size: 0.8rem; margin-top: 2px;">
+                    {st.session_state.typing_feedback_msg}
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+         st.markdown(f"""
+        <div style="margin-top: 10px; background: rgba(148, 163, 184, 0.1); border: 1px solid #475569; border-radius: 8px; padding: 10px; display: flex; align-items: center; gap: 10px;">
+             <div style="width: 8px; height: 8px; background: #64748b; border-radius: 50%;"></div>
+            <div style="color: #94a3b8; font-size: 0.85rem;">
+                Awaiting input... (Stress Score currently running on passive simulation)
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Auto-refresh if enabled
+    if st.session_state.sentinel_enabled:
+        time.sleep(1)
+        st.rerun()
 if st.session_state.biofeedback_active and st.session_state.biofeedback_start_time:
     elapsed = time.time() - st.session_state.biofeedback_start_time
     if elapsed > 180: # 3 minutes
