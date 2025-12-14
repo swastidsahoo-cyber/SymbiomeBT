@@ -1428,8 +1428,7 @@ else:
             except FileNotFoundError:
                 st.error("Whitepaper file not found.")
 # --- PAGE ROUTING ---
-# DEBUG BANNER
-st.markdown("<div style='background: #ef4444; color: white; padding: 10px; text-align: center; font-weight: bold;'>⚠️ UPDATE 2.1: PASSIVE SENTINEL ACTIVE</div>", unsafe_allow_html=True)
+# --- PAGE ROUTING ---
 
 if st.session_state.page == "Dashboard":
     # Show main dashboard (existing code or summary)
