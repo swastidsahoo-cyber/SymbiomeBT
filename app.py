@@ -233,21 +233,6 @@ if st.session_state.get('redirect_to_monitor'):
     st.session_state.redirect_to_monitor = False
     st.rerun()
 
-def on_stress_click_global():
-    data_engine.trigger_stress()
-    st.toast("Stress Spike Simulated", icon="⚡")
-
-def on_recovery_click_global():
-    data_engine.trigger_recovery()
-    st.toast("Recovery Protocol Initiated", icon="🌿")
-
-def on_annotate_click_global():
-    st.toast("Annotation Added at " + time.strftime("%H:%M:%S"), icon="🏷️")
-
-def on_monitor_start_click_global():
-    start_biofeedback()
-    st.toast("Session Started", icon="🧬")
-
 def toggle_live_mode():
     st.session_state.live_mode = not st.session_state.live_mode
 
@@ -289,7 +274,11 @@ def render_monitor():
              if st.session_state.biofeedback_active:
                 st.button("✅ Complete", on_click=stop_biofeedback, type="primary", use_container_width=True)
              else:
-                st.button("▶ Start", key="btn_monitor_start_header", on_click=on_monitor_start_click_global, type="primary", use_container_width=True)
+                if st.button("▶ Start", key="btn_monitor_start_header_inline", type="primary", use_container_width=True):
+                    start_biofeedback()
+                    st.session_state.page = 'Monitor' # Force stay
+                    st.session_state.biofeedback_active = True # Force active
+                    st.rerun()
 
     st.markdown("---")
 
@@ -338,12 +327,34 @@ def render_monitor():
         st.markdown('<div style="height: 10px;"></div>', unsafe_allow_html=True) # Spacer
         cc1, cc2, cc3 = st.columns(3)
         with cc1:
-            st.button("⚡ Simulate Stress", use_container_width=True, on_click=on_stress_click_global, key="btn_sim_stress")
+            if st.button("⚡ Simulate Stress", use_container_width=True, key="btn_sim_stress_inline"):
+                try:
+                    data_engine.trigger_stress()
+                    st.toast("Stress Spike Simulated", icon="⚡")
+                    # RE-ASSERT STATE TO PREVENT REDIRECTS
+                    st.session_state.page = 'Monitor'
+                    st.session_state.biofeedback_active = True
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Error: {e}")
             
         with cc2:
-            st.button("🌿 Mark Recovery", use_container_width=True, on_click=on_recovery_click_global, key="btn_sim_recovery")
+            if st.button("🌿 Mark Recovery", use_container_width=True, key="btn_sim_recovery_inline"):
+                try:
+                    data_engine.trigger_recovery()
+                    st.toast("Recovery Protocol Initiated", icon="🌿")
+                    st.session_state.page = 'Monitor'
+                    st.session_state.biofeedback_active = True
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Error: {e}")
+
         with cc3:
-            st.button("🏷️ Add Annotation", use_container_width=True, on_click=on_annotate_click_global, key="btn_annotate")
+            if st.button("🏷️ Add Annotation", use_container_width=True, key="btn_annotate_inline"):
+                st.toast("Annotation Added at " + time.strftime("%H:%M:%S"), icon="🏷️")
+                st.session_state.page = 'Monitor'
+                st.session_state.biofeedback_active = True
+                st.rerun()
 
     # --- SENSOR CARDS (Screenshot 1) ---
     # Dark cards with colored headers/borders
