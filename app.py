@@ -49,7 +49,7 @@ if 'tip_index' not in st.session_state:
 if 'live_mode' not in st.session_state:
     st.session_state.live_mode = False
 if 'page' not in st.session_state:
-    st.session_state.page = 'SENTINEL'  # Default to Passive Sentinel to show the feature
+    st.session_state.page = 'Dashboard'  # Default to Dashboard
 print(f"DEBUG: GLOBAL RUN - Current Page: {st.session_state.get('page')}")
 if 'biofeedback_start_time' not in st.session_state:
     st.session_state.biofeedback_start_time = None
