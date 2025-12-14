@@ -223,7 +223,7 @@ def stop_biofeedback():
 if st.session_state.get('redirect_to_monitor'):
     start_biofeedback() # Now defined!
     st.session_state.redirect_to_monitor = False
-    st.rerun()
+    # st.rerun() removed to allow immediate render
 
 def toggle_live_mode():
     st.session_state.live_mode = not st.session_state.live_mode
