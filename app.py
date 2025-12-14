@@ -1538,8 +1538,9 @@ def render_passive_sentinel_inlined():
 #         stop_biofeedback()
 #         st.toast("Session Complete: 3 Minutes Reached", icon="🏁")
 
-if st.session_state.get('biofeedback_active', False):
-    # FORCE MONITOR IF ACTIVE (Overrides any erroneous page state)
+if st.session_state.get('biofeedback_active', False) and st.session_state.page == 'Dashboard':
+    # Only force Monitor if the app tries to fall back to Dashboard (the bug)
+    # If the user explicitly selected 'Training' or 'Sentinel', allow it.
     render_monitor()
 elif st.session_state.page == 'Monitor':
     render_monitor()
