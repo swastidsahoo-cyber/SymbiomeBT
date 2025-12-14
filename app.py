@@ -962,7 +962,7 @@ elif st.session_state.page == 'Training':
     render_training()
 elif st.session_state.page == 'Summary':
     render_session_summary()
-else:
+elif st.session_state.page == 'Dashboard':
     # ==========================================
     # DASHBOARD LAYOUT
     # ==========================================
