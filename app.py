@@ -53,6 +53,7 @@ if 'page' not in st.session_state:
 print(f"DEBUG: GLOBAL RUN - Current Page: {st.session_state.get('page')}")
 # DEBUG: Visible State Tracker
 st.warning(f"DEBUG: Current Page = {st.session_state.get('page')} | Sentinel Enabled = {st.session_state.get('sentinel_enabled')}")
+if 'biofeedback_start_time' not in st.session_state:
     st.session_state.biofeedback_start_time = None
 
 # --- REDIRECT TOKEN LOGIC (Robust Navigation) ---
