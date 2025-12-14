@@ -49,7 +49,7 @@ if 'tip_index' not in st.session_state:
 if 'live_mode' not in st.session_state:
     st.session_state.live_mode = False
 if 'page' not in st.session_state:
-    st.session_state.page = '🔔 SENTINEL'  # Default to Passive Sentinel to show the feature
+    st.session_state.page = 'SENTINEL'  # Default to Passive Sentinel to show the feature
 if 'biofeedback_start_time' not in st.session_state:
     st.session_state.biofeedback_start_time = None
 
@@ -505,7 +505,7 @@ def render_navbar():
     """, unsafe_allow_html=True)
     
     # Navigation Items
-    nav_items = ["Dashboard", "🔔 SENTINEL", "Monitor", "Training", "Digital Twin", "Journal", "Research", "Community"]
+    nav_items = ["Dashboard", "SENTINEL", "Monitor", "Training", "Digital Twin", "Journal", "Research", "Community"]
     
     # Container for Nav (Simplified)
     with st.container():
@@ -1473,7 +1473,7 @@ elif st.session_state.page == "Monitor":
 elif st.session_state.page == "Training":
     render_training()
 
-elif st.session_state.page == "🔔 SENTINEL":
+elif st.session_state.page == "SENTINEL":
     render_passive_sentinel()
     
 else:
