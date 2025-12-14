@@ -577,6 +577,12 @@ def render_navbar():
     # Backup Sidebar Navigation (Just in case)
     with st.sidebar:
         st.markdown("### 🧭 Navigation")
+        # SYNC STATE: Ensure widget matches current page to prevent resets
+        if 'sidebar_nav' not in st.session_state:
+             st.session_state.sidebar_nav = st.session_state.page
+        elif st.session_state.sidebar_nav != st.session_state.page:
+             st.session_state.sidebar_nav = st.session_state.page
+
         selected_page = st.radio("Go to:", nav_items, index=nav_items.index(st.session_state.page) if st.session_state.page in nav_items else 0, key="sidebar_nav")
         if selected_page != st.session_state.page:
             set_page(selected_page)
@@ -1526,10 +1532,12 @@ def render_passive_sentinel_inlined():
         """, unsafe_allow_html=True)
     
     # Auto-refresh if enabled (DOUBLE CHECK PAGE STATE)
-    if st.session_state.sentinel_enabled:
-        if st.session_state.page == 'SENTINEL':
-            time.sleep(1)
-            st.rerun()
+    # Auto-refresh if enabled (DOUBLE CHECK PAGE STATE)
+    # DISABLED to prevent redirect loops
+    # if st.session_state.sentinel_enabled:
+    #     if st.session_state.page == 'SENTINEL':
+    #         time.sleep(1)
+    #         st.rerun()
             
 # AUTO-STOP LOGIC DISABLED DEBUGGING
 # if st.session_state.biofeedback_active and st.session_state.biofeedback_start_time:
