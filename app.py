@@ -1,7 +1,7 @@
 # ==========================================
-# SYMBIOME STABLE VERSION 8.2
-# BUILD ID: UI-REFRESH-V82
-# TIMESTAMP: 2025-12-22 09:40 UTC
+# SYMBIOME STABLE VERSION 8.4
+# BUILD ID: HI-FI-FIX-V84
+# TIMESTAMP: 2025-12-22 09:47 UTC
 # ==========================================
 
 import streamlit as st

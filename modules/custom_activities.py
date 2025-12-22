@@ -1,6 +1,7 @@
 """
 Custom Activities Interface.
 Allows users to define and track real-world stress challenges using Virtual Sensors.
+Version 8.4 - Definitive UI & Interaction Fix
 """
 import streamlit as st
 import numpy as np
@@ -11,16 +12,8 @@ from datetime import datetime
 def render_custom_activities_page():
     # --- SESSION STATE INITIALIZATION ---
     if 'custom_activities' not in st.session_state:
-        st.session_state.custom_activities = [
-            {
-                "name": "Chemistry Test",
-                "type": "Cognitive",
-                "intensity": 6,
-                "duration": 1,
-                "notes": "With friends",
-                "sessions": 0
-            }
-        ]
+        st.session_state.custom_activities = []
+    
     if 'active_ca_session' not in st.session_state:
         st.session_state.active_ca_session = {
             "active": False,
@@ -32,7 +25,7 @@ def render_custom_activities_page():
     if 'show_add_activity' not in st.session_state:
         st.session_state.show_add_activity = False
 
-    # --- CSS STYLES ---
+    # --- CSS STYLES (DEDENTED) ---
     st.markdown("""
 <style>
 @keyframes pulse-red {
@@ -159,17 +152,15 @@ def render_custom_activities_page():
 </div>
 """, unsafe_allow_html=True)
 
-    # --- ACTIVE SESSION VIEW (SCREENSHOT 3) ---
+    # --- ACTIVE SESSION VIEW (SCREENSHOT 3 / SCREEN 4) ---
     if st.session_state.active_ca_session["active"]:
         session = st.session_state.active_ca_session
         elapsed = int(time.time() - session["start_time"])
         mins, secs = divmod(elapsed, 60)
         
-        # Simulate sensor readings incrementing
         if random.random() > 0.7:
             session["readings"] += 1
 
-        # Use a single block for the Active Session Bar to match Screenshot 3
         st.markdown(f"""
 <div class="active-session-v2">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
@@ -219,14 +210,15 @@ def render_custom_activities_page():
 </div>
 """, unsafe_allow_html=True)
         
-        # Invisible button to trigger the end (placed near the text for UX)
         if st.button("Click to End Session", key="end_hidden", type="primary", use_container_width=True):
             st.session_state.active_ca_session["active"] = False
             st.toast("Activity analyzed. Data synced to Journal.", icon="📊")
             st.rerun()
 
     # --- VIRTUAL SENSOR LAYER (SCREENSHOT 0) ---
-    st.markdown(f"""
+    # We display this ALWAYS unless we want to hide it in session (Screen 4 suggests it might be gone)
+    if not st.session_state.active_ca_session["active"]:
+        st.markdown(f"""
 <div class="section-container">
     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 5px;">
         <span style="font-size: 1.3rem; color: #94a3b8;">♒</span>
@@ -235,7 +227,6 @@ def render_custom_activities_page():
     <div style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 20px;">
         Enable measurement methods - works completely without hardware
     </div>
-    
     <div class="sensor-grid">
         <div class="sensor-card">
             <div class="sensor-icon">📷</div>
@@ -258,7 +249,6 @@ def render_custom_activities_page():
             <div class="sensor-sub">Reaction time & accuracy</div>
         </div>
     </div>
-    
     <div class="no-hw-box">
         <span style="font-weight: 700;">No hardware required:</span> These virtual sensors use your device's camera, microphone, and interaction patterns to measure physiological stress without any wearable devices.
     </div>
@@ -272,13 +262,14 @@ def render_custom_activities_page():
     with ca_header_col2:
         if st.button("+ Add New Activity", key="btn_show_add", use_container_width=True):
             st.session_state.show_add_activity = True
+            # Forcing immediate refresh to show modal (Screen 2)
             st.rerun()
 
-    # Add Activity Form (Modal Simulation - SCREENSHOT 1 & 2)
+    # --- MODAL SIMULATION (SCREENSHOT 1 / SCREEN 2) ---
     if st.session_state.show_add_activity:
         st.markdown("""
-<div style="position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); z-index: 10002;"></div>
-<div style="position: fixed; top:50%; left:50%; transform: translate(-50%, -50%); width: 500px; background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; z-index: 10003; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.6);">
+<div style="position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 10002;"></div>
+<div style="position: fixed; top:50%; left:50%; transform: translate(-50%, -50%); width: 500px; background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; z-index: 10003; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.8);">
     <div style="text-align: left; margin-bottom: 30px;">
         <h3 style="color: white; margin-bottom: 10px;">Add New Stress Activity</h3>
         <p style="color: #94a3b8; font-size: 0.95rem;">Create a custom activity to track your stress response</p>
@@ -286,11 +277,11 @@ def render_custom_activities_page():
 </div>
 """, unsafe_allow_html=True)
         
-        # We place columns for the form inputs to overlay the "modal"
         m_col1, m_col2, m_col3 = st.columns([1, 2, 1])
         with m_col2:
-            with st.form("new_activity_form_v2"):
-                new_name = st.text_input("Activity Name", placeholder="e.g., Chemistry Test")
+            st.markdown('<div style="height: 100px;"></div>', unsafe_allow_html=True) # Spacer for overlay alignment
+            with st.form("new_activity_form_v84"):
+                new_name = st.text_input("Activity Name", placeholder="e.g., Chemistry Exam, Job Interview, Public Speaking")
                 new_type = st.selectbox("Activity Type", [
                     "Cognitive (studying, exams)", 
                     "Social (presentations, interviews)", 
@@ -298,13 +289,13 @@ def render_custom_activities_page():
                     "Emotional (difficult conversations)", 
                     "High Pressure (competitions, deadlines)"
                 ])
-                new_intensity = st.slider("Estimated Intensity", 1, 10, 6)
-                new_duration = st.number_input("Expected Duration (minutes)", min_value=1, value=1)
-                new_notes = st.text_area("Notes (optional)", placeholder="With friends")
+                new_intensity = st.slider("Estimated Intensity: 5/10", 1, 10, 5)
+                new_duration = st.number_input("Expected Duration (minutes)", min_value=1, value=10)
+                new_notes = st.text_area("Notes (optional)", placeholder="What triggers stress? Where are you? Who are you with?")
                 
                 f_col1, f_col2 = st.columns(2)
                 with f_col1:
-                    if st.form_submit_button("🎯 Add Activity", use_container_width=True):
+                    if st.form_submit_button("✅ Add Activity", use_container_width=True):
                         st.session_state.custom_activities.append({
                             "name": new_name if new_name else "Untitled Activity",
                             "type": new_type.split(" (")[0],
@@ -314,14 +305,16 @@ def render_custom_activities_page():
                             "sessions": 0
                         })
                         st.session_state.show_add_activity = False
+                        # AUTO START TRIAL? No, just refresh to show in registry (Screen 4 style)
+                        st.toast("Activity added to registry", icon="✨")
                         st.rerun()
                 with f_col2:
                     if st.form_submit_button("Cancel", use_container_width=True):
                         st.session_state.show_add_activity = False
                         st.rerun()
 
-    # Empty State (SCREENSHOT 0)
-    if not st.session_state.custom_activities:
+    # --- EMPTY STATE (PRE-ADD) ---
+    if not st.session_state.custom_activities and not st.session_state.show_add_activity:
         st.markdown("""
 <div style="background: rgba(15, 23, 42, 0.4); border: 2px dashed rgba(255,255,255,0.05); border-radius: 20px; padding: 100px 40px; text-align: center; margin-top: 20px;">
     <div style="font-size: 4rem; color: #334155; margin-bottom: 25px;">🎯</div>
@@ -331,14 +324,14 @@ def render_custom_activities_page():
     </p>
 </div>
 """, unsafe_allow_html=True)
-        # Hidden button for the centered look
         m_empty1, m_empty2, m_empty3 = st.columns([1, 1, 1])
         with m_empty2:
             if st.button("+ Add Your First Activity", key="btn_first_add", type="primary", use_container_width=True):
                 st.session_state.show_add_activity = True
                 st.rerun()
-    else:
-        # Activity List Cards (SCREENSHOT 3)
+    
+    # --- ACTIVITY REGISTRY (SCREENSHOT 3 / SCREEN 4) ---
+    elif st.session_state.custom_activities:
         cols = st.columns(2)
         for i, activity in enumerate(st.session_state.custom_activities):
             with cols[i % 2]:
@@ -351,7 +344,6 @@ def render_custom_activities_page():
             <div style="font-size: 0.9rem; color: #94a3b8; font-weight: 500;">{activity['type']}</div>
         </div>
     </div>
-    
     <div style="margin-bottom: 25px;">
         <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
             <span style="font-size: 0.9rem; color: #e2e8f0; font-weight: 500;">Intensity</span>
@@ -361,20 +353,17 @@ def render_custom_activities_page():
             <div class="intensity-bar-fill" style="width: {activity['intensity']*10}%;"></div>
         </div>
     </div>
-    
     <div style="display: flex; gap: 20px; color: #94a3b8; font-size: 0.9rem; margin-bottom: 15px; font-weight: 500;">
         <span>🕒 {activity['duration']}m</span>
         <span>📊 {activity['sessions']} sessions</span>
     </div>
     <div style="color: #64748b; font-size: 0.85rem; margin-bottom: 25px;">{activity['notes']}</div>
-    
     <div class="btn-start" onClick="window.parent.postMessage({{type: 'streamlit:setComponentValue', key: 'start_{i}', value: true}}, '*')">
         ▷ Start Activity
     </div>
 </div>
 """, unsafe_allow_html=True)
                 
-                # Hidden actual button for functional start
                 if st.button(f"Hidden Start {i}", key=f"start_{i}", type="secondary"):
                     st.session_state.active_ca_session = {
                         "active": True,
@@ -386,7 +375,7 @@ def render_custom_activities_page():
                     activity['sessions'] += 1
                     st.rerun()
 
-    # --- AUTO-REFRESH (If session active) ---
+    # --- AUTO-REFRESH ---
     if st.session_state.active_ca_session["active"]:
         time.sleep(1)
         st.rerun()
