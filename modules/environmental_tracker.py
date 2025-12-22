@@ -1,145 +1,48 @@
 """
-Environmental Symbiome Feedback (v1.5)
-PIXEL-PERFECT 1:1 UI Realization.
-Matches competition mockups exactly in header, sliders, curves, and pattern charts.
+Environmental Symbiome Feedback (v2.0)
+COMPLETE REWRITE - BULLETPROOF HTML RENDERING
+Zero indentation, direct variable injection for guaranteed visual rendering.
 """
 import streamlit as st
 import plotly.graph_objects as go
 import numpy as np
 import random
 import time
-import textwrap
 import pandas as pd
 from datetime import datetime
 
-
 def render_environmental_tracker_page():
-    # --- CSS STYLES (PIXEL-PERFECT FIGMA ACCURACY) ---
-    st.markdown("""
-<style>
+    # CSS - stored in variable with ZERO indentation
+    css_styles = """<style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
-
-html, body, [data-testid="stAppViewContainer"] {
-    font-family: 'Inter', sans-serif !important;
-}
-
-.env-header-v15 {
-    text-align: center;
-    margin-bottom: 40px;
-}
-.env-title-v15 {
-    color: #f59e0b;
-    font-size: 1.8rem;
-    font-weight: 800;
-    margin-bottom: 8px;
-}
-.env-sub-v15 {
-    color: #94a3b8;
-    font-size: 0.85rem;
-    font-weight: 500;
-}
-
-/* Stat Grid */
-.env-stat-row-v15 {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-bottom: 30px;
-}
-.env-stat-card-v15 {
-    background: #020617;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    padding: 20px;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-}
-.env-stat-tag-v15 {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: #111827;
-    color: #10b981;
-    font-size: 0.55rem;
-    font-weight: 800;
-    padding: 3px 6px;
-    border-radius: 4px;
-}
+html, body, [data-testid="stAppViewContainer"] { font-family: 'Inter', sans-serif !important; }
+.env-header-v15 { text-align: center; margin-bottom: 40px; }
+.env-title-v15 { color: #f59e0b; font-size: 1.8rem; font-weight: 800; margin-bottom: 8px; }
+.env-sub-v15 { color: #94a3b8; font-size: 0.85rem; font-weight: 500; }
+.env-stat-row-v15 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 30px; }
+.env-stat-card-v15 { background: #020617; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 20px; position: relative; display: flex; flex-direction: column; }
+.env-stat-tag-v15 { position: absolute; top: 10px; right: 10px; background: #111827; color: #10b981; font-size: 0.55rem; font-weight: 800; padding: 3px 6px; border-radius: 4px; }
 .env-stat-icon-v15 { font-size: 1.2rem; margin-bottom: 8px; }
 .env-stat-val-v15 { color: white; font-weight: 800; font-size: 1.5rem; line-height: 1; }
 .env-stat-lbl-v15 { color: #94a3b8; font-size: 0.7rem; font-weight: 600; margin-top: 4px; }
-
-/* Impact Panel */
-.panel-v15 {
-    background: #020617;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
-    padding: 30px;
-    margin-bottom: 25px;
-}
-.panel-title-v15 {
-    color: white;
-    font-weight: 800;
-    font-size: 1rem;
-    margin-bottom: 25px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-/* Prediction Result */
-.prediction-res-v15 {
-    background: rgba(15, 23, 42, 0.4);
-    border-radius: 12px;
-    padding: 24px;
-    margin-top: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-/* Progress Sliders Label Match */
-.env-sl-lbl-v15 {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
-    margin-bottom: 4px;
-}
+.panel-v15 { background: #020617; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 30px; margin-bottom: 25px; }
+.panel-title-v15 { color: white; font-weight: 800; font-size: 1rem; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
+.env-sl-lbl-v15 { display: flex; justify-content: space-between; margin-top: 15px; margin-bottom: 4px; }
 .env-sl-name-v15 { color: white; font-size: 0.75rem; font-weight: 800; }
 .env-sl-val-v15 { color: white; font-size: 0.75rem; font-weight: 800; }
-
-/* Tip Item */
-.tip-item-v15 {
-    background: #020617;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    padding: 16px;
-    margin-bottom: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.impact-tag-v15 {
-    border: 1px solid #10b981;
-    color: #10b981;
-    font-size: 0.65rem;
-    font-weight: 800;
-    padding: 2px 6px;
-    border-radius: 4px;
-}
-</style>
-    """, unsafe_allow_html=True)
-
-    # --- TOP HEADER ---
-    st.markdown("""
-<div class="env-header-v15">
-    <div class="env-title-v15">Environmental Symbiome Feedback</div>
-    <div class="env-sub-v15">How your surrounding environment shapes your physiological resilience</div>
-</div>
-    """, unsafe_allow_html=True)
-
-    # --- SENSOR ROW ---
+.tip-item-v15 { background: #020617; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+.impact-tag-v15 { border: 1px solid #10b981; color: #10b981; font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; }
+</style>"""
+    st.markdown(css_styles, unsafe_allow_html=True)
+    
+    # Header
+    header_html = """<div class="env-header-v15">
+<div class="env-title-v15">Environmental Symbiome Feedback</div>
+<div class="env-sub-v15">How your surrounding environment shapes your physiological resilience</div>
+</div>"""
+    st.markdown(header_html, unsafe_allow_html=True)
+    
+    # Sensor Row
     st.markdown('<div class="env-stat-row-v15">', unsafe_allow_html=True)
     sensors = [
         ("☀️", "65 %", "Light Intensity"),
@@ -150,17 +53,16 @@ html, body, [data-testid="stAppViewContainer"] {
     cols = st.columns(4)
     for i, (icon, val, lbl) in enumerate(sensors):
         with cols[i]:
-            st.markdown(f"""
-<div class="env-stat-card-v15">
-    <div class="env-stat-tag-v15">Optimal</div>
-    <div class="env-stat-icon-v15">{icon}</div>
-    <div class="env-stat-val-v15">{val}</div>
-    <div class="env-stat-lbl-v15">{lbl}</div>
-</div>
-            """, unsafe_allow_html=True)
+            sensor_html = f"""<div class="env-stat-card-v15">
+<div class="env-stat-tag-v15">Optimal</div>
+<div class="env-stat-icon-v15">{icon}</div>
+<div class="env-stat-val-v15">{val}</div>
+<div class="env-stat-lbl-v15">{lbl}</div>
+</div>"""
+            st.markdown(sensor_html, unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
-
-    # --- LIVE IMPACT MODEL ---
+    
+    # Live Impact Model
     st.markdown('<div class="panel-v15">', unsafe_allow_html=True)
     st.markdown('<div class="panel-title-v15"><span style="color: #a855f7;">⚡</span> Live Environmental Impact Model</div>', unsafe_allow_html=True)
     
@@ -181,25 +83,23 @@ html, body, [data-testid="stAppViewContainer"] {
         optimality = max(0, min(100, optimality))
         impact = (optimality - 50) / 2
         
-        st.markdown(f"""
-<div style="padding-top: 15px; text-align: right;">
-    <div style="color: #94a3b8; font-size: 0.75rem; font-weight: 700; margin-bottom: 5px;">Predicted SRI Impact</div>
-    <div style="color: #10b981; font-size: 2.2rem; font-weight: 900;">{'+' if impact >=0 else ''}{impact:.1f}%</div>
-    
-    <div style="margin-top: 40px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <span style="color: #94a3b8; font-size: 0.75rem; font-weight: 700;">Optimality Score</span>
-            <span style="color: white; font-size: 0.8rem; font-weight: 800;">{int(optimality)}/100</span>
-        </div>
-        <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px;">
-            <div style="width: {optimality}%; height: 100%; background: white; border-radius: 3px;"></div>
-        </div>
-    </div>
+        impact_html = f"""<div style="padding-top: 15px; text-align: right;">
+<div style="color: #94a3b8; font-size: 0.75rem; font-weight: 700; margin-bottom: 5px;">Predicted SRI Impact</div>
+<div style="color: #10b981; font-size: 2.2rem; font-weight: 900;">{'+' if impact >=0 else ''}{impact:.1f}%</div>
+<div style="margin-top: 40px;">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+<span style="color: #94a3b8; font-size: 0.75rem; font-weight: 700;">Optimality Score</span>
+<span style="color: white; font-size: 0.8rem; font-weight: 800;">{int(optimality)}/100</span>
 </div>
-        """, unsafe_allow_html=True)
+<div style="width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px;">
+<div style="width: {optimality}%; height: 100%; background: white; border-radius: 3px;"></div>
+</div>
+</div>
+</div>"""
+        st.markdown(impact_html, unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
-
-    # --- CURVE CHARTS ---
+    
+    # Curve Charts
     col_c1, col_c2 = st.columns(2)
     with col_c1:
         st.markdown('<div class="panel-v15">', unsafe_allow_html=True)
@@ -224,8 +124,8 @@ html, body, [data-testid="stAppViewContainer"] {
         st.plotly_chart(fig_n, use_container_width=True, key="n_v_r")
         st.markdown('<div style="color: #94a3b8; font-size: 0.65rem; margin-top: 10px;">Higher ambient noise (>70dB) reduces resilience by average 14%</div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
-
-    # --- 24-HOUR PATTERN ---
+    
+    # 24-Hour Pattern
     st.markdown('<div class="panel-v15">', unsafe_allow_html=True)
     st.markdown('<div class="panel-title-v15"><span style="color: #2dd4bf;">🕒</span> 24-Hour Resilience & Light Pattern</div>', unsafe_allow_html=True)
     
@@ -250,28 +150,26 @@ html, body, [data-testid="stAppViewContainer"] {
     # Day/Night Insight Badges
     b_c1, b_c2 = st.columns(2)
     with b_c1:
-        st.markdown("""
-        <div style="background: #020617; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 15px; display: flex; gap: 12px; border-left: 3px solid #f59e0b;">
-            <div style="font-size: 1.2rem;">☀️</div>
-            <div>
-                <div style="color: white; font-weight: 800; font-size: 0.75rem;">Day Pattern</div>
-                <div style="color: #64748b; font-size: 0.65rem; margin-top: 3px;">Morning sunlight exposure improves HRV by 12% and accelerates recovery</div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        badge1_html = """<div style="background: #020617; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 15px; display: flex; gap: 12px; border-left: 3px solid #f59e0b;">
+<div style="font-size: 1.2rem;">☀️</div>
+<div>
+<div style="color: white; font-weight: 800; font-size: 0.75rem;">Day Pattern</div>
+<div style="color: #64748b; font-size: 0.65rem; margin-top: 3px;">Morning sunlight exposure improves HRV by 12% and accelerates recovery</div>
+</div>
+</div>"""
+        st.markdown(badge1_html, unsafe_allow_html=True)
     with b_c2:
-        st.markdown("""
-        <div style="background: #020617; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 15px; display: flex; gap: 12px; border-left: 3px solid #3b82f6;">
-            <div style="font-size: 1.2rem;">🌙</div>
-            <div>
-                <div style="color: white; font-weight: 800; font-size: 0.75rem;">Night Pattern</div>
-                <div style="color: #64748b; font-size: 0.65rem; margin-top: 3px;">Low light after 10 PM supports natural cortisol reduction and sleep quality</div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        badge2_html = """<div style="background: #020617; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 15px; display: flex; gap: 12px; border-left: 3px solid #3b82f6;">
+<div style="font-size: 1.2rem;">🌙</div>
+<div>
+<div style="color: white; font-weight: 800; font-size: 0.75rem;">Night Pattern</div>
+<div style="color: #64748b; font-size: 0.65rem; margin-top: 3px;">Low light after 10 PM supports natural cortisol reduction and sleep quality</div>
+</div>
+</div>"""
+        st.markdown(badge2_html, unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
-
-    # --- TIPS ---
+    
+    # Tips
     st.markdown('<div style="font-weight: 800; color: white; font-size: 1.1rem; margin-bottom: 25px;">Environmental Optimization Tips</div>', unsafe_allow_html=True)
     tips = [
         ("💡", "Optimize your workspace lighting", "Try 60-70% brightness with natural light exposure for peak resilience", "+8% SRI"),
@@ -280,18 +178,17 @@ html, body, [data-testid="stAppViewContainer"] {
         ("🌅", "Morning light ritual", "15 minutes of bright light exposure within 1 hour of waking", "+18% morning resilience")
     ]
     for i, t, d, tg in tips:
-        st.markdown(f"""
-<div class="tip-item-v15">
-    <div style="display: flex; gap: 15px; align-items: flex-start;">
-        <div style="font-size: 1.2rem;">{i}</div>
-        <div>
-            <div style="color: white; font-weight: 800; font-size: 0.85rem;">{t}</div>
-            <div style="color: #94a3b8; font-size: 0.75rem; margin-top: 4px;">{d}</div>
-        </div>
-    </div>
-    <div class="impact-tag-v15">{tg}</div>
+        tip_html = f"""<div class="tip-item-v15">
+<div style="display: flex; gap: 15px; align-items: flex-start;">
+<div style="font-size: 1.2rem;">{i}</div>
+<div>
+<div style="color: white; font-weight: 800; font-size: 0.85rem;">{t}</div>
+<div style="color: #94a3b8; font-size: 0.75rem; margin-top: 4px;">{d}</div>
 </div>
-        """, unsafe_allow_html=True)
+</div>
+<div class="impact-tag-v15">{tg}</div>
+</div>"""
+        st.markdown(tip_html, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     render_environmental_tracker_page()
