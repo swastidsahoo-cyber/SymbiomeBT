@@ -1075,23 +1075,15 @@ def render_training():
         """, unsafe_allow_html=True)
 
 # ==========================================
-# MAIN LAYOUT ROUTING
+# PAGE RENDERERS (PLACEHOLDERS)
 # ==========================================
-            
-# AUTO-STOP LOGIC DISABLED DEBUGGING
-# if st.session_state.biofeedback_active and st.session_state.biofeedback_start_time:
-#     elapsed = time.time() - st.session_state.biofeedback_start_time
-#     if elapsed > 180: # 3 minutes
-#         stop_biofeedback()
-#         st.toast("Session Complete: 3 Minutes Reached", icon="🏁")
 
-# --- PLACEHOLDER RENDERER ---
 def render_placeholder(title, icon, desc):
     st.markdown(f"""
     <div style="text-align: center; padding: 100px 20px;">
         <div style="font-size: 5rem; margin-bottom: 20px;">{icon}</div>
-        <div style="font-size: 2.5rem; font-weight: 700; color: white; margin-bottom: 10px;">{title}</div>
-        <div style="color: #94a3b8; font-size: 1.2rem; max-width: 600px; margin: 0 auto; line-height: 1.6;">
+        <div style="font-size: 2.1rem; font-weight: 700; color: white; margin-bottom: 10px;">{title}</div>
+        <div style="color: #94a3b8; font-size: 1.1rem; max-width: 600px; margin: 0 auto; line-height: 1.6;">
             {desc}
         </div>
         <div style="margin-top: 40px; padding: 20px; background: rgba(15, 23, 42, 0.5); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px; display: inline-block;">
@@ -1100,6 +1092,47 @@ def render_placeholder(title, icon, desc):
     </div>
     """, unsafe_allow_html=True)
 
+def render_session_summary():
+    st.markdown("## 📈 Session Summary")
+    st.markdown("---")
+    render_placeholder("Session Summary", "📈", "Detailed insights from your past sessions will appear here.")
+
+def render_digital_twin_advanced_page():
+    st.markdown("## 👤 Digital Twin Advanced")
+    st.markdown("---")
+    render_placeholder("Digital Twin Advanced", "👤", "Advanced configuration for your digital twin.")
+
+# ==========================================
+# MAIN LAYOUT ROUTING
+# ==========================================
+
+# --- SIDEBAR (SYSTEM STATUS & DOCS) ---
+with st.sidebar:
+    st.divider()
+    st.markdown("#### 🔧 System Status")
+    status_color = "#10b981" if st.session_state.get('biofeedback_active') else "#64748b"
+    st.markdown(f"""
+    <div style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; font-family: monospace; font-size: 0.8rem; color: #cbd5e1;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+            <span style="color: #94a3b8;">Page:</span>
+            <span style="color: #e2e8f0;">{st.session_state.get('page')}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+            <span style="color: #94a3b8;">Active:</span>
+            <span style="color: {status_color};">{st.session_state.get('biofeedback_active')}</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.divider()
+    with st.expander("📄 Scientific Documentation"):
+        try:
+            with open("science_whitepaper.md", "r") as f:
+                st.download_button("Download Whitepaper", f, file_name="Symbiome_Whitepaper.md")
+        except:
+            st.caption("Whitepaper not found.")
+            
+# --- PAGE ROUTING ---
 if st.session_state.page == 'Monitor':
     render_monitor()
 elif st.session_state.page == 'Training':
@@ -1592,55 +1625,167 @@ elif st.session_state.page == 'Dashboard':
             time.sleep(1)
             st.toast("Insight saved to Journal", icon="✅")
     
-    # --- AUTO-REFRESH LOGIC (MUST BE AT END) ---
-    if st.session_state.live_mode:
-        time.sleep(0.5) # Faster refresh rate for Biofeedback
-        st.rerun()
+# ==========================================
+# MAIN LAYOUT ROUTING
+# ==========================================
+
+# --- PAGE ROUTING ---
+if st.session_state.page == 'Monitor':
+    render_monitor()
+elif st.session_state.page == 'Training':
+    render_training()
+elif st.session_state.page == 'Summary':
+    render_session_summary()
+elif st.session_state.page == 'Digital Twin':
+    render_digital_twin_page()
+elif st.session_state.page == 'Digital Twin Advanced':
+    render_digital_twin_advanced_page()
+elif st.session_state.page == 'SENTINEL':
+    render_passive_sentinel()
+elif st.session_state.page == 'Journal':
+    render_nlp_journal_page()
+elif st.session_state.page == 'Predictive':
+    render_predictive_engine_page()
+elif st.session_state.page == 'Forecast':
+    render_resilience_forecast_page()
+elif st.session_state.page == 'Environmental':
+    render_environmental_tracker_page()
+elif st.session_state.page == 'Clinical Vault':
+    render_clinical_vault_page()
+elif st.session_state.page == 'Custom Stress':
+    render_custom_activities_page()
+elif st.session_state.page == 'Closed Loop':
+    render_closed_loop_page()
+elif st.session_state.page == 'Research':
+    render_advanced_features_page()
+elif st.session_state.page == 'Resilience Quotient':
+    render_resilience_quotient_page()
+elif st.session_state.page == 'Settings':
+    render_settings_privacy_page()
+elif st.session_state.page == 'Dashboard':
+    # ==========================================
+    # DASHBOARD LAYOUT
+    # ==========================================
     
-    # --- SIDEBAR ---
-    with st.sidebar:
-        st.image("https://img.icons8.com/fluency/96/dna-helix.png", width=50)
-        st.markdown("### Symbiome")
+    # --- HEADER ---
+    c1, c2 = st.columns([3, 1])
+    with c1:
+        st.markdown("# Symbiome Resilience System")
+        st.markdown("AI-Powered Biological Intelligence Platform")
+    with c2:
+        # Live Mode Toggle
+        if st.button(f"{'🔴 STOP LIVE' if st.session_state.live_mode else '🟢 GO LIVE'}", key="dashboard_live_toggle", use_container_width=True):
+            st.session_state.live_mode = not st.session_state.live_mode
+            st.rerun()
         
-        # --- DEBUG STATUS ---
-        st.divider()
-        st.markdown("#### 🔧 Debug Status")
-        
-        # Determine status colors
-        engine_status_color = "#10b981" if data_engine.is_running else "#94a3b8"
-        active_color = "#10b981" if st.session_state.get('biofeedback_active') else "#64748b"
-        
+        if st.session_state.live_mode:
+            st.caption("Live Monitoring Active: Auto-refreshing...")
+    
+    st.markdown("---")
+    
+    # --- SECTION 1: HERO (SRI GAUGE) ---
+    current_sri = st.session_state.get('current_sri', 70)
+    if current_sri >= 75:
+        sri_color, status_text = "#00f2fe", "OPTIMAL STATE"
+    elif current_sri >= 50:
+        sri_color, status_text = "#f2c94c", "BALANCED"
+    else:
+        sri_color, status_text = "#ff4b1f", "HIGH STRESS"
+    
+    col_hero_1, col_hero_2, col_hero_3 = st.columns([1, 2, 1])
+    
+    with col_hero_2:
         st.markdown(f"""
-        <div style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; font-family: monospace; font-size: 0.8rem; color: #cbd5e1;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                <span style="color: #94a3b8;">Page:</span>
-                <span style="color: #e2e8f0;">{st.session_state.get('page')}</span>
+        <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; margin: 40px 0;">
+            <div style="
+                width: 260px; height: 260px; 
+                border-radius: 50%; 
+                background: conic-gradient({sri_color} {current_sri}%, rgba(255,255,255,0.05) 0);
+                display: flex; justify-content: center; align-items: center;
+                box-shadow: 0 0 80px {sri_color}4d;
+                animation: pulse-glow 3s infinite;
+            ">
+                <div style="
+                    width: 240px; height: 240px; 
+                    background: #050511; 
+                    border-radius: 50%;
+                    display: flex; flex-direction: column;
+                    justify-content: center; align-items: center;
+                ">
+                    <span style="font-size: 5rem; font-weight: 700; color: white; line-height: 1;">{current_sri}</span>
+                    <span style="font-size: 1rem; color: #94a3b8; letter-spacing: 2px; margin-top: 10px;">SRI SCORE</span>
+                </div>
             </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                <span style="color: #94a3b8;">Active:</span>
-                <span style="color: {active_color};">{st.session_state.get('biofeedback_active')}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                <span style="color: #94a3b8;">Engine:</span>
-                <span style="color: {engine_status_color};">{data_engine.is_running}</span>
-            </div>
-             <div style="display: flex; justify-content: space-between;">
-                <span style="color: #94a3b8;">Start:</span>
-                <span style="color: #64748b;">{str(data_engine.start_time)[11:19] if data_engine.start_time else 'None'}</span>
+            <div style="margin-top: 25px; font-size: 1.5rem; font-weight: 700; color: {sri_color}; letter-spacing: 3px;">
+                {status_text}
             </div>
         </div>
         """, unsafe_allow_html=True)
-        st.divider()
-        # --------------------
-        with st.expander("📄 Scientific Documentation"):
-            try:
-                with open("science_whitepaper.md", "r") as f:
-                    st.download_button("Download Whitepaper", f, file_name="Symbiome_Whitepaper.md")
-            except FileNotFoundError:
-                st.error("Whitepaper file not found.")
-# --- PAGE ROUTING ---
+        
+        if st.session_state.get('biofeedback_active'):
+             st.button("⏹ STOP SESSION", on_click=lambda: st.session_state.update({"biofeedback_active": False}), use_container_width=True, key="dashboard_stop_session")
+        else:
+            if st.button("◎ START BIOFEEDBACK SESSION", key="btn_dashboard_start", type="primary", use_container_width=True):
+                st.session_state.page = 'Monitor'
+                st.rerun()
+    
+    # --- SECTION 2: BIOMETRICS ---
+    st.markdown("### ⚡ Real-Time Biological Readings")
+    m1, m2, m3, m4 = st.columns(4)
+    cur_hrv = st.session_state.get('live_hrv', 65)
+    cur_gsr = st.session_state.get('live_gsr', 0.5)
+    cur_ph = st.session_state.get('live_ph', 7.4)
+    cur_temp = st.session_state.get('live_temp', 36.8)
+    
+    biometrics = [
+        ("Heart Rate", f"{int(cur_hrv)}", "bpm", "#ff4b1f"),
+        ("GSR (Stress)", f"{cur_gsr:.1f}", "µS", "#f2c94c"),
+        ("pH Level", f"{cur_ph:.2f}", "pH", "#00f2fe"),
+        ("Temperature", f"{cur_temp:.1f}", "°C", "#a8ff78")
+    ]
+    
+    for col, (label, val, unit, color) in zip([m1, m2, m3, m4], biometrics):
+        with col:
+            st.markdown(f"""
+            <div class="glass-card">
+                <div class="metric-label">{label}</div>
+                <div style="display: flex; align-items: baseline;">
+                    <span class="metric-value" style="font-size: 2.2rem;">{val}</span>
+                    <span style="color: {color}; margin-left: 5px; font-weight: 600;">{unit}</span>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
-# ==========================================
+    # --- SECTION 3: AI PREDICTIONS ---
+    st.markdown("### 🔮 Advanced Resilience Prediction")
+    pred_1, pred_2 = st.columns(2)
+    ai_vals = st.session_state.get('ai_data', {'recovery': 15.3, 'recovery_trend': '↓ Improving', 'confidence': 92})
+    
+    with pred_1:
+        st.markdown(f"""
+        <div class="glass-card" style="border-left: 4px solid #10b981;">
+             <div style="color: #10b981; font-weight: 700; font-size: 0.8rem; text-transform: uppercase;">Recovery Prediction</div>
+             <div style="font-size: 2.5rem; font-weight: 700; color: white;">{ai_vals['recovery']:.1f} <span style="font-size: 1rem; color: #64748b;">min</span></div>
+             <div style="color: #10b981;">{ai_vals['recovery_trend']}</div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+    with pred_2:
+        st.markdown(f"""
+        <div class="glass-card" style="border-left: 4px solid #2dd4bf;">
+             <div style="color: #2dd4bf; font-weight: 700; font-size: 0.8rem; text-transform: uppercase;">AI Confidence</div>
+             <div style="font-size: 2.5rem; font-weight: 700; color: white;">{ai_vals['confidence']}%</div>
+             <div style="color: #2dd4bf;">↑ High Precision</div>
+        </div>
+        """, unsafe_allow_html=True)
 
+    # --- FOOTER ---
+    st.markdown("---")
+    st.caption("Symbiome Research Platform © 2025 • Advancing the science of human resilience")
 
-# End of application
+# --- AUTO-REFRESH ---
+if st.session_state.live_mode:
+    time.sleep(0.5)
+    st.rerun()
+
+# --- END OF APPLICATION ---
