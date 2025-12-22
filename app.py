@@ -1,3 +1,9 @@
+# ==========================================
+# EMERGENCY RECOVERY VERSION 4.0
+# TIMESTAMP: 2025-12-22 07:25 UTC
+# This version definitively removes the legacy import.
+# ==========================================
+
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
@@ -21,11 +27,11 @@ from modules.custom_activities import render_custom_activities_page
 from modules.closed_loop import render_closed_loop_page
 from modules.advanced_features import render_advanced_features_page
 from modules.settings_privacy import render_settings_privacy_page
-from modules.passive_sentinel import render_passive_sentinel # CORRECT FUNCTION NAME
+from modules.passive_sentinel import render_passive_sentinel # CORRECT SYMBOL
 
 # ==========================================
 # SYMBIOME APP CONFIGURATION
-# EMERGENCY FIX VERSION: 3.1 - DEFINITIVE IMPORT FIX
+# v4.0 - STABLE DEPLOYMENT
 # ==========================================
 st.set_page_config(
     page_title="Symbiome | AI Resilience",
@@ -33,6 +39,8 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+st.success("SYMBIOOME VERSION 4.0 - LIVE & STABILIZED")
 
 # ==========================================
 # CSS & ASSETS
