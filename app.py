@@ -1,7 +1,7 @@
 # ==========================================
-# SYMBIOME STABLE VERSION 8.7
-# BUILD ID: INTERACTIVE-MODAL-V87
-# TIMESTAMP: 2025-12-22 10:30 UTC
+# SYMBIOME STABLE VERSION 8.8
+# BUILD ID: NATIVE-INTERACTION-V88
+# TIMESTAMP: 2025-12-22 10:45 UTC
 # ==========================================
 
 import streamlit as st
