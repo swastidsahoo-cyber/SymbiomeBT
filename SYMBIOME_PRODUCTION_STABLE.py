@@ -509,7 +509,7 @@ def render_monitor():
     # --- LOGIC EXPANDER ---
     st.markdown("---")
     with st.expander("View Mathematical Models", expanded=False):
-        st.markdown("""
+        st.markdown(r"""
         ### 🧮 Physiological Computing Models
         
         **1. Heart Rate Variability (RSA Model)**
