@@ -10,6 +10,7 @@ from datetime import datetime
 import math
 from data_engine import data_engine # Import the new backend engine
 from modules.passive_sentinel import render_passive_sentinel # Import Passive Sentinel module
+from modules.digital_twin_ui import render_digital_twin_page # Import Digital Twin UI
 
 # ==========================================
 # SYMBIOME APP CONFIGURATION
@@ -19,7 +20,7 @@ st.set_page_config(
     page_title="Symbiome | AI Resilience Platform",
     page_icon="🧬",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
 # ==========================================
@@ -523,73 +524,116 @@ def render_session_summary():
     st.session_state.live_mode = not st.session_state.live_mode
 
 # ==========================================
-# GLOBAL NAVIGATION
+# GLOBAL NAVIGATION & HEADER
 # ==========================================
-def set_page(page):
-    st.session_state.page = page
 
-def render_navbar():
-    """Renders the global navigation bar on every page."""
-    st.markdown("""
-    <style>
-    .nav-btn {
-        background: transparent !important;
-        border: none !important;
-        color: #94a3b8 !important;
-        font-weight: 600 !important;
-        font-size: 0.9rem !important;
-        padding: 0.5rem 1rem !important;
-        transition: color 0.2s !important;
-    }
-    .nav-btn:hover {
-        color: #ffffff !important;
-    }
-    .nav-btn-active {
-        color: #00f2fe !important;
-        border-bottom: 2px solid #00f2fe !important;
-    }
-    /* Hide default button styles for nav items */
-    div[data-testid="stHorizontalBlock"] button {
-        background-color: transparent;
-        border: none;
-        color: #94a3b8;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-    
-    # Navigation Items
-    nav_items = ["Dashboard", "SENTINEL", "Monitor", "Training", "Digital Twin", "Journal", "Research", "Community"]
-    
-    # Container for Nav (Simplified)
-    with st.container():
-        # st.markdown('<div class="nav-container" ...>', unsafe_allow_html=True)  <-- REMOVED TO FIX CLICK ISSUE
-        cols = st.columns(len(nav_items))
-        for i, item in enumerate(nav_items):
-            with cols[i]:
-                # Highlight active page
-                is_active = (st.session_state.page == item)
-                label = f"**{item}**" if is_active else item
-                if st.button(label, key=f"nav_{item}", use_container_width=True):
-                    st.session_state.page = item
-                    st.rerun()
-        # st.markdown('</div>', unsafe_allow_html=True) <-- REMOVED
-
-    # Backup Sidebar Navigation (Just in case)
+def render_sidebar():
+    """Renders the Sidebar Navigation matching React design categories."""
     with st.sidebar:
-        st.markdown("### 🧭 Navigation")
-        # SYNC STATE: Ensure widget matches current page to prevent resets
-        if 'sidebar_nav' not in st.session_state:
-             st.session_state.sidebar_nav = st.session_state.page
-        elif st.session_state.sidebar_nav != st.session_state.page:
-             st.session_state.sidebar_nav = st.session_state.page
-
-        selected_page = st.radio("Go to:", nav_items, index=nav_items.index(st.session_state.page) if st.session_state.page in nav_items else 0, key="sidebar_nav")
-        if selected_page != st.session_state.page:
-            set_page(selected_page)
+        # --- LOGO SECTION ---
+        st.markdown("""
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #2dd4bf, #06b6d4); border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 20px rgba(45, 212, 191, 0.3);">
+                <span style="font-size: 1.2rem;">✨</span>
+            </div>
+            <div>
+                <div style="font-weight: 700; font-size: 1.2rem; background: linear-gradient(90deg, #2dd4bf, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Symbiome</div>
+                <div style="font-size: 0.7rem; color: #94a3b8;">Resilience Platform</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # --- NAVIGATION ---
+        # Helper to render category header
+        def nav_category(name):
+            st.markdown(f"<div style='font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-top: 15px; margin-bottom: 5px;'>{name}</div>", unsafe_allow_html=True)
+        
+        # 1. Dashboard
+        if st.button("🏠 Dashboard", key="nav_home", use_container_width=True, type="secondary" if st.session_state.page != "Dashboard" else "primary"):
+            st.session_state.page = "Dashboard"
+            st.rerun()
+            
+        # 2. Real-Time Monitoring
+        nav_category("Real-Time Monitoring")
+        if st.button("❤️ Live Monitor", key="nav_monitor", use_container_width=True, type="secondary" if st.session_state.page != "Monitor" else "primary"):
+            st.session_state.page = "Monitor"
+            st.rerun()
+        if st.button("👁️ Passive Sentinel", key="nav_sentinel", use_container_width=True, type="secondary" if st.session_state.page != "SENTINEL" else "primary"):
+            st.session_state.page = "SENTINEL"
+            st.rerun()
+        if st.button("🎯 Custom Activities", key="nav_custom", use_container_width=True, type="secondary" if st.session_state.page != "Custom Stress" else "primary"):
+            st.session_state.page = "Custom Stress"
             st.rerun()
 
-# Render Navbar GLOBALLY
-render_navbar()
+        # 3. Training & Intervention
+        nav_category("Training & Intervention")
+        if st.button("🎮 Biofeedback Training", key="nav_train", use_container_width=True, type="secondary" if st.session_state.page != "Training" else "primary"):
+            st.session_state.page = "Training"
+            st.rerun()
+        if st.button("⚡ Closed-Loop System", key="nav_closedloop", use_container_width=True, type="secondary" if st.session_state.page != "Closed Loop" else "primary"):
+            st.session_state.page = "Closed Loop"
+            st.rerun()
+        if st.button("🧠 Cognitive Tests", key="nav_cognitive", use_container_width=True, type="secondary" if st.session_state.page != "Cognitive" else "primary"):
+            st.session_state.page = "Cognitive"
+            st.rerun()
+
+        # 4. AI & Prediction
+        nav_category("AI & Prediction")
+        if st.button("📈 Predictive Engine", key="nav_predictive", use_container_width=True, type="secondary" if st.session_state.page != "Predictive" else "primary"):
+            st.session_state.page = "Predictive"
+            st.rerun()
+        if st.button("🤖 Digital Twin", key="nav_twin", use_container_width=True, type="secondary" if st.session_state.page != "Digital Twin" else "primary"):
+            st.session_state.page = "Digital Twin"
+            st.rerun()
+        if st.button("🌤️ Resilience Forecast", key="nav_forecast", use_container_width=True, type="secondary" if st.session_state.page != "Forecast" else "primary"):
+            st.session_state.page = "Forecast"
+            st.rerun()
+
+        # 5. Data & Analysis
+        nav_category("Data & Analysis")
+        if st.button("❤️ Emotional Journal", key="nav_journal", use_container_width=True, type="secondary" if st.session_state.page != "Journal" else "primary"):
+            st.session_state.page = "Journal"
+            st.rerun()
+        if st.button("🏆 Resilience Quotient™", key="nav_rq", use_container_width=True, type="secondary" if st.session_state.page != "Resilience Quotient" else "primary"):
+            st.session_state.page = "Resilience Quotient"
+            st.rerun()
+        if st.button("📊 Research Dashboard", key="nav_analysis", use_container_width=True, type="secondary" if st.session_state.page != "Research" else "primary"):
+            st.session_state.page = "Research"
+            st.rerun()
+
+        # 6. Community & Impact
+        nav_category("Community & Impact")
+        if st.button("🌍 Community Cloud", key="nav_community", use_container_width=True, type="secondary" if st.session_state.page != "Community" else "primary"):
+            st.session_state.page = "Community"
+            st.rerun()
+
+def render_top_bar():
+    """Renders the Top Bar with User Stats (XP, Streak)."""
+    # Load User Data
+    user_data = load_user_progress()
+    
+    with st.container():
+        c1, c2 = st.columns([2, 1])
+        with c1:
+             # Generous Breadcrumb / Page Title
+             st.markdown(f"### {st.session_state.page}")
+        with c2:
+            st.markdown(f"""
+            <div style="display: flex; justify-content: flex-end; gap: 15px; align-items: center;">
+                 <div style="text-align: right; display: none; @media(min-width: 768px){{display: block;}}">
+                    <div style="font-weight: 700; color: white;">Researcher</div>
+                    <div style="font-size: 0.75rem; color: #94a3b8;">Level {user_data['level']} • {user_data['xp']} XP</div>
+                 </div>
+                 <div style="background: rgba(45, 212, 191, 0.1); color: #2dd4bf; padding: 5px 12px; border-radius: 20px; font-weight: 700; border: 1px solid rgba(45, 212, 191, 0.2);">
+                    🔥 {user_data['streak_days']}
+                 </div>
+            </div>
+            """, unsafe_allow_html=True)
+    st.markdown("---")
+
+# EXECUTE LAYOUT
+render_sidebar()
+render_top_bar()
 
 # ==========================================
 # TRAINING / GAMIFICATION LOGIC
@@ -1546,14 +1590,49 @@ def render_passive_sentinel_inlined():
 #         stop_biofeedback()
 #         st.toast("Session Complete: 3 Minutes Reached", icon="🏁")
 
+# --- PLACEHOLDER RENDERER ---
+def render_placeholder(title, icon, desc):
+    st.markdown(f"""
+    <div style="text-align: center; padding: 100px 20px;">
+        <div style="font-size: 5rem; margin-bottom: 20px;">{icon}</div>
+        <div style="font-size: 2.5rem; font-weight: 700; color: white; margin-bottom: 10px;">{title}</div>
+        <div style="color: #94a3b8; font-size: 1.2rem; max-width: 600px; margin: 0 auto; line-height: 1.6;">
+            {desc}
+        </div>
+        <div style="margin-top: 40px; padding: 20px; background: rgba(15, 23, 42, 0.5); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px; display: inline-block;">
+            <div style="color: #64748b; font-size: 0.9rem; font-family: monospace;">STATUS: UNDER DEVELOPMENT</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
 if st.session_state.page == 'Monitor':
     render_monitor()
 elif st.session_state.page == 'Training':
     render_training()
 elif st.session_state.page == 'Summary':
     render_session_summary()
+elif st.session_state.page == 'Digital Twin':
+    render_digital_twin_page()
 elif st.session_state.page == 'SENTINEL':
     render_passive_sentinel_inlined()
+elif st.session_state.page == 'Custom Stress':
+    render_placeholder("Custom Activities", "🎯", "Design your own stress resilience protocols with custom stressors and recovery intervals.")
+elif st.session_state.page == 'Closed Loop':
+    render_placeholder("Closed-Loop System", "⚡", "Automated biofeedback interventions triggered by real-time physiological states.")
+elif st.session_state.page == 'Cognitive':
+    render_placeholder("Cognitive Tests", "🧠", "Standardized neuropsychological assessments to measure executive function under stress.")
+elif st.session_state.page == 'Predictive':
+    render_placeholder("Predictive Engine", "📈", "Advanced machine learning models forecasting your stress response 4 hours in advance.")
+elif st.session_state.page == 'Forecast':
+    render_placeholder("Resilience Forecast", "🌤️", "Looking ahead: Your 48-hour resilience weather report based on sleep and recovery.")
+elif st.session_state.page == 'Journal':
+    render_placeholder("Emotional Journal", "❤️", "Log your subjective experiences and correlate them with objective biometric data.")
+elif st.session_state.page == 'Resilience Quotient':
+    render_placeholder("Resilience Quotient™", "🏆", "Your comprehensive resilience score, benchmarking you against the global population.")
+elif st.session_state.page == 'Research':
+    render_placeholder("Research Dashboard", "📊", "Deep-dive analytics for researchers. Export raw data and visualize correlation matrices.")
+elif st.session_state.page == 'Community':
+    render_placeholder("Community Cloud", "🌍", "Connect with the global Symbiome network. Share resilience scores and compete on leaderboards.")
 elif st.session_state.page == 'Dashboard':
     # ==========================================
     # DASHBOARD LAYOUT
@@ -1837,24 +1916,29 @@ elif st.session_state.page == 'Dashboard':
     # --- SECTION 7: SIF FRAMEWORK ---
     st.markdown("### 🚀 Symbiome Intelligence Framework (SIF)")
     features = [
-        ("Resilience Mirror", "Transform stress into art", "✨"),
-        ("Digital Twin", "AI model of your physiology", "🤖"),
-        ("Env × Body", "Surroundings impact analysis", "☁️"),
-        ("Resilience Game", "Gamified stress control", "🎮"),
-        ("Emotion Journal", "Physiological mapping", "❤️"),
-        ("Stress Forecast", "Predictive weather for health", "🌧️")
+        ("Resilience Mirror", "Transform stress into art", "✨", "Dashboard"),
+        ("Digital Twin", "AI model of your physiology", "🤖", "Digital Twin"),
+        ("Env × Body", "Surroundings impact analysis", "☁️", "Monitor"),
+        ("Resilience Game", "Gamified stress control", "🎮", "Training"),
+        ("Emotion Journal", "Physiological mapping", "❤️", "Journal"),
+        ("Stress Forecast", "Predictive weather for health", "🌧️", "Digital Twin")
     ]
     cols = st.columns(3)
-    for i, (title, desc, icon) in enumerate(features):
+    for i, (title, desc, icon, target_page) in enumerate(features):
         with cols[i % 3]:
+            # Render visual card
             st.markdown(f"""
-            <div class="glass-card" style="min-height: 150px; cursor: pointer;">
-                <div style="font-size: 2rem; margin-bottom: 10px;">{icon}</div>
-                <div style="font-weight: 700; color: white; margin-bottom: 5px;">{title}</div>
-                <div style="font-size: 0.85rem; color: #94a3b8;">{desc}</div>
-                <div style="margin-top: 10px; color: #00f2fe; font-size: 0.8rem; font-weight: 600;">EXPLORE →</div>
+            <div class="glass-card" style="min-height: 140px; margin-bottom: 10px;">
+                <div style="font-size: 2rem; margin-bottom: 5px;">{icon}</div>
+                <div style="font-weight: 700; color: white;">{title}</div>
+                <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 5px;">{desc}</div>
             </div>
             """, unsafe_allow_html=True)
+            
+            # Invisible-ish button to trigger navigation
+            if st.button(f"OPEN {title.upper()}", key=f"btn_nav_{i}", use_container_width=True):
+                st.session_state.page = target_page
+                st.rerun()
     
     # --- FOOTER ---
     st.markdown("""

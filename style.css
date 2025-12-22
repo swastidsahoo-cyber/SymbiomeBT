@@ -1,16 +1,17 @@
 /* Symbiome Premium "Deep Space" Theme */
 
 /* Import Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
 
 /* Global Reset & Base Styles */
 .stApp {
-    background: #050511 !important;
-    /* Deepest Blue/Black */
+    background-color: #020617 !important;
+    /* slate-950 */
     background-image:
-        radial-gradient(circle at 10% 20%, rgba(0, 242, 254, 0.05) 0%, transparent 20%),
-        radial-gradient(circle at 90% 80%, rgba(118, 75, 162, 0.05) 0%, transparent 20%) !important;
-    color: #ffffff !important;
+        radial-gradient(circle at 50% 0%, rgba(45, 212, 191, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 100% 0%, rgba(139, 92, 246, 0.1) 0%, transparent 50%) !important;
+    color: #f8fafc !important;
+    /* slate-50 */
     font-family: 'Outfit', sans-serif !important;
 }
 
@@ -127,8 +128,10 @@ li {
 }
 
 /* Sidebar Styling */
+/* Sidebar Styling */
 [data-testid="stSidebar"] {
-    background-color: #02020a !important;
+    background-color: #020617 !important;
+    /* slate-950 */
     border-right: 1px solid rgba(255, 255, 255, 0.05);
 }
 
