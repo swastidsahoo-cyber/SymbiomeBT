@@ -1,12 +1,12 @@
 # ==========================================
-# SYMBIOME STABLE VERSION 2.2
-# BUILD ID: CLINICAL-VAULT-V22
-# TIMESTAMP: 2025-12-22 14:15 UTC
+# SYMBIOME STABLE VERSION 2.3
+# BUILD ID: COMPREHENSIVE-PDF-V23
+# TIMESTAMP: 2025-12-22 14:32 UTC
 # ==========================================
 
 import streamlit as st
 st.set_page_config(page_title="Symbiome | AI Resilience", page_icon="🧬", layout="wide")
-st.info("🔄 SYMBIOME SYSTEM BOOTING - VERSION 2.2 • CLINICAL VAULT ACTIVE")
+st.info("🔄 SYMBIOME SYSTEM BOOTING - VERSION 2.3 • 8-PAGE CLINICAL PDF")
 
 # --- CORE UTILITIES ---
 import pandas as pd
