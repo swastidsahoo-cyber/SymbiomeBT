@@ -9,13 +9,14 @@ import random
 from datetime import datetime
 import math
 from data_engine import data_engine # Import the new backend engine
-from modules.passive_sentinel import render_passive_sentinel # Import Passive Sentinel module
 from modules.digital_twin_ui import render_digital_twin_page # Import Digital Twin UI
 from modules.digital_twin_advanced import render_digital_twin_advanced_page # NEW: Advanced Digital Twin
 from modules.resilience_quotient import render_resilience_quotient_page # NEW: Resilience Quotient
 from modules.nlp_journal import render_nlp_journal_page # NEW: NLP Journal
 from modules.predictive_engine import render_predictive_engine_page # NEW: Predictive Engine
-from modules.passive_sentinel import render_passive_sentinel_inlined # Import Passive Sentinel module
+from modules.resilience_forecast import render_resilience_forecast_page # NEW: Resilience Forecast
+from modules.passive_sentinel import render_passive_sentinel_inlined
+ # Import Passive Sentinel module
 
 # ==========================================
 # SYMBIOME APP CONFIGURATION
@@ -1631,26 +1632,8 @@ elif st.session_state.page == 'Journal':
     render_nlp_journal_page()
 elif st.session_state.page == 'Predictive':
     render_predictive_engine_page()
-elif st.session_state.page == 'Resilience Quotient':
-    render_resilience_quotient_page()
-elif st.session_state.page == 'Custom Stress':
-    render_placeholder("Custom Activities", "🎯", "Design your own stress resilience protocols with custom stressors and recovery intervals.")
-elif st.session_state.page == 'Closed Loop':
-    render_placeholder("Closed-Loop System", "⚡", "Automated biofeedback interventions triggered by real-time physiological states.")
-elif st.session_state.page == 'Cognitive':
-    render_placeholder("Cognitive Tests", "🧠", "Standardized neuropsychological assessments to measure executive function under stress.")
-elif st.session_state.page == 'Predictive':
-    render_placeholder("Predictive Engine", "📈", "Advanced machine learning models forecasting your stress response 4 hours in advance.")
 elif st.session_state.page == 'Forecast':
-    render_placeholder("Resilience Forecast", "🌤️", "Looking ahead: Your 48-hour resilience weather report based on sleep and recovery.")
-elif st.session_state.page == 'Journal':
-    render_placeholder("Emotional Journal", "❤️", "Log your subjective experiences and correlate them with objective biometric data.")
-elif st.session_state.page == 'Resilience Quotient':
-    render_placeholder("Resilience Quotient™", "🏆", "Your comprehensive resilience score, benchmarking you against the global population.")
-elif st.session_state.page == 'Research':
-    render_placeholder("Research Dashboard", "📊", "Deep-dive analytics for researchers. Export raw data and visualize correlation matrices.")
-elif st.session_state.page == 'Community':
-    render_placeholder("Community Cloud", "🌍", "Connect with the global Symbiome network. Share resilience scores and compete on leaderboards.")
+    render_resilience_forecast_page()
 elif st.session_state.page == 'Resilience Quotient':
     render_resilience_quotient_page()
 elif st.session_state.page == 'Dashboard':
