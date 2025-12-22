@@ -2,7 +2,7 @@ import streamlit as st
 import plotly.graph_objects as go
 import numpy as np
 import time
-from modules.twin_model import TwinModel
+from .twin_model import TwinModel
 
 # Initialize Twin Model
 if 'twin_model' not in st.session_state:
