@@ -21,8 +21,7 @@ from modules.custom_activities import render_custom_activities_page # NEW: Custo
 from modules.closed_loop import render_closed_loop_page # NEW: Closed-Loop System
 from modules.advanced_features import render_advanced_features_page # NEW: Advanced Features
 from modules.settings_privacy import render_settings_privacy_page # NEW: Settings & Privacy
-from modules.passive_sentinel import render_passive_sentinel_inlined
- # Import Passive Sentinel module
+from modules.passive_sentinel import render_passive_sentinel # Import Passive Sentinel module
 
 # ==========================================
 # SYMBIOME APP CONFIGURATION
@@ -1639,7 +1638,7 @@ elif st.session_state.page == 'Digital Twin':
 elif st.session_state.page == 'Digital Twin Advanced':
     render_digital_twin_advanced_page()
 elif st.session_state.page == 'SENTINEL':
-    render_passive_sentinel_inlined()
+    render_passive_sentinel()
 elif st.session_state.page == 'Journal':
     render_nlp_journal_page()
 elif st.session_state.page == 'Predictive':
