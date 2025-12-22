@@ -53,6 +53,7 @@ def route_page():
         from modules.predictive_engine import render_predictive_engine_page
         render_predictive_engine_page()
     elif page == 'Digital Twin Advanced':
+        from modules.digital_twin_advanced import render_digital_twin_advanced_page
         render_digital_twin_advanced_page()
     elif page == 'Summary':
         render_session_summary()
