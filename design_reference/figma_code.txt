@@ -1,0 +1,7 @@
+PASTE YOUR FIGMA CODE HERE
+===========================
+
+Instructions:
+1. Copy the code from Figma (CSS, Tailwind, React, etc.).
+2. Paste it below this line.
+3. Save the file.

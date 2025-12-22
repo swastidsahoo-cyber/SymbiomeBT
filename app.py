@@ -47,10 +47,24 @@ if 'hydration_active' not in st.session_state:
     st.session_state.hydration_active = False
 if 'tip_index' not in st.session_state:
     st.session_state.tip_index = 0
+
+# Initialize Session State
+if 'page' not in st.session_state:
+    st.session_state.page = "Dashboard"
+
+def load_user_progress():
+    """Loads user gamification data from CSV."""
+    try:
+        df = pd.read_csv("data/user_progress.csv")
+        return df.iloc[0].to_dict()
+    except:
+        return {
+            "xp": 1308, "level": 5, "streak_days": 7, 
+            "garden_growth": 16, "achievements_unlocked": "[]"
+        }
+
 if 'live_mode' not in st.session_state:
     st.session_state.live_mode = False
-if 'page' not in st.session_state:
-    st.session_state.page = 'Dashboard'  # Default to Dashboard
 if 'biofeedback_start_time' not in st.session_state:
     st.session_state.biofeedback_start_time = None
 
@@ -638,17 +652,6 @@ render_top_bar()
 # ==========================================
 # TRAINING / GAMIFICATION LOGIC
 # ==========================================
-def load_user_progress():
-    """Loads user gamification data from CSV."""
-    try:
-        df = pd.read_csv("data/user_progress.csv")
-        return df.iloc[0].to_dict()
-    except:
-        return {
-            "xp": 1308, "level": 5, "streak_days": 7, 
-            "garden_growth": 16, "achievements_unlocked": "[]"
-        }
-
 def render_training():
     """
     Renders the Gamified Biofeedback Interface.
