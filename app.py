@@ -16,6 +16,7 @@ from modules.nlp_journal import render_nlp_journal_page # NEW: NLP Journal
 from modules.predictive_engine import render_predictive_engine_page # NEW: Predictive Engine
 from modules.resilience_forecast import render_resilience_forecast_page # NEW: Resilience Forecast
 from modules.environmental_tracker import render_environmental_tracker_page # NEW: Environmental Tracker
+from modules.clinical_vault import render_clinical_vault_page # NEW: Clinical Vault
 from modules.passive_sentinel import render_passive_sentinel_inlined
  # Import Passive Sentinel module
 
@@ -613,6 +614,9 @@ def render_sidebar():
             st.rerun()
         if st.button("🌍 Environment", key="nav_env", use_container_width=True, type="secondary" if st.session_state.page != "Environmental" else "primary"):
             st.session_state.page = "Environmental"
+            st.rerun()
+        if st.button("🔒 Clinical Vault", key="nav_vault", use_container_width=True, type="secondary" if st.session_state.page != "Clinical Vault" else "primary"):
+            st.session_state.page = "Clinical Vault"
             st.rerun()
 
         # 5. Data & Analysis
@@ -1640,6 +1644,8 @@ elif st.session_state.page == 'Forecast':
     render_resilience_forecast_page()
 elif st.session_state.page == 'Environmental':
     render_environmental_tracker_page()
+elif st.session_state.page == 'Clinical Vault':
+    render_clinical_vault_page()
 elif st.session_state.page == 'Resilience Quotient':
     render_resilience_quotient_page()
 elif st.session_state.page == 'Dashboard':
