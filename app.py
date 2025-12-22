@@ -12,6 +12,7 @@ from data_engine import data_engine # Import the new backend engine
 from modules.passive_sentinel import render_passive_sentinel # Import Passive Sentinel module
 from modules.digital_twin_ui import render_digital_twin_page # Import Digital Twin UI
 from modules.digital_twin_advanced import render_digital_twin_advanced_page # NEW: Advanced Digital Twin
+from modules.resilience_quotient import render_resilience_quotient_page # NEW: Resilience Quotient
 from modules.passive_sentinel import render_passive_sentinel_inlined # Import Passive Sentinel module
 
 # ==========================================
@@ -1643,6 +1644,8 @@ elif st.session_state.page == 'Research':
     render_placeholder("Research Dashboard", "📊", "Deep-dive analytics for researchers. Export raw data and visualize correlation matrices.")
 elif st.session_state.page == 'Community':
     render_placeholder("Community Cloud", "🌍", "Connect with the global Symbiome network. Share resilience scores and compete on leaderboards.")
+elif st.session_state.page == 'Resilience Quotient':
+    render_resilience_quotient_page()
 elif st.session_state.page == 'Dashboard':
     # ==========================================
     # DASHBOARD LAYOUT
