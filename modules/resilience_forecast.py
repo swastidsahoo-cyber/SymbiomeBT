@@ -281,16 +281,15 @@ html, body, [data-testid="stAppViewContainer"] {
     """)
 
     # --- TOP TITLE ---
-    clean_render("""
+    st.markdown("""
 <div class="main-title-container">
     <div class="main-title">Resilience Weather Forecast</div>
     <div class="main-subtitle">Your personalized 7-day resilience prediction based on behavioral patterns and historical data</div>
 </div>
-    """)
+    """, unsafe_allow_html=True)
 
     # --- TODAY'S FORECAST CARD ---
-    # Using raw HTML for maximum control
-    clean_render("""
+    st.markdown("""
 <div class="today-card">
     <div class="today-tag">Today's Forecast</div>
     <div class="today-headline">Good Resilience</div>
@@ -318,7 +317,7 @@ html, body, [data-testid="stAppViewContainer"] {
     
     <div class="today-icon" style="filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.3));">☀️</div>
 </div>
-    """)
+    """, unsafe_allow_html=True)
 
     # --- 7-DAY OUTLOOK CHART PANEL ---
     st.markdown('<div class="chart-panel">', unsafe_allow_html=True)
@@ -382,10 +381,10 @@ html, body, [data-testid="stAppViewContainer"] {
 </div>
         """
     grid_html += '</div>'
-    clean_render(grid_html)
+    st.markdown(grid_html, unsafe_allow_html=True)
 
     # --- FACTORS & ACTIONS ---
-    clean_render("""
+    st.markdown("""
 <div class="factors-panel">
     <div class="panel-title">Forecast Factors</div>
     <div class="factor-row">
@@ -470,10 +469,10 @@ html, body, [data-testid="stAppViewContainer"] {
         📊 <b>Forecast Methodology:</b> Predictions use time-series analysis of your last 14 days, combined with behavioral inputs (sleep, activity, environment). The model learns your personal resilience rhythms and extrapolates forward with confidence intervals. Accuracy improves with more data.
     </div>
 </div>
-    """)
+    """, unsafe_allow_html=True)
 
     # --- PIXEL PERFECT FOOTER (v1.5) ---
-    clean_render("""
+    st.markdown("""
 <div class="hifi-footer">
     <div>
         <div style="color: #10b981; font-weight: 800; font-size: 0.9rem; margin-bottom: 12px;">🧬 About Symbiome</div>
@@ -515,7 +514,7 @@ html, body, [data-testid="stAppViewContainer"] {
     <div class="footer-text" style="font-size: 0.7rem; margin-top: 5px;">Multi-modal biometrics • AI prediction • Environmental correlation • Gut-brain research • Community health mapping</div>
     <div class="footer-text" style="font-size: 0.7rem; margin-top: 15px; color: #475569;">Symbiome Research Platform © 2025 - Advancing the science of human resilience</div>
 </div>
-    """)
+    """, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     render_resilience_forecast_page()

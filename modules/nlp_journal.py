@@ -26,7 +26,7 @@ def render_nlp_journal_page():
         ]
 
     # --- CSS STYLES (PIXEL-PERFECT FIGMA ACCURACY) ---
-    clean_render("""
+    st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
 
@@ -168,12 +168,12 @@ html, body, [data-testid="stAppViewContainer"] {
     """)
 
     # --- TOP HEADER ---
-    clean_render("""
+    st.markdown("""
 <div class="journal-header-v15">
     <div class="journal-title-v15">Mind-Body Journal</div>
     <div class="journal-sub-v15">Bridge the gap between emotions and physiology - track how your feelings connect to your body's resilience</div>
 </div>
-    """)
+    """, unsafe_allow_html=True)
 
     # --- STAT ROW ---
     st.markdown('<div class="stat-row-v15">', unsafe_allow_html=True)
@@ -205,16 +205,16 @@ html, body, [data-testid="stAppViewContainer"] {
         st.markdown('<div class="panel-title-v15"><span style="color: #2dd4bf;">+</span> Log Your State</div>', unsafe_allow_html=True)
         
         mood = st.slider("Mood Slider", 1, 10, 5, key="mood_s", label_visibility="collapsed")
-        clean_render(f'<div class="slider-label-v15"><span class="slider-name-v15">Mood</span><span class="slider-val-v15">{mood}/10</span></div>')
+        st.markdown(f'<div class="slider-label-v15"><span class="slider-name-v15">Mood</span><span class="slider-val-v15">{mood}/10</span></div>', unsafe_allow_html=True)
         
         stress = st.slider("Stress Slider", 1, 10, 5, key="stress_s", label_visibility="collapsed")
-        clean_render(f'<div class="slider-label-v15"><span class="slider-name-v15">Stress Level</span><span class="slider-val-v15">{stress}/10</span></div>')
+        st.markdown(f'<div class="slider-label-v15"><span class="slider-name-v15">Stress Level</span><span class="slider-val-v15">{stress}/10</span></div>', unsafe_allow_html=True)
 
         energy = st.slider("Energy Slider", 1, 10, 5, key="energy_s", label_visibility="collapsed")
-        clean_render(f'<div class="slider-label-v15"><span class="slider-name-v15">Energy Level</span><span class="slider-val-v15">{energy}/10</span></div>')
+        st.markdown(f'<div class="slider-label-v15"><span class="slider-name-v15">Energy Level</span><span class="slider-val-v15">{energy}/10</span></div>', unsafe_allow_html=True)
 
         gut = st.slider("Gut Slider", 1, 10, 5, key="gut_s", label_visibility="collapsed")
-        clean_render(f'<div class="slider-label-v15"><span class="slider-name-v15">Gut Comfort</span><span class="slider-val-v15">{gut}/10</span></div>')
+        st.markdown(f'<div class="slider-label-v15"><span class="slider-name-v15">Gut Comfort</span><span class="slider-val-v15">{gut}/10</span></div>', unsafe_allow_html=True)
 
         st.markdown('<div style="color: white; font-size: 0.8rem; font-weight: 800; margin-top: 30px; margin-bottom: 15px;">Today\'s Diet</div>', unsafe_allow_html=True)
         
@@ -304,7 +304,7 @@ html, body, [data-testid="stAppViewContainer"] {
         st.markdown('</div>', unsafe_allow_html=True)
 
     # --- SCIENCE PANEL ---
-    clean_render("""
+    st.markdown("""
 <div class="science-panel-v15">
     <div class="panel-title-v15" style="margin-bottom: 25px;"><span style="color: #f59e0b;">💡</span> The Science Behind Mind-Body Logging</div>
     <div style="margin-bottom: 20px;">
@@ -320,7 +320,7 @@ html, body, [data-testid="stAppViewContainer"] {
         <span class="journal-sub-v15"> Gut bacteria produce neurotransmitters like serotonin (90% made in gut) and GABA, directly affecting emotional regulation.</span>
     </div>
 </div>
-    """)
+    """, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     render_nlp_journal_page()

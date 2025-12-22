@@ -18,7 +18,7 @@ def clean_render(html_str):
 
 def render_environmental_tracker_page():
     # --- CSS STYLES (PIXEL-PERFECT FIGMA ACCURACY) ---
-    clean_render("""
+    st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
 
@@ -132,15 +132,15 @@ html, body, [data-testid="stAppViewContainer"] {
     border-radius: 4px;
 }
 </style>
-    """)
+    """, unsafe_allow_html=True)
 
     # --- TOP HEADER ---
-    clean_render("""
+    st.markdown("""
 <div class="env-header-v15">
     <div class="env-title-v15">Environmental Symbiome Feedback</div>
     <div class="env-sub-v15">How your surrounding environment shapes your physiological resilience</div>
 </div>
-    """)
+    """, unsafe_allow_html=True)
 
     # --- SENSOR ROW ---
     st.markdown('<div class="env-stat-row-v15">', unsafe_allow_html=True)
@@ -170,13 +170,13 @@ html, body, [data-testid="stAppViewContainer"] {
     col_sl, col_res = st.columns([1.8, 1])
     with col_sl:
         l_s = st.slider("L", 0, 100, 65, key="l_s", label_visibility="collapsed")
-        clean_render(f'<div class="env-sl-lbl-v15"><span class="env-sl-name-v15">💡 Light Exposure</span><span class="env-sl-val-v15">{l_s}%</span></div>')
+        st.markdown(f'<div class="env-sl-lbl-v15"><span class="env-sl-name-v15">💡 Light Exposure</span><span class="env-sl-val-v15">{l_s}%</span></div>', unsafe_allow_html=True)
         
         n_s = st.slider("N", 20, 100, 39, key="n_s", label_visibility="collapsed")
-        clean_render(f'<div class="env-sl-lbl-v15"><span class="env-sl-name-v15">🔊 Noise Level</span><span class="env-sl-val-v15">{n_s} dB</span></div>')
+        st.markdown(f'<div class="env-sl-lbl-v15"><span class="env-sl-name-v15">🔊 Noise Level</span><span class="env-sl-val-v15">{n_s} dB</span></div>', unsafe_allow_html=True)
 
         t_s = st.slider("T", 10, 40, 21, key="t_s", label_visibility="collapsed")
-        clean_render(f'<div class="env-sl-lbl-v15"><span class="env-sl-name-v15">🌡️ Temperature</span><span class="env-sl-val-v15">{t_s}°C</span></div>')
+        st.markdown(f'<div class="env-sl-lbl-v15"><span class="env-sl-name-v15">🌡️ Temperature</span><span class="env-sl-val-v15">{t_s}°C</span></div>', unsafe_allow_html=True)
 
     with col_res:
         # Calculate Mock Impact
@@ -184,7 +184,7 @@ html, body, [data-testid="stAppViewContainer"] {
         optimality = max(0, min(100, optimality))
         impact = (optimality - 50) / 2
         
-        clean_render(f"""
+        st.markdown(f"""
 <div style="padding-top: 15px; text-align: right;">
     <div style="color: #94a3b8; font-size: 0.75rem; font-weight: 700; margin-bottom: 5px;">Predicted SRI Impact</div>
     <div style="color: #10b981; font-size: 2.2rem; font-weight: 900;">{'+' if impact >=0 else ''}{impact:.1f}%</div>
@@ -199,7 +199,7 @@ html, body, [data-testid="stAppViewContainer"] {
         </div>
     </div>
 </div>
-        """)
+        """, unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
     # --- CURVE CHARTS ---
