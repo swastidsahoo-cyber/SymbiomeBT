@@ -1220,10 +1220,10 @@ def render_session_summary():
     st.markdown("---")
     render_placeholder("Session Summary", "📈", "Detailed insights from your past sessions will appear here.")
 
-def render_digital_twin_advanced_page():
-    st.markdown("## 👤 Digital Twin Advanced")
-    st.markdown("---")
-    render_placeholder("Digital Twin Advanced", "👤", "Advanced configuration for your digital twin.")
+# def render_digital_twin_advanced_page():
+#     st.markdown("## 👤 Digital Twin Advanced")
+#     st.markdown("---")
+#     render_placeholder("Digital Twin Advanced", "👤", "Advanced configuration for your digital twin.")
 
 
 # ==========================================
