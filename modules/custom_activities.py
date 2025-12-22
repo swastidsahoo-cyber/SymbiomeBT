@@ -1,7 +1,7 @@
 """
 Custom Activities Interface.
 Allows users to define and track real-world stress challenges using Virtual Sensors.
-Version 8.4 - Definitive UI & Interaction Fix
+Version 8.5 - FULLY INTEGRATED MODAL & RENDERING FIX
 """
 import streamlit as st
 import numpy as np
@@ -25,9 +25,8 @@ def render_custom_activities_page():
     if 'show_add_activity' not in st.session_state:
         st.session_state.show_add_activity = False
 
-    # --- CSS STYLES (DEDENTED) ---
-    st.markdown("""
-<style>
+    # --- CSS STYLES (0-INDENTED FOR STABILITY) ---
+    st.markdown("""<style>
 @keyframes pulse-red {
     0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
     70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
@@ -60,25 +59,10 @@ def render_custom_activities_page():
     text-align: center;
     transition: all 0.2s ease;
 }
-.sensor-card:hover {
-    border-color: rgba(6, 182, 212, 0.4);
-    background: rgba(2, 6, 23, 0.8);
-}
-.sensor-icon {
-    font-size: 1.8rem;
-    margin-bottom: 15px;
-    opacity: 0.9;
-}
-.sensor-label {
-    font-weight: 700;
-    color: white;
-    font-size: 0.95rem;
-    margin-bottom: 5px;
-}
-.sensor-sub {
-    font-size: 0.7rem;
-    color: #94a3b8;
-}
+.sensor-card:hover { border-color: rgba(6, 182, 212, 0.4); background: rgba(2, 6, 23, 0.8); }
+.sensor-icon { font-size: 1.8rem; margin-bottom: 15px; opacity: 0.9; }
+.sensor-label { font-weight: 700; color: white; font-size: 0.95rem; margin-bottom: 5px; }
+.sensor-sub { font-size: 0.7rem; color: #94a3b8; }
 .no-hw-box {
     background: rgba(6, 182, 212, 0.05);
     border: 1px solid rgba(6, 182, 212, 0.2);
@@ -87,7 +71,6 @@ def render_custom_activities_page():
     margin-top: 20px;
     font-size: 0.85rem;
     color: #e2e8f0;
-    text-align: left;
 }
 .activity-card-container {
     background: #0f172a;
@@ -99,14 +82,9 @@ def render_custom_activities_page():
 }
 .brain-box {
     background: rgba(245, 158, 11, 0.15);
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.4rem;
-    color: #f59e0b;
+    width: 44px; height: 44px; border-radius: 10px;
+    display: flex; justify-content: center; align-items: center;
+    font-size: 1.4rem; color: #f59e0b;
 }
 .active-session-v2 {
     background: linear-gradient(90deg, #1e0b0b 0%, #2a1a1a 100%);
@@ -118,11 +96,10 @@ def render_custom_activities_page():
 .intensity-bar-bg {
     width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; position: relative; margin: 15px 0;
 }
-.intensity-bar-fill {
-    height: 100%; background: white; border-radius: 3px;
-}
+.intensity-bar-fill { height: 100%; background: white; border-radius: 3px; }
 .intensity-bar-handle {
-    width: 12px; height: 12px; background: white; border-radius: 50%; position: absolute; top: -3px; left: 60%;
+    width: 12px; height: 12px; background: white; border-radius: 50%;
+    position: absolute; top: -3px; left: 60%;
 }
 .btn-start {
     background: rgba(255,255,255,0.05);
@@ -135,152 +112,131 @@ def render_custom_activities_page():
     transition: all 0.2s;
     cursor: pointer;
 }
-.btn-start:hover {
-    background: rgba(255,255,255,0.1);
-    color: white;
+.btn-start:hover { background: rgba(255,255,255,0.1); color: white; }
+
+/* MODAL INTEGRATION FIX FOR V8.5 */
+div[data-testid="stForm"] {
+    background: #0f172a !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    border-radius: 20px !important;
+    padding: 30px !important;
 }
-</style>
-""", unsafe_allow_html=True)
+</style>""", unsafe_allow_html=True)
 
     # --- TOP HEADER ---
-    st.markdown("""
-<div style="margin-bottom: 30px;">
-    <div class="ca-title">Custom Stress Activities</div>
-    <p style="color: #94a3b8; font-size: 1.05rem;">
-        Add your own real-world stress challenges and measure your resilience with or without sensors
-    </p>
-</div>
-""", unsafe_allow_html=True)
+    st.markdown("""<div style="margin-bottom: 30px;">
+<div class="ca-title">Custom Stress Activities</div>
+<p style="color: #94a3b8; font-size: 1.05rem;">
+Add your own real-world stress challenges and measure your resilience with or without sensors
+</p>
+</div>""", unsafe_allow_html=True)
 
-    # --- ACTIVE SESSION VIEW (SCREENSHOT 3 / SCREEN 4) ---
+    # --- ACTIVE SESSION VIEW ---
     if st.session_state.active_ca_session["active"]:
         session = st.session_state.active_ca_session
         elapsed = int(time.time() - session["start_time"])
         mins, secs = divmod(elapsed, 60)
-        
-        if random.random() > 0.7:
-            session["readings"] += 1
+        if random.random() > 0.7: session["readings"] += 1
 
-        st.markdown(f"""
-<div class="active-session-v2">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <div style="width: 10px; height: 10px; background: #ef4444; border-radius: 50%; box-shadow: 0 0 10px #ef4444;"></div>
-            <div style="font-weight: 700; color: white; font-size: 0.95rem;">Session Active <span style="font-weight: 400; color: #94a3b8; margin-left: 10px;">{mins}:{secs:02d}</span></div>
-            <div style="font-size: 0.8rem; color: #f59e0b; margin-left: 20px; display: flex; align-items: center; gap: 5px;">⚡ {session['readings']} readings</div>
-            <div style="display: flex; gap: 12px; margin-left: 15px;">
-                <span style="font-size: 0.8rem; color: #94a3b8; display: flex; align-items: center; gap: 5px;">📷 Camera PPG</span>
-                <span style="font-size: 0.8rem; color: #94a3b8; display: flex; align-items: center; gap: 5px;">🎙️ Voice</span>
-                <span style="font-size: 0.8rem; color: #94a3b8; display: flex; align-items: center; gap: 5px;">⌨️ Typing</span>
-            </div>
-        </div>
-        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: white; padding: 6px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 0.9rem;">⏹️</span> End & Compute Score
-        </div>
-    </div>
-    
-    <div style="margin-bottom: 25px;">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-            <span style="font-size: 0.95rem; font-weight: 700; color: white;">Current Stress Level: {session['stress_level']}/10</span>
-        </div>
-        <div class="intensity-bar-bg">
-            <div class="intensity-bar-fill" style="width: {session['stress_level']*10}%;"></div>
-            <div class="intensity-bar-handle" style="left: calc({session['stress_level']*10}% - 6px);"></div>
-        </div>
-    </div>
-    
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; text-align: center;">
-        <div>
-            <div style="color: #2dd4bf; font-size: 1.8rem; font-weight: 800;">{70 + random.randint(0,10)}</div>
-            <div style="color: #94a3b8; font-size: 0.75rem;">HRV (ms)</div>
-        </div>
-        <div>
-            <div style="color: #38bdf8; font-size: 1.8rem; font-weight: 800;">{75 + random.randint(0,5)}</div>
-            <div style="color: #94a3b8; font-size: 0.75rem;">HR (bpm)</div>
-        </div>
-        <div>
-            <div style="color: #a855f7; font-size: 1.8rem; font-weight: 800;">{50 + random.randint(0,5)}</div>
-            <div style="color: #94a3b8; font-size: 0.75rem;">GSR (μS)</div>
-        </div>
-        <div>
-            <div style="color: #10b981; font-size: 1.8rem; font-weight: 800;">{40 + random.randint(0,10)}</div>
-            <div style="color: #94a3b8; font-size: 0.75rem;">Calm Index</div>
-        </div>
-    </div>
+        st.markdown(f"""<div class="active-session-v2">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+<div style="display: flex; align-items: center; gap: 15px;">
+<div style="width: 10px; height: 10px; background: #ef4444; border-radius: 50%; box-shadow: 0 0 10px #ef4444;"></div>
+<div style="font-weight: 700; color: white; font-size: 0.95rem;">Session Active <span style="font-weight: 400; color: #94a3b8; margin-left: 10px;">{mins}:{secs:02d}</span></div>
+<div style="font-size: 0.8rem; color: #f59e0b; margin-left: 20px; display: flex; align-items: center; gap: 5px;">⚡ {session['readings']} readings</div>
+<div style="display: flex; gap: 12px; margin-left: 15px;">
+<span style="font-size: 0.8rem; color: #94a3b8;">📷 Camera PPG</span>
+<span style="font-size: 0.8rem; color: #94a3b8;">🎙️ Voice</span>
+<span style="font-size: 0.8rem; color: #94a3b8;">⌨️ Typing</span>
 </div>
-""", unsafe_allow_html=True)
+</div>
+<div style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: white; padding: 6px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 8px;">
+<span style="font-size: 0.9rem;">⏹️</span> End & Compute Score
+</div>
+</div>
+<div style="margin-bottom: 25px;">
+<div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+<span style="font-size: 0.95rem; font-weight: 700; color: white;">Current Stress Level: {session['stress_level']}/10</span>
+</div>
+<div class="intensity-bar-bg">
+<div class="intensity-bar-fill" style="width: {session['stress_level']*10}%;"></div>
+<div class="intensity-bar-handle" style="left: calc({session['stress_level']*10}% - 6px);"></div>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; text-align: center;">
+<div><div style="color: #2dd4bf; font-size: 1.8rem; font-weight: 800;">{70 + random.randint(0,10)}</div><div style="color: #94a3b8; font-size: 0.75rem;">HRV (ms)</div></div>
+<div><div style="color: #38bdf8; font-size: 1.8rem; font-weight: 800;">{75 + random.randint(0,5)}</div><div style="color: #94a3b8; font-size: 0.75rem;">HR (bpm)</div></div>
+<div><div style="color: #a855f7; font-size: 1.8rem; font-weight: 800;">{50 + random.randint(0,5)}</div><div style="color: #94a3b8; font-size: 0.75rem;">GSR (μS)</div></div>
+<div><div style="color: #10b981; font-size: 1.8rem; font-weight: 800;">{40 + random.randint(0,10)}</div><div style="color: #94a3b8; font-size: 0.75rem;">Calm Index</div></div>
+</div>
+</div>""", unsafe_allow_html=True)
         
         if st.button("Click to End Session", key="end_hidden", type="primary", use_container_width=True):
             st.session_state.active_ca_session["active"] = False
             st.toast("Activity analyzed. Data synced to Journal.", icon="📊")
             st.rerun()
 
-    # --- VIRTUAL SENSOR LAYER (SCREENSHOT 0) ---
-    # We display this ALWAYS unless we want to hide it in session (Screen 4 suggests it might be gone)
+    # --- VIRTUAL SENSOR LAYER (ALWAYS ON COLUMN 0) ---
     if not st.session_state.active_ca_session["active"]:
-        st.markdown(f"""
-<div class="section-container">
-    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 5px;">
-        <span style="font-size: 1.3rem; color: #94a3b8;">♒</span>
-        <span style="font-weight: 700; color: white; font-size: 1.1rem;">Virtual Sensor Layer</span>
-    </div>
-    <div style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 20px;">
-        Enable measurement methods - works completely without hardware
-    </div>
-    <div class="sensor-grid">
-        <div class="sensor-card">
-            <div class="sensor-icon">📷</div>
-            <div class="sensor-label">Camera PPG</div>
-            <div class="sensor-sub">HRV & Heart Rate</div>
-        </div>
-        <div class="sensor-card">
-            <div class="sensor-icon">🎙️</div>
-            <div class="sensor-label">Voice Analysis</div>
-            <div class="sensor-sub">Speech stress markers</div>
-        </div>
-        <div class="sensor-card">
-            <div class="sensor-icon">⌨️</div>
-            <div class="sensor-label">Typing Dynamics</div>
-            <div class="sensor-sub">Cognitive load</div>
-        </div>
-        <div class="sensor-card">
-            <div class="sensor-icon">🧠</div>
-            <div class="sensor-label">Cognitive Tests</div>
-            <div class="sensor-sub">Reaction time & accuracy</div>
-        </div>
-    </div>
-    <div class="no-hw-box">
-        <span style="font-weight: 700;">No hardware required:</span> These virtual sensors use your device's camera, microphone, and interaction patterns to measure physiological stress without any wearable devices.
-    </div>
+        st.markdown("""<div class="section-container">
+<div style="display: flex; align-items: center; gap: 12px; margin-bottom: 5px;">
+<span style="font-size: 1.3rem; color: #94a3b8;">♒</span>
+<span style="font-weight: 700; color: white; font-size: 1.1rem;">Virtual Sensor Layer</span>
 </div>
-""", unsafe_allow_html=True)
+<div style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 20px;">
+Enable measurement methods - works completely without hardware
+</div>
+<div class="sensor-grid">
+<div class="sensor-card">
+<div class="sensor-icon">📷</div>
+<div class="sensor-label">Camera PPG</div>
+<div class="sensor-sub">HRV & Heart Rate</div>
+</div>
+<div class="sensor-card">
+<div class="sensor-icon">🎙️</div>
+<div class="sensor-label">Voice Analysis</div>
+<div class="sensor-sub">Speech stress markers</div>
+</div>
+<div class="sensor-card">
+<div class="sensor-icon">⌨️</div>
+<div class="sensor-label">Typing Dynamics</div>
+<div class="sensor-sub">Cognitive load</div>
+</div>
+<div class="sensor-card">
+<div class="sensor-icon">🧠</div>
+<div class="sensor-label">Cognitive Tests</div>
+<div class="sensor-sub">Reaction time & accuracy</div>
+</div>
+</div>
+<div class="no-hw-box">
+<span style="font-weight: 700;">No hardware required:</span> These virtual sensors use your device's camera, microphone, and interaction patterns to measure physiological stress without any wearable devices.
+</div>
+</div>""", unsafe_allow_html=True)
 
-    # --- YOUR CUSTOM ACTIVITIES ---
+    # --- YOUR CUSTOM ACTIVITIES HEADER ---
     ca_header_col1, ca_header_col2 = st.columns([3, 1])
     with ca_header_col1:
         st.markdown('<h3 style="margin-top: 10px;">Your Custom Activities</h3>', unsafe_allow_html=True)
     with ca_header_col2:
         if st.button("+ Add New Activity", key="btn_show_add", use_container_width=True):
             st.session_state.show_add_activity = True
-            # Forcing immediate refresh to show modal (Screen 2)
             st.rerun()
 
-    # --- MODAL SIMULATION (SCREENSHOT 1 / SCREEN 2) ---
+    # --- INTEGRATED MODAL (V8.5 DEFINITIVE) ---
     if st.session_state.show_add_activity:
-        st.markdown("""
-<div style="position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 10002;"></div>
-<div style="position: fixed; top:50%; left:50%; transform: translate(-50%, -50%); width: 500px; background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; z-index: 10003; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.8);">
-    <div style="text-align: left; margin-bottom: 30px;">
-        <h3 style="color: white; margin-bottom: 10px;">Add New Stress Activity</h3>
-        <p style="color: #94a3b8; font-size: 0.95rem;">Create a custom activity to track your stress response</p>
-    </div>
-</div>
-""", unsafe_allow_html=True)
+        # Full screen darkened overlay
+        st.markdown("""<div style="position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); z-index: 9999;"></div>""", unsafe_allow_html=True)
         
-        m_col1, m_col2, m_col3 = st.columns([1, 2, 1])
-        with m_col2:
-            st.markdown('<div style="height: 100px;"></div>', unsafe_allow_html=True) # Spacer for overlay alignment
-            with st.form("new_activity_form_v84"):
+        # Centered form unit
+        m_spacer1, m_content, m_spacer2 = st.columns([0.5, 2, 0.5])
+        with m_content:
+            st.markdown('<div style="height: 50px;"></div>', unsafe_allow_html=True) # Move form down
+            with st.form("new_activity_modal_v85"):
+                st.markdown("""<div style="text-align: left; margin-bottom: 20px;">
+<h3 style="color: white; margin-bottom: 5px;">Add New Stress Activity</h3>
+<p style="color: #94a3b8; font-size: 0.9rem;">Create a custom activity to track your stress response</p>
+</div>""", unsafe_allow_html=True)
+                
                 new_name = st.text_input("Activity Name", placeholder="e.g., Chemistry Exam, Job Interview, Public Speaking")
                 new_type = st.selectbox("Activity Type", [
                     "Cognitive (studying, exams)", 
@@ -289,11 +245,13 @@ def render_custom_activities_page():
                     "Emotional (difficult conversations)", 
                     "High Pressure (competitions, deadlines)"
                 ])
-                new_intensity = st.slider("Estimated Intensity: 5/10", 1, 10, 5)
+                st.markdown('<div style="margin-top: 15px; color: white; font-size: 0.9rem; font-weight: 600;">Estimated Intensity: 5/10</div>', unsafe_allow_html=True)
+                new_intensity = st.slider("Intensity Slider", 1, 10, 5, label_visibility="collapsed")
                 new_duration = st.number_input("Expected Duration (minutes)", min_value=1, value=10)
                 new_notes = st.text_area("Notes (optional)", placeholder="What triggers stress? Where are you? Who are you with?")
                 
-                f_col1, f_col2 = st.columns(2)
+                st.markdown('<div style="height: 20px;"></div>', unsafe_allow_html=True)
+                f_col1, f_col2 = st.columns([2, 1])
                 with f_col1:
                     if st.form_submit_button("✅ Add Activity", use_container_width=True):
                         st.session_state.custom_activities.append({
@@ -305,64 +263,58 @@ def render_custom_activities_page():
                             "sessions": 0
                         })
                         st.session_state.show_add_activity = False
-                        # AUTO START TRIAL? No, just refresh to show in registry (Screen 4 style)
-                        st.toast("Activity added to registry", icon="✨")
+                        st.toast("Activity synchronized!", icon="✨")
                         st.rerun()
                 with f_col2:
                     if st.form_submit_button("Cancel", use_container_width=True):
                         st.session_state.show_add_activity = False
                         st.rerun()
 
-    # --- EMPTY STATE (PRE-ADD) ---
+    # --- REGISTRY & EMPTY STATE ---
     if not st.session_state.custom_activities and not st.session_state.show_add_activity:
-        st.markdown("""
-<div style="background: rgba(15, 23, 42, 0.4); border: 2px dashed rgba(255,255,255,0.05); border-radius: 20px; padding: 100px 40px; text-align: center; margin-top: 20px;">
-    <div style="font-size: 4rem; color: #334155; margin-bottom: 25px;">🎯</div>
-    <h3 style="color: white; margin-bottom: 15px; font-weight: 800;">No Custom Activities Yet</h3>
-    <p style="color: #94a3b8; max-width: 450px; margin: 0 auto 35px auto; font-size: 1rem; line-height: 1.6;">
-        Create your first stress activity to start tracking your resilience in real-world scenarios. Works with sensors or self-report data.
-    </p>
-</div>
-""", unsafe_allow_html=True)
+        st.markdown("""<div style="background: rgba(15, 23, 42, 0.4); border: 2px dashed rgba(255,255,255,0.05); border-radius: 20px; padding: 100px 40px; text-align: center; margin-top: 20px;">
+<div style="font-size: 4rem; color: #334155; margin-bottom: 25px;">🎯</div>
+<h3 style="color: white; margin-bottom: 15px; font-weight: 800;">No Custom Activities Yet</h3>
+<p style="color: #94a3b8; max-width: 450px; margin: 0 auto 35px auto; font-size: 1rem; line-height: 1.6;">
+Create your first stress activity to start tracking your resilience in real-world scenarios.
+</p>
+</div>""", unsafe_allow_html=True)
         m_empty1, m_empty2, m_empty3 = st.columns([1, 1, 1])
         with m_empty2:
             if st.button("+ Add Your First Activity", key="btn_first_add", type="primary", use_container_width=True):
                 st.session_state.show_add_activity = True
                 st.rerun()
     
-    # --- ACTIVITY REGISTRY (SCREENSHOT 3 / SCREEN 4) ---
     elif st.session_state.custom_activities:
         cols = st.columns(2)
         for i, activity in enumerate(st.session_state.custom_activities):
             with cols[i % 2]:
-                st.markdown(f"""
-<div class="activity-card-container">
-    <div style="display: flex; gap: 18px; align-items: flex-start; margin-bottom: 25px;">
-        <div class="brain-box">🧠</div>
-        <div>
-            <div style="font-weight: 800; color: white; font-size: 1.25rem;">{activity['name']}</div>
-            <div style="font-size: 0.9rem; color: #94a3b8; font-weight: 500;">{activity['type']}</div>
-        </div>
-    </div>
-    <div style="margin-bottom: 25px;">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-            <span style="font-size: 0.9rem; color: #e2e8f0; font-weight: 500;">Intensity</span>
-            <span style="font-size: 0.95rem; color: white; font-weight: 800;">{activity['intensity']}/10</span>
-        </div>
-        <div class="intensity-bar-bg" style="margin: 0;">
-            <div class="intensity-bar-fill" style="width: {activity['intensity']*10}%;"></div>
-        </div>
-    </div>
-    <div style="display: flex; gap: 20px; color: #94a3b8; font-size: 0.9rem; margin-bottom: 15px; font-weight: 500;">
-        <span>🕒 {activity['duration']}m</span>
-        <span>📊 {activity['sessions']} sessions</span>
-    </div>
-    <div style="color: #64748b; font-size: 0.85rem; margin-bottom: 25px;">{activity['notes']}</div>
-    <div class="btn-start" onClick="window.parent.postMessage({{type: 'streamlit:setComponentValue', key: 'start_{i}', value: true}}, '*')">
-        ▷ Start Activity
-    </div>
+                st.markdown(f"""<div class="activity-card-container">
+<div style="display: flex; gap: 18px; align-items: flex-start; margin-bottom: 25px;">
+<div class="brain-box">🧠</div>
+<div>
+<div style="font-weight: 800; color: white; font-size: 1.25rem;">{activity['name']}</div>
+<div style="font-size: 0.9rem; color: #94a3b8; font-weight: 500;">{activity['type']}</div>
 </div>
-""", unsafe_allow_html=True)
+</div>
+<div style="margin-bottom: 25px;">
+<div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+<span style="font-size: 0.9rem; color: #e2e8f0; font-weight: 500;">Intensity</span>
+<span style="font-size: 0.95rem; color: white; font-weight: 800;">{activity['intensity']}/10</span>
+</div>
+<div class="intensity-bar-bg" style="margin: 0;">
+<div class="intensity-bar-fill" style="width: {activity['intensity']*10}%;"></div>
+</div>
+</div>
+<div style="display: flex; gap: 20px; color: #94a3b8; font-size: 0.9rem; margin-bottom: 15px; font-weight: 500;">
+<span>🕒 {activity['duration']}m</span>
+<span>📊 {activity['sessions']} sessions</span>
+</div>
+<div style="color: #64748b; font-size: 0.85rem; margin-bottom: 25px;">{activity['notes']}</div>
+<div class="btn-start" onClick="window.parent.postMessage({{type: 'streamlit:setComponentValue', key: 'start_{i}', value: true}}, '*')">
+▷ Start Activity
+</div>
+</div>""", unsafe_allow_html=True)
                 
                 if st.button(f"Hidden Start {i}", key=f"start_{i}", type="secondary"):
                     st.session_state.active_ca_session = {
@@ -375,7 +327,6 @@ def render_custom_activities_page():
                     activity['sessions'] += 1
                     st.rerun()
 
-    # --- AUTO-REFRESH ---
     if st.session_state.active_ca_session["active"]:
         time.sleep(1)
         st.rerun()
