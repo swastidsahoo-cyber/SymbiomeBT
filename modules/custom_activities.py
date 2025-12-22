@@ -34,94 +34,131 @@ def render_custom_activities_page():
     # --- CSS STYLES (ENFORCED 0-INDENT) ---
     clean_render("""
 <style>
-@keyframes pulse-red {
-    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
-    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+@keyframes pulse-vibrant {
+    0% { transform: scale(0.98); box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.6); }
+    70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(249, 115, 22, 0); }
+    100% { transform: scale(0.98); box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); }
 }
 .ca-title {
-    color: #f97316;
-    font-size: 2.2rem;
-    font-weight: 800;
-    margin-bottom: 5px;
+    background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
 }
 .section-container {
-    background: rgba(15, 23, 42, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    padding: 24px;
-    margin-bottom: 25px;
+    background: rgba(30, 41, 59, 0.4);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 30px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.3);
 }
 .sensor-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 15px;
-    margin-top: 20px;
+    gap: 18px;
+    margin-top: 25px;
 }
 .sensor-card {
-    background: rgba(2, 6, 23, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    padding: 20px;
+    background: linear-gradient(145deg, rgba(15, 23, 42, 0.8), rgba(2, 6, 23, 0.9));
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 24px;
     text-align: center;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.sensor-card:hover { border-color: rgba(6, 182, 212, 0.4); background: rgba(2, 6, 23, 0.8); }
-.sensor-icon { font-size: 1.8rem; margin-bottom: 15px; opacity: 0.9; }
-.sensor-label { font-weight: 700; color: white; font-size: 0.95rem; margin-bottom: 5px; }
-.sensor-sub { font-size: 0.7rem; color: #94a3b8; }
+.sensor-card:hover {
+    border-color: #fb923c;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(249, 115, 22, 0.2);
+}
+.sensor-icon { 
+    font-size: 2.2rem; 
+    margin-bottom: 18px; 
+    filter: drop-shadow(0 0 10px rgba(249, 115, 22, 0.3));
+}
+.sensor-label { font-weight: 800; color: white; font-size: 1rem; margin-bottom: 6px; }
+.sensor-sub { font-size: 0.75rem; color: #94a3b8; font-weight: 500; }
 
 .activity-card-container {
-    background: #0f172a;
-    border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 14px;
-    padding: 24px;
-    margin-bottom: 20px;
+    background: linear-gradient(165deg, #0f172a 0%, #020617 100%);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 24px;
+    padding: 28px;
+    margin-bottom: 25px;
     position: relative;
     height: 100%;
+    overflow: hidden;
+}
+.activity-card-container::before {
+    content: '';
+    position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+    background: linear-gradient(90deg, #f97316, #a855f7);
+    opacity: 0.6;
 }
 .brain-box {
-    background: rgba(245, 158, 11, 0.15);
-    width: 44px; height: 44px; border-radius: 10px;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.1));
+    width: 48px; height: 48px; border-radius: 14px;
     display: flex; justify-content: center; align-items: center;
-    font-size: 1.4rem; color: #f59e0b;
+    font-size: 1.6rem; color: #fb923c;
+    border: 1px solid rgba(245, 158, 11, 0.2);
 }
 .active-session-v2 {
-    background: linear-gradient(90deg, #1e0b0b 0%, #2a1a1a 100%);
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    border-radius: 16px;
-    padding: 25px;
-    margin-bottom: 30px;
+    background: linear-gradient(135deg, #1e0b0b 0%, #2e1212 50%, #1e0b0b 100%);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    border-radius: 24px;
+    padding: 30px;
+    margin-bottom: 35px;
+    box-shadow: 0 20px 50px rgba(239, 68, 68, 0.15);
 }
 .intensity-bar-bg {
-    width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; position: relative; margin: 15px 0;
+    width: 100%; height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; position: relative; margin: 20px 0;
+    overflow: hidden;
 }
-.intensity-bar-fill { height: 100%; background: white; border-radius: 3px; }
+.intensity-bar-fill { 
+    height: 100%; 
+    background: linear-gradient(90deg, #fb923c, #f97316); 
+    border-radius: 5px; 
+    box-shadow: 0 0 15px rgba(249, 115, 22, 0.5);
+}
 .intensity-bar-handle {
-    width: 12px; height: 12px; background: white; border-radius: 50%;
-    position: absolute; top: -3px; left: 60%;
+    width: 16px; height: 16px; background: white; border-radius: 50%;
+    position: absolute; top: -3px; border: 3px solid #f97316;
+    box-shadow: 0 0 10px rgba(255,255,255,0.8);
 }
 
-/* MODAL UNIT (V8.8 NATIVE-FIRST) */
+/* MODAL UNIT (V9.0 VIBRANT) */
 div[data-testid="stForm"] {
-    background-color: #0f172a !important;
-    border: 1px solid rgba(255,255,255,0.1) !important;
-    border-radius: 20px !important;
-    padding: 30px !important;
+    background: linear-gradient(165deg, #0f172a 0%, #020617 100%) !important;
+    border: 1px solid rgba(255,255,255,0.15) !important;
+    border-radius: 28px !important;
+    padding: 40px !important;
+    box-shadow: 0 30px 100px rgba(0,0,0,0.8) !important;
 }
 
-/* Custom button styling to match high-fidelity cards */
+/* Custom button styling - Premium Glass Look */
 div.stButton > button {
-    background-color: rgba(255,255,255,0.05) !important;
-    border: 1px solid rgba(255,255,255,0.1) !important;
-    color: #94a3b8 !important;
-    font-weight: 600 !important;
-    border-radius: 8px !important;
+    background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)) !important;
+    border: 1px solid rgba(255,255,255,0.12) !important;
+    color: #e2e8f0 !important;
+    font-weight: 700 !important;
+    border-radius: 12px !important;
+    padding: 12px 24px !important;
+    transition: all 0.3s ease !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.85rem !important;
 }
 div.stButton > button:hover {
-    background-color: rgba(255,255,255,0.1) !important;
+    background: linear-gradient(135deg, #fb923c, #f97316) !important;
     color: white !important;
-    border-color: rgba(255,255,255,0.2) !important;
+    border-color: transparent !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 10px 20px rgba(249, 115, 22, 0.3) !important;
 }
 </style>
     """)
