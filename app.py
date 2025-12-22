@@ -1,12 +1,12 @@
 # ==========================================
-# SYMBIOME STABLE VERSION 2.4
-# BUILD ID: FUNCTIONAL-QR-V24
-# TIMESTAMP: 2025-12-22 14:49 UTC
+# SYMBIOME STABLE VERSION 2.5
+# BUILD ID: DIGITAL-TWIN-V25
+# TIMESTAMP: 2025-12-22 15:09 UTC
 # ==========================================
 
 import streamlit as st
 st.set_page_config(page_title="Symbiome | AI Resilience", page_icon="🧬", layout="wide")
-st.info("🔄 SYMBIOME SYSTEM BOOTING - VERSION 2.4 • FUNCTIONAL QR PORTAL")
+st.info("🔄 SYMBIOME SYSTEM BOOTING - VERSION 2.5 • DIGITAL TWIN IN-SILICO")
 
 # --- CORE UTILITIES ---
 import pandas as pd
