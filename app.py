@@ -1,49 +1,87 @@
 # ==========================================
-# SYMBIOME STABLE VERSION 7.2
-# BUILD ID: DEF-DEPENDENCY-FIX-99
-# TIMESTAMP: 2025-12-22 08:05 UTC
+# SYMBIOME STABLE VERSION 7.3
+# BUILD ID: LATE-LOAD-RECOVERY-01
+# TIMESTAMP: 2025-12-22 08:10 UTC
 # ==========================================
 
 import streamlit as st
 st.set_page_config(page_title="Symbiome | AI Resilience", page_icon="🧬", layout="wide")
+st.info("🔄 SYMBIOME SYSTEM BOOTING - VERSION 7.3")
 
-# --- EMERGENCY SAFETY FOR STALE CLOUD RUNTIME ---
-def render_passive_sentinel_inlined():
-    from modules.passive_sentinel import render_passive_sentinel
-    return render_passive_sentinel()
-# --- END EMERGENCY SAFETY ---
-
+# --- CORE UTILITIES ---
 import pandas as pd
+import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
-from modules.science_logic import calculate_sri
 import time
 import os
 import random
 from datetime import datetime
 import math
 from data_engine import data_engine
-from modules.digital_twin_ui import render_digital_twin_page
-from modules.digital_twin_advanced import render_digital_twin_advanced_page
-from modules.resilience_quotient import render_resilience_quotient_page
-from modules.nlp_journal import render_nlp_journal_page
-from modules.predictive_engine import render_predictive_engine_page
-from modules.resilience_forecast import render_resilience_forecast_page
-from modules.environmental_tracker import render_environmental_tracker_page
-from modules.clinical_vault import render_clinical_vault_page
-from modules.custom_activities import render_custom_activities_page
-from modules.closed_loop import render_closed_loop_page
-from modules.advanced_features import render_advanced_features_page
-from modules.settings_privacy import render_settings_privacy_page
-from modules.passive_sentinel import render_passive_sentinel # CORRECT SYMBOL
+from modules.science_logic import calculate_sri
 
-st.success("🚀 SYMBIOME VERSION 7.2 (CRITICAL FIX ACTIVE)")
+# --- DEFENISVE WRAPPER FOR SIDEBAR ---
+def load_user_progress():
+    """Loads user gamification data from CSV."""
+    try:
+        df = pd.read_csv("data/user_progress.csv")
+        return df.iloc[0].to_dict()
+    except:
+        return {
+            "xp": 1308, "level": 5, "streak_days": 7, 
+            "garden_growth": 16, "achievements_unlocked": "[]"
+        }
 
-# SAFETY NET: Alias if cache is stale
-try:
-    from modules.passive_sentinel import render_passive_sentinel_inlined
-except ImportError:
-    from modules.passive_sentinel import render_passive_sentinel as render_passive_sentinel_inlined
+# --- DYNAMIC ROUTING (LATE LOADING) ---
+def route_page():
+    page = st.session_state.get('page', 'Dashboard')
+    
+    if page == 'Monitor':
+        from modules.custom_activities import render_monitor
+        render_monitor()
+    elif page == 'Training':
+        render_training() # Defined in app.py
+    elif page == 'SENTINEL':
+        from modules.passive_sentinel import render_passive_sentinel
+        render_passive_sentinel()
+    elif page == 'Dashboard':
+        render_dashboard()
+    elif page == 'Digital Twin':
+        from modules.digital_twin_ui import render_digital_twin_page
+        render_digital_twin_page()
+    elif page == 'Predictive':
+        from modules.predictive_engine import render_predictive_engine_page
+        render_predictive_engine_page()
+    elif page == 'Journal':
+        from modules.nlp_journal import render_nlp_journal_page
+        render_nlp_journal_page()
+    elif page == 'Resilience Quotient':
+        from modules.resilience_quotient import render_resilience_quotient_page
+        render_resilience_quotient_page()
+    elif page == 'Forecast':
+        from modules.resilience_forecast import render_resilience_forecast_page
+        render_resilience_forecast_page()
+    elif page == 'Environmental':
+        from modules.environmental_tracker import render_environmental_tracker_page
+        render_environmental_tracker_page()
+    elif page == 'Clinical Vault':
+        from modules.clinical_vault import render_clinical_vault_page
+        render_clinical_vault_page()
+    elif page == 'Custom Stress':
+        from modules.custom_activities import render_custom_activities_page
+        render_custom_activities_page()
+    elif page == 'Closed Loop':
+        from modules.closed_loop import render_closed_loop_page
+        render_closed_loop_page()
+    elif page == 'Advanced Features':
+        from modules.advanced_features import render_advanced_features_page
+        render_advanced_features_page()
+    elif page == 'Settings':
+        from modules.settings_privacy import render_settings_privacy_page
+        render_settings_privacy_page()
+    else:
+        st.error(f"Page {page} not found or module failed to load.")
 
 # ==========================================
 # CSS & ASSETS
@@ -1692,44 +1730,7 @@ with st.sidebar:
 # MAIN LAYOUT ROUTING
 # ==========================================
 
-# --- PAGE ROUTING ---
-if st.session_state.page == 'Monitor':
-    render_monitor()
-elif st.session_state.page == 'Training':
-    render_training()
-elif st.session_state.page == 'Summary':
-    render_session_summary()
-elif st.session_state.page == 'Digital Twin':
-    render_digital_twin_page()
-elif st.session_state.page == 'Digital Twin Advanced':
-    render_digital_twin_advanced_page()
-elif st.session_state.page == 'SENTINEL':
-    render_passive_sentinel()
-elif st.session_state.page == 'Journal':
-    render_nlp_journal_page()
-elif st.session_state.page == 'Predictive':
-    render_predictive_engine_page()
-elif st.session_state.page == 'Forecast':
-    render_resilience_forecast_page()
-elif st.session_state.page == 'Environmental':
-    render_environmental_tracker_page()
-elif st.session_state.page == 'Clinical Vault':
-    render_clinical_vault_page()
-elif st.session_state.page == 'Custom Stress':
-    render_custom_activities_page()
-elif st.session_state.page == 'Closed Loop':
-    render_closed_loop_page()
-elif st.session_state.page == 'Research':
-    render_advanced_features_page()
-elif st.session_state.page == 'Resilience Quotient':
-    render_resilience_quotient_page()
-elif st.session_state.page == 'Settings':
-    render_settings_privacy_page()
-elif st.session_state.page == 'Dashboard':
-    # ==========================================
-    # DASHBOARD LAYOUT
-    # ==========================================
-    
+def render_dashboard():
     # --- HEADER ---
     c1, c2 = st.columns([3, 1])
     with c1:
@@ -1747,7 +1748,7 @@ elif st.session_state.page == 'Dashboard':
     st.markdown("---")
     
     # --- SECTION 1: HERO (SRI GAUGE) ---
-    current_sri = st.session_state.get('current_sri', 70)
+    current_sri = st.session_state.get('last_session_sri', 70)
     if current_sri >= 75:
         sri_color, status_text = "#00f2fe", "OPTIMAL STATE"
     elif current_sri >= 50:
@@ -1786,25 +1787,20 @@ elif st.session_state.page == 'Dashboard':
         """, unsafe_allow_html=True)
         
         if st.session_state.get('biofeedback_active'):
-             st.button("⏹ STOP SESSION", on_click=lambda: st.session_state.update({"biofeedback_active": False}), use_container_width=True, key="dashboard_stop_session")
+             st.button("⏹ STOP SESSION", on_click=stop_biofeedback, use_container_width=True, key="dashboard_stop_session")
         else:
             if st.button("◎ START BIOFEEDBACK SESSION", key="btn_dashboard_start", type="primary", use_container_width=True):
-                st.session_state.page = 'Monitor'
+                start_biofeedback()
                 st.rerun()
     
     # --- SECTION 2: BIOMETRICS ---
     st.markdown("### ⚡ Real-Time Biological Readings")
     m1, m2, m3, m4 = st.columns(4)
-    cur_hrv = st.session_state.get('live_hrv', 65)
-    cur_gsr = st.session_state.get('live_gsr', 0.5)
-    cur_ph = st.session_state.get('live_ph', 7.4)
-    cur_temp = st.session_state.get('live_temp', 36.8)
-    
     biometrics = [
-        ("Heart Rate", f"{int(cur_hrv)}", "bpm", "#ff4b1f"),
-        ("GSR (Stress)", f"{cur_gsr:.1f}", "µS", "#f2c94c"),
-        ("pH Level", f"{cur_ph:.2f}", "pH", "#00f2fe"),
-        ("Temperature", f"{cur_temp:.1f}", "°C", "#a8ff78")
+        ("Heart Rate", f"{int(live_hrv)}", "bpm", "#ff4b1f"),
+        ("GSR (Stress)", f"{live_gsr:.1f}", "µS", "#f2c94c"),
+        ("pH Level", f"{live_ph:.2f}", "pH", "#00f2fe"),
+        ("Temperature", f"{live_temp:.1f}", "°C", "#a8ff78")
     ]
     
     for col, (label, val, unit, color) in zip([m1, m2, m3, m4], biometrics):
@@ -1822,29 +1818,29 @@ elif st.session_state.page == 'Dashboard':
     # --- SECTION 3: AI PREDICTIONS ---
     st.markdown("### 🔮 Advanced Resilience Prediction")
     pred_1, pred_2 = st.columns(2)
-    ai_vals = st.session_state.get('ai_data', {'recovery': 15.3, 'recovery_trend': '↓ Improving', 'confidence': 92})
-    
     with pred_1:
         st.markdown(f"""
         <div class="glass-card" style="border-left: 4px solid #10b981;">
              <div style="color: #10b981; font-weight: 700; font-size: 0.8rem; text-transform: uppercase;">Recovery Prediction</div>
-             <div style="font-size: 2.5rem; font-weight: 700; color: white;">{ai_vals['recovery']:.1f} <span style="font-size: 1rem; color: #64748b;">min</span></div>
-             <div style="color: #10b981;">{ai_vals['recovery_trend']}</div>
+             <div style="font-size: 2.5rem; font-weight: 700; color: white;">{ai_data['recovery']:.1f} <span style="font-size: 1rem; color: #64748b;">min</span></div>
+             <div style="color: #10b981;">{ai_data['recovery_trend']}</div>
         </div>
         """, unsafe_allow_html=True)
-        
     with pred_2:
         st.markdown(f"""
         <div class="glass-card" style="border-left: 4px solid #2dd4bf;">
              <div style="color: #2dd4bf; font-weight: 700; font-size: 0.8rem; text-transform: uppercase;">AI Confidence</div>
-             <div style="font-size: 2.5rem; font-weight: 700; color: white;">{ai_vals['confidence']}%</div>
+             <div style="font-size: 2.5rem; font-weight: 700; color: white;">{ai_data['confidence']}%</div>
              <div style="color: #2dd4bf;">↑ High Precision</div>
         </div>
         """, unsafe_allow_html=True)
 
-    # --- FOOTER ---
-    st.markdown("---")
-    st.caption("Symbiome Research Platform © 2025 • Advancing the science of human resilience")
+# --- EXECUTE ROUTING ---
+route_page()
+
+# --- FOOTER ---
+st.markdown("---")
+st.caption("Symbiome Research Platform © 2025 • Advancing the science of human resilience")
 
 # --- AUTO-REFRESH ---
 if st.session_state.live_mode:
