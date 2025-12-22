@@ -14,6 +14,7 @@ from modules.digital_twin_ui import render_digital_twin_page # Import Digital Tw
 from modules.digital_twin_advanced import render_digital_twin_advanced_page # NEW: Advanced Digital Twin
 from modules.resilience_quotient import render_resilience_quotient_page # NEW: Resilience Quotient
 from modules.nlp_journal import render_nlp_journal_page # NEW: NLP Journal
+from modules.predictive_engine import render_predictive_engine_page # NEW: Predictive Engine
 from modules.passive_sentinel import render_passive_sentinel_inlined # Import Passive Sentinel module
 
 # ==========================================
@@ -382,7 +383,6 @@ def render_monitor():
                 st.rerun()
 
     # --- SENSOR CARDS (Screenshot 1) ---
-    # Dark cards with colored headers/borders
     st.markdown('<div style="height: 20px;"></div>', unsafe_allow_html=True) # Spacer
     
     m1, m2, m3, m4 = st.columns(4)
@@ -1627,6 +1627,12 @@ elif st.session_state.page == 'Digital Twin Advanced':
     render_digital_twin_advanced_page()
 elif st.session_state.page == 'SENTINEL':
     render_passive_sentinel_inlined()
+elif st.session_state.page == 'Journal':
+    render_nlp_journal_page()
+elif st.session_state.page == 'Predictive':
+    render_predictive_engine_page()
+elif st.session_state.page == 'Resilience Quotient':
+    render_resilience_quotient_page()
 elif st.session_state.page == 'Custom Stress':
     render_placeholder("Custom Activities", "🎯", "Design your own stress resilience protocols with custom stressors and recovery intervals.")
 elif st.session_state.page == 'Closed Loop':
