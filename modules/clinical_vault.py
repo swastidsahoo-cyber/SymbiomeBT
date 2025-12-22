@@ -82,7 +82,7 @@ def generate_clinical_pdf():
         ('TOPPADDING', (0, 0), (-1, -1), 6),
         ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
     ]))
-    story.append(summary_table))
+    story.append(summary_table)
     story.append(Spacer(1, 0.2*inch))
     
     # Clinical Interpretation
