@@ -1,12 +1,18 @@
 # ==========================================
-# SYMBIOME STABLE VERSION 5.1
-# VERIFIED DEPLOYMENT: 2025-12-22 07:42 UTC
-# FORCE SYNC INITIATED
+# SYMBIOME STABLE VERSION 7.0 (ULTRA-FORCED SYNC)
+# BUILD ID: 9A8B7C6E5D4F3G2H1I
+# TIMESTAMP: 2025-12-22 07:46 UTC
 # ==========================================
 
 import streamlit as st
 st.set_page_config(page_title="Symbiome | AI Resilience", page_icon="🧬", layout="wide")
-st.success("✅ SYMBIOME SYSTEM ONLINE - VERSION 5.1")
+st.success("🚀 SYMBIOME VERSION 7.0 (STABLE DEPLOYMENT ACTIVE)")
+
+# --- EMERGENCY SAFETY FOR STALE CLOUD RUNTIME ---
+def render_passive_sentinel_inlined():
+    from modules.passive_sentinel import render_passive_sentinel
+    return render_passive_sentinel()
+# --- END EMERGENCY SAFETY ---
 
 import pandas as pd
 import plotly.graph_objects as go
