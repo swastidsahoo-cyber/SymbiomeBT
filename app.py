@@ -1,12 +1,12 @@
 # ==========================================
-# SYMBIOME STABLE VERSION 2.5
-# BUILD ID: DIGITAL-TWIN-V25
-# TIMESTAMP: 2025-12-22 15:09 UTC
+# SYMBIOME STABLE VERSION 2.6
+# BUILD ID: TWIN-BEHAVIORAL-V26
+# TIMESTAMP: 2025-12-22 16:01 UTC
 # ==========================================
 
 import streamlit as st
 st.set_page_config(page_title="Symbiome | AI Resilience", page_icon="🧬", layout="wide")
-st.info("🔄 SYMBIOME SYSTEM BOOTING - VERSION 2.5 • DIGITAL TWIN IN-SILICO")
+st.info("🔄 SYMBIOME SYSTEM BOOTING - VERSION 2.6 • TWIN BEHAVIORAL INPUTS")
 
 # --- CORE UTILITIES ---
 import pandas as pd
