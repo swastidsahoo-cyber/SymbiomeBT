@@ -1,7 +1,7 @@
 # ==========================================
-# SYMBIOME STABLE VERSION 7.8
-# BUILD ID: CLOSED-LOOP-ADAPTIVE-V78
-# TIMESTAMP: 2025-12-22 09:10 UTC
+# SYMBIOME STABLE VERSION 7.9
+# BUILD ID: PERVASIVE-MONITORING-V79
+# TIMESTAMP: 2025-12-22 09:20 UTC
 # ==========================================
 
 import streamlit as st
@@ -161,6 +161,66 @@ if 'last_stress_notif_time' not in st.session_state:
 if current_sri < 45 and (time.time() - st.session_state.last_stress_notif_time > 30):
     st.toast(f"🚨 STRESS ALERT: Your Resilience Index has dropped to {current_sri}. Consider a 2-minute reset in the Closed-Loop System.", icon="⚠️")
     st.session_state.last_stress_notif_time = time.time()
+
+# --- TOP-SCREEN INSIGHT BANNER (ILLUSION OF MONITORING) ---
+def render_top_notification(current_sri):
+    if 'last_top_insight_time' not in st.session_state:
+        st.session_state.last_top_insight_time = 0
+    
+    # Show an insight every 45-60 seconds to maintain the "Alive" feel
+    if time.time() - st.session_state.last_top_insight_time > 45:
+        insights = [
+            ("🧠 NEURAL SYNC", "Subtle alpha-wave instability detected. Autonomic re-calibration active.", "#38bdf8"),
+            ("🫀 BIOSIGNAL", f"HRV coherence is {random.randint(85,95)}%. Pulse quality: OPTIMAL.", "#10b981"),
+            ("🛰️ SENSING", "Passive monitoring active via Sentinel. No acute stressors detected.", "#94a3b8"),
+            ("⚡ REACTIVITY", "Slight sympathetic rise detected. Initiating background dampening.", "#f59e0b"),
+            ("☁️ SYSTEM", "Bio-Intelligence synchronization complete. 100% data integrity.", "#2dd4bf")
+        ]
+        
+        # Select insight based on SRI (lower SRI -> more warning-like insights)
+        if current_sri < 60:
+            insight_title, insight_text, insight_color = insights[3] if random.random() > 0.5 else insights[0]
+        else:
+            insight_title, insight_text, insight_color = random.choice([insights[1], insights[2], insights[4]])
+
+        st.markdown(f"""
+        <style>
+        @keyframes slideDown {{
+            0% {{ transform: translateY(-100%); opacity: 0; }}
+            10% {{ transform: translateY(0); opacity: 1; }}
+            90% {{ transform: translateY(0); opacity: 1; }}
+            100% {{ transform: translateY(-150%); opacity: 0; }}
+        }}
+        .top-insight-banner {{
+            position: fixed;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10001;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid {insight_color}44;
+            border-left: 4px solid {insight_color};
+            padding: 12px 24px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            animation: slideDown 8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+            min-width: 400px;
+        }}
+        </style>
+        <div class="top-insight-banner">
+            <div style="background: {insight_color}22; color: {insight_color}; font-weight: 800; font-size: 0.75rem; letter-spacing: 1px; padding: 4px 8px; border-radius: 4px;">{insight_title}</div>
+            <div style="color: white; font-size: 0.85rem; font-weight: 500;">{insight_text}</div>
+            <div class="pulse-animation" style="width: 8px; height: 8px; background: {insight_color}; border-radius: 50%;"></div>
+        </div>
+        """, unsafe_allow_html=True)
+        st.session_state.last_top_insight_time = time.time()
+
+# Global execution of the top notification
+render_top_notification(current_sri)
 
 # --- AI PREDICTION LOGIC ---
 def get_ai_predictions(sri):
