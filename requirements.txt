@@ -2,6 +2,8 @@ streamlit>=1.28.0
 streamlit-webrtc>=0.47.1
 opencv-python-headless>=4.8.0
 mediapipe>=0.10.0
+qrcode[pil]
+reportlab
 deepface>=0.0.79
 transformers>=4.35.0
 torch>=2.1.0
