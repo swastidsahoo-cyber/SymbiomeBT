@@ -291,3 +291,10 @@ def render_passive_sentinel():
     if st.session_state.sentinel_enabled:
         time.sleep(1)
         st.rerun()
+
+# ==========================================
+# STALE CACHE SAFETY NET
+# ==========================================
+# This alias ensures that if an old version of app.py is served, 
+# it can still import the required function name.
+render_passive_sentinel_inlined = render_passive_sentinel

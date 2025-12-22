@@ -32,18 +32,13 @@ from modules.advanced_features import render_advanced_features_page
 from modules.settings_privacy import render_settings_privacy_page
 from modules.passive_sentinel import render_passive_sentinel # CORRECT SYMBOL
 
-# ==========================================
-# SYMBIOME APP CONFIGURATION
-# v4.0 - STABLE DEPLOYMENT
-# ==========================================
-st.set_page_config(
-    page_title="Symbiome | AI Resilience",
-    page_icon="🧬",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+st.success("✅ SYMBIOME SYSTEM ONLINE - VERSION 6.0 (STABLE)")
 
-st.success("SYMBIOOME VERSION 4.0 - LIVE & STABILIZED")
+# SAFETY NET: Alias if cache is stale
+try:
+    from modules.passive_sentinel import render_passive_sentinel_inlined
+except ImportError:
+    from modules.passive_sentinel import render_passive_sentinel as render_passive_sentinel_inlined
 
 # ==========================================
 # CSS & ASSETS
