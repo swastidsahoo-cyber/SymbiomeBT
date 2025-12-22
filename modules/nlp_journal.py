@@ -20,11 +20,9 @@ def render_nlp_journal_page():
     # --- SESSION STATE INITIALIZATION ---
     if "journal_logs" not in st.session_state:
         st.session_state.journal_logs = [
-            {"date": "12/21/2025", "mood": 6.16, "stress": 6.16, "energy": 5.79, "gut": 7.55, "sri": 51, "diet": ["Vegetables", "Protein"]},
-            {"date": "12/20/2025", "mood": 6.22, "stress": 3.40, "energy": 8.16, "gut": 5.34, "sri": 72, "diet": ["Fruits", "Grains"]},
-            {"date": "12/19/2025", "mood": 4.74, "stress": 4.69, "energy": 6.62, "gut": 8.59, "sri": 61, "diet": ["Spicy", "Alcohol"]},
-            {"date": "12/18/2025", "mood": 9.42, "stress": 4.25, "energy": 8.14, "gut": 9.26, "sri": 66, "diet": ["Vegetables", "Caffeine"]},
-            {"date": "12/17/2025", "mood": 6.92, "stress": 3.56, "energy": 7.31, "gut": 7.55, "sri": 68, "diet": ["Dairy", "Sweets"]}
+            {"date": "12/21/2025", "mood": 6.1670357561177676, "stress": 6.167035226953227, "energy": 5.799616087965775, "gut": 7.551611952086196, "sri": 51, "diet": ["Vegetables", "Protein"]},
+            {"date": "12/20/2025", "mood": 6.221583719482910, "stress": 3.401928371948291, "energy": 8.161029371948291, "gut": 5.341029371948291, "sri": 72, "diet": ["Fruits", "Grains"]},
+            {"date": "12/19/2025", "mood": 4.741029371948291, "stress": 4.691029371948291, "energy": 6.621029371948291, "gut": 8.591029371948291, "sri": 61, "diet": ["Spicy", "Alcohol"]}
         ]
 
     # --- CSS STYLES (PIXEL-PERFECT FIGMA ACCURACY) ---
@@ -236,10 +234,20 @@ html, body, [data-testid="stAppViewContainer"] {
         notes = st.text_area("journal_notes", placeholder="How are you feeling? Any symptoms or observations?", label_visibility="collapsed", height=80)
         
         if st.button("➕ Log Entry", use_container_width=True):
+            # Generate high-precision "simulated" scores based on slider + noise
+            p_mood = float(mood) + random.random() * 0.5
+            p_stress = float(stress) + random.random() * 0.5
+            p_energy = float(energy) + random.random() * 0.5
+            p_gut = float(gut) + random.random() * 0.5
+            
             new_entry = {
                 "date": datetime.now().strftime("%m/%d/%Y"),
-                "mood": float(mood), "stress": float(stress), "energy": float(energy), "gut": float(gut),
-                "sri": random.randint(50, 95), "diet": selected_diet
+                "mood": p_mood, 
+                "stress": p_stress, 
+                "energy": p_energy, 
+                "gut": p_gut,
+                "sri": random.randint(50, 95), 
+                "diet": selected_diet
             }
             st.session_state.journal_logs.insert(0, new_entry)
             st.toast("Deep-Sync Entry Captured", icon="🧬")
@@ -259,7 +267,7 @@ html, body, [data-testid="stAppViewContainer"] {
         <div class="log-date-v15">🟡 {log['date']}</div>
         <div class="log-sri-badge-v15">SRI: {log['sri']}</div>
     </div>
-    <div class="log-metrics-v15">
+    <div class="log-metrics-v15" style="display: block;">
         <div class="log-metric-sub-v15">Mood: {log['mood']}/10</div>
         <div class="log-metric-sub-v15">Stress: {log['stress']}/10</div>
         <div class="log-metric-sub-v15">Energy: {log['energy']}/10</div>

@@ -184,7 +184,7 @@ html, body, [data-testid="stAppViewContainer"] {
         optimality = max(0, min(100, optimality))
         impact = (optimality - 50) / 2
         
-        st.markdown(f"""
+        clean_render(f"""
 <div style="padding-top: 15px; text-align: right;">
     <div style="color: #94a3b8; font-size: 0.75rem; font-weight: 700; margin-bottom: 5px;">Predicted SRI Impact</div>
     <div style="color: #10b981; font-size: 2.2rem; font-weight: 900;">{'+' if impact >=0 else ''}{impact:.1f}%</div>
@@ -199,7 +199,7 @@ html, body, [data-testid="stAppViewContainer"] {
         </div>
     </div>
 </div>
-        """, unsafe_allow_html=True)
+        """)
     st.markdown('</div>', unsafe_allow_html=True)
 
     # --- CURVE CHARTS ---
@@ -210,7 +210,7 @@ html, body, [data-testid="stAppViewContainer"] {
         x = np.linspace(20, 100, 50)
         y = 50 + 25 * np.exp(-((x - 70)**2) / 350)
         fig_l = go.Figure()
-        fig_l.add_trace(go.Scatter(x=x, y=y, fill='tozeroy', line_color='#f59e0b', fillcolor='rgba(245, 158, 11, 0.1)'))
+        fig_l.add_trace(go.Scatter(x=x, y=y, fill='tozeroy', line=dict(color='#f59e0b'), fillcolor='rgba(245, 158, 11, 0.1)'))
         fig_l.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=220, margin=dict(l=0,r=0,t=0,b=0), xaxis=dict(showgrid=False, title_text="Light (%)", title_font=dict(size=10, color="#64748b")), yaxis=dict(showgrid=True, gridcolor='#1e293b', range=[40, 90]))
         st.plotly_chart(fig_l, use_container_width=True, key="l_v_r")
         st.markdown('<div style="color: #94a3b8; font-size: 0.65rem; margin-top: 10px;">Moderate light (60-80%) correlates with optimal resilience</div>', unsafe_allow_html=True)
@@ -222,7 +222,7 @@ html, body, [data-testid="stAppViewContainer"] {
         x_n = np.linspace(20, 100, 50)
         y_n = 75 - 0.4 * x_n + np.random.normal(0, 1, 50)
         fig_n = go.Figure()
-        fig_n.add_trace(go.Scatter(x=x_n, y=y_n, line_color='#3b82f6', width=2))
+        fig_n.add_trace(go.Scatter(x=x_n, y=y_n, line=dict(color='#3b82f6', width=2)))
         fig_n.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=220, margin=dict(l=0,r=0,t=0,b=0), xaxis=dict(showgrid=False, title_text="Noise (dB)", title_font=dict(size=10, color="#64748b")), yaxis=dict(showgrid=True, gridcolor='#1e293b', range=[40, 90]))
         st.plotly_chart(fig_n, use_container_width=True, key="n_v_r")
         st.markdown('<div style="color: #94a3b8; font-size: 0.65rem; margin-top: 10px;">Higher ambient noise (>70dB) reduces resilience by average 14%</div>', unsafe_allow_html=True)
@@ -239,30 +239,39 @@ html, body, [data-testid="stAppViewContainer"] {
     fig_24 = go.Figure()
     fig_24.add_trace(go.Scatter(x=hours, y=l_24, name="Light", fill='tozeroy', line=dict(color='#f59e0b', dash='dot'), fillcolor='rgba(245, 158, 11, 0.05)', yaxis='y2'))
     fig_24.add_trace(go.Scatter(x=hours, y=sri_24, name="SRI", line=dict(color='#2dd4bf', width=3)))
-    fig_24.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=320, margin=dict(l=0,r=0,t=10,b=0), font=dict(color="#94a3b8"), xaxis=dict(showgrid=False, tickvals=hours[::4]), yaxis=dict(showgrid=True, gridcolor='#1e293b', title="SRI", range=[0, 110]), yaxis2=dict(overlaying='y', side='right', title="Light", range=[0, 110], showgrid=False), legend=dict(orientation="h", y=-0.2))
+    
+    fig_24.update_layout(
+        paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=320, 
+        margin=dict(l=0,r=0,t=10,b=0), font=dict(color="#94a3b8"),
+        xaxis=dict(showgrid=False, tickvals=hours[::4]),
+        yaxis=dict(showgrid=True, gridcolor='#1e293b', title="SRI", range=[0, 110]),
+        yaxis2=dict(overlaying='y', side='right', title="Light", range=[0, 110], showgrid=False),
+        legend=dict(orientation="h", y=-0.2)
+    )
     st.plotly_chart(fig_24, use_container_width=True, key="p24h")
     
+    # Day/Night Insight Badges
     b_c1, b_c2 = st.columns(2)
     with b_c1:
-        clean_render("""
-<div style="background: #020617; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 15px; display: flex; gap: 12px; border-left: 3px solid #f59e0b;">
-    <div style="font-size: 1.2rem;">☀️</div>
-    <div>
-        <div style="color: white; font-weight: 800; font-size: 0.75rem;">Day Pattern</div>
-        <div style="color: #64748b; font-size: 0.65rem; margin-top: 3px;">Morning sunlight exposure improves HRV by 12% and accelerates recovery</div>
-    </div>
-</div>
-        """)
+        st.markdown("""
+        <div style="background: #020617; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 15px; display: flex; gap: 12px; border-left: 3px solid #f59e0b;">
+            <div style="font-size: 1.2rem;">☀️</div>
+            <div>
+                <div style="color: white; font-weight: 800; font-size: 0.75rem;">Day Pattern</div>
+                <div style="color: #64748b; font-size: 0.65rem; margin-top: 3px;">Morning sunlight exposure improves HRV by 12% and accelerates recovery</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
     with b_c2:
-        clean_render("""
-<div style="background: #020617; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 15px; display: flex; gap: 12px; border-left: 3px solid #3b82f6;">
-    <div style="font-size: 1.2rem;">🌙</div>
-    <div>
-        <div style="color: white; font-weight: 800; font-size: 0.75rem;">Night Pattern</div>
-        <div style="color: #64748b; font-size: 0.65rem; margin-top: 3px;">Low light after 10 PM supports natural cortisol reduction and sleep quality</div>
-    </div>
-</div>
-        """)
+        st.markdown("""
+        <div style="background: #020617; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 15px; display: flex; gap: 12px; border-left: 3px solid #3b82f6;">
+            <div style="font-size: 1.2rem;">🌙</div>
+            <div>
+                <div style="color: white; font-weight: 800; font-size: 0.75rem;">Night Pattern</div>
+                <div style="color: #64748b; font-size: 0.65rem; margin-top: 3px;">Low light after 10 PM supports natural cortisol reduction and sleep quality</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
     # --- TIPS ---

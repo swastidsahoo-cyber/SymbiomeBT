@@ -1,12 +1,12 @@
 # ==========================================
-# SYMBIOME STABLE VERSION 1.5
-# BUILD ID: PIXEL-PERFECT-UI-V15
-# TIMESTAMP: 2025-12-22 12:50 UTC
+# SYMBIOME STABLE VERSION 1.6
+# BUILD ID: FUNCTIONAL-FIX-V16
+# TIMESTAMP: 2025-12-22 13:00 UTC
 # ==========================================
 
 import streamlit as st
 st.set_page_config(page_title="Symbiome | AI Resilience", page_icon="🧬", layout="wide")
-st.info("🔄 SYMBIOME SYSTEM BOOTING - VERSION 7.7")
+st.info("🔄 SYMBIOME SYSTEM BOOTING - VERSION 1.6")
 
 # --- CORE UTILITIES ---
 import pandas as pd
@@ -168,6 +168,13 @@ def render_top_notification(current_sri):
         st.session_state.last_top_insight_time = 0
     
     # Show an insight every 45-60 seconds to maintain the "Alive" feel
+    if "journal_logs" not in st.session_state:
+        st.session_state.journal_logs = [
+            {"date": "12/21/2025", "mood": 6.1670357561177676, "stress": 6.167035226953227, "energy": 5.799616087965775, "gut": 7.551611952086196, "sri": 51, "diet": ["Vegetables", "Protein"]},
+            {"date": "12/20/2025", "mood": 6.221583719482910, "stress": 3.401928371948291, "energy": 8.161029371948291, "gut": 5.341029371948291, "sri": 72, "diet": ["Fruits", "Grains"]},
+            {"date": "12/19/2025", "mood": 4.741029371948291, "stress": 4.691029371948291, "energy": 6.621029371948291, "gut": 8.591029371948291, "sri": 61, "diet": ["Spicy", "Alcohol"]}
+        ]
+        
     if time.time() - st.session_state.last_top_insight_time > 45:
         insights = [
             ("🧠 NEURAL SYNC", "Subtle alpha-wave instability detected. Autonomic re-calibration active.", "#38bdf8"),
