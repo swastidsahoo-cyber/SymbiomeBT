@@ -1,7 +1,7 @@
 # ==========================================
-# SYMBIOME STABLE VERSION 7.7
-# BUILD ID: NAVIGATION-RESTORED-V77
-# TIMESTAMP: 2025-12-22 08:50 UTC
+# SYMBIOME STABLE VERSION 7.8
+# BUILD ID: CLOSED-LOOP-ADAPTIVE-V78
+# TIMESTAMP: 2025-12-22 09:10 UTC
 # ==========================================
 
 import streamlit as st
@@ -152,6 +152,15 @@ if 'last_session_sri' in st.session_state:
     current_sri = st.session_state.last_session_sri
 else:
     current_sri = int(calculate_sri(live_hrv, live_gsr, live_facial))
+
+# --- REAL-TIME STRESS NOTIFICATIONS ---
+if 'last_stress_notif_time' not in st.session_state:
+    st.session_state.last_stress_notif_time = 0
+
+# Trigger notification if SRI is low and enough time has passed (min 30s between notifs)
+if current_sri < 45 and (time.time() - st.session_state.last_stress_notif_time > 30):
+    st.toast(f"🚨 STRESS ALERT: Your Resilience Index has dropped to {current_sri}. Consider a 2-minute reset in the Closed-Loop System.", icon="⚠️")
+    st.session_state.last_stress_notif_time = time.time()
 
 # --- AI PREDICTION LOGIC ---
 def get_ai_predictions(sri):
