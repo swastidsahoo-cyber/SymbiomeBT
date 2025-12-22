@@ -1,7 +1,7 @@
 # ==========================================
-# SYMBIOME STABLE VERSION 7.5
-# BUILD ID: ROUTING-CONSOLIDATION-FINAL
-# TIMESTAMP: 2025-12-22 08:25 UTC
+# SYMBIOME STABLE VERSION 7.6
+# BUILD ID: IMPORT-ERROR-FIX-V76
+# TIMESTAMP: 2025-12-22 08:35 UTC
 # ==========================================
 
 import streamlit as st
@@ -38,7 +38,6 @@ def route_page():
     page = st.session_state.get('page', 'Dashboard')
     
     if page == 'Monitor':
-        from modules.custom_activities import render_monitor
         render_monitor()
     elif page == 'Training':
         render_training() # Defined in app.py
