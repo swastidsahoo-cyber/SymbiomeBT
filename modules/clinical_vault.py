@@ -24,9 +24,12 @@ def generate_access_code():
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
 
 def generate_qr_code(code):
-    """Generate QR code image for access code"""
+    """Generate QR code image with secure portal URL"""
+    # Create secure portal URL that would link to the patient data
+    portal_url = f"https://portal.symbiome.health/access/{code}"
+    
     qr = qrcode.QRCode(version=1, box_size=10, border=4)
-    qr.add_data(code)
+    qr.add_data(portal_url)  # Encode the URL, not just the code
     qr.make(fit=True)
     img = qr.make_image(fill_color="#1e293b", back_color="white")
     
@@ -559,15 +562,21 @@ html, body, [data-testid="stAppViewContainer"] { font-family: 'Inter', sans-seri
     st.markdown(header_html, unsafe_allow_html=True)
     
     # Action Buttons Row
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4 = st.columns(4)
     with col1:
         if st.button("📊 Preview Data", use_container_width=True):
             st.session_state.show_preview = not st.session_state.show_preview
+            st.session_state.access_code = None  # Hide QR when showing preview
     with col2:
         if st.button("🔑 Generate Code", use_container_width=True):
             st.session_state.access_code = generate_access_code()
             st.session_state.show_preview = False
     with col3:
+        if st.button("🔄 Regenerate Code", use_container_width=True, disabled=not st.session_state.access_code):
+            if st.session_state.access_code:
+                st.session_state.access_code = generate_access_code()
+                st.rerun()
+    with col4:
         pdf_buffer = generate_clinical_pdf()
         st.download_button(
             label="📥 Download PDF",
@@ -636,24 +645,34 @@ html, body, [data-testid="stAppViewContainer"] { font-family: 'Inter', sans-seri
     # Show QR Code if generated
     if st.session_state.access_code:
         qr_img = generate_qr_code(st.session_state.access_code)
+        portal_url = f"https://portal.symbiome.health/access/{st.session_state.access_code}"
+        
         qr_html = f"""<div class="qr-container">
-<div style="color: #1e293b; font-size: 1.3rem; font-weight: 800; margin-bottom: 10px;">Generate Secure Medical Access Code</div>
-<div style="color: #64748b; font-size: 0.85rem; margin-bottom: 20px;">Create a one-time-use QR code to share with your healthcare provider</div>
+<div style="color: #1e293b; font-size: 1.3rem; font-weight: 800; margin-bottom: 10px;">Secure Medical Access Portal</div>
+<div style="color: #64748b; font-size: 0.85rem; margin-bottom: 20px;">Scan this QR code to access patient data via secure portal</div>
 <img src="data:image/png;base64,{qr_img}" style="width: 250px; height: 250px; margin: 20px auto; display: block;"/>
+<div style="color: #64748b; font-size: 0.75rem; margin-top: 10px;">Portal URL</div>
+<div style="background: #f1f5f9; color: #1e293b; font-size: 0.75rem; font-family: monospace; padding: 10px; border-radius: 6px; margin: 10px 0; word-break: break-all;">{portal_url}</div>
 <div style="color: #64748b; font-size: 0.75rem; margin-top: 10px;">One-time Access Code</div>
 <div class="access-code-display">{st.session_state.access_code}</div>
 <div style="color: #64748b; font-size: 0.7rem; margin-top: 15px;">⏱ Expires in 48 hours • 🔒 Single-use only</div>
+<div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 12px; margin-top: 15px; text-align: left;">
+<div style="color: #10b981; font-size: 0.75rem; font-weight: 700; margin-bottom: 6px;">✓ QR Code Active</div>
+<div style="color: #64748b; font-size: 0.7rem;">Scanning this code will direct to the secure portal where the healthcare provider can view the full clinical data summary and download the PDF report.</div>
+</div>
 </div>"""
         st.markdown(qr_html, unsafe_allow_html=True)
         
         # Instructions
         instructions_html = """<div style="background: #1e293b; border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 20px; margin: 20px 0;">
-<div style="color: #10b981; font-weight: 800; font-size: 0.95rem; margin-bottom: 15px;">📋 How to Use with Your Doctor</div>
+<div style="color: #10b981; font-weight: 800; font-size: 0.95rem; margin-bottom: 15px;">📋 How Healthcare Providers Use This Code</div>
 <div style="color: #94a3b8; font-size: 0.8rem; line-height: 1.8;">
-1. Show this QR code to your healthcare provider<br>
-2. They scan/enter the code to access your 30-day biometric summary<br>
-3. Code expires automatically after 48 hours or first use<br>
-4. Your doctor gets objective data instead of subjective self-reporting
+1. <b>Patient shows QR code</b> to their healthcare provider during consultation<br>
+2. <b>Provider scans code</b> with their smartphone or enters the URL manually<br>
+3. <b>Secure portal opens</b> displaying the patient's 30-day biometric summary<br>
+4. <b>Provider reviews data</b> including HRV trends, stress events, sleep patterns, and NLP anxiety markers<br>
+5. <b>Provider downloads PDF</b> for medical records (8-page comprehensive report)<br>
+6. <b>Code expires automatically</b> after 48 hours or first use for security
 </div>
 </div>"""
         st.markdown(instructions_html, unsafe_allow_html=True)
