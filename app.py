@@ -1,12 +1,12 @@
 # ==========================================
-# SYMBIOME STABLE VERSION 7.6
-# BUILD ID: IMPORT-ERROR-FIX-V76
-# TIMESTAMP: 2025-12-22 08:35 UTC
+# SYMBIOME STABLE VERSION 7.7
+# BUILD ID: NAVIGATION-RESTORED-V77
+# TIMESTAMP: 2025-12-22 08:50 UTC
 # ==========================================
 
 import streamlit as st
 st.set_page_config(page_title="Symbiome | AI Resilience", page_icon="🧬", layout="wide")
-st.info("🔄 SYMBIOME SYSTEM BOOTING - VERSION 7.3")
+st.info("🔄 SYMBIOME SYSTEM BOOTING - VERSION 7.7")
 
 # --- CORE UTILITIES ---
 import pandas as pd
@@ -1148,158 +1148,6 @@ def render_digital_twin_advanced_page():
     st.markdown("---")
     render_placeholder("Digital Twin Advanced", "👤", "Advanced configuration for your digital twin.")
 
-
-# --- DETAILED AI PREDICTION ENGINE ---
-    st.markdown("### 🔮 AI Prediction Engine")
-    
-    # Main AI Insight Card
-    st.markdown(f"""
-    <div class="glass-card" style="background: linear-gradient(135deg, rgba(118, 75, 162, 0.2) 0%, rgba(24, 24, 27, 0.5) 100%); border: 1px solid rgba(118, 75, 162, 0.4);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <div style="background: rgba(168, 85, 247, 0.2); padding: 8px; border-radius: 8px;">✨</div>
-                <div>
-                    <div style="font-size: 1.1rem; font-weight: 700; color: white;">AI Insight</div>
-                    <div style="font-size: 0.9rem; color: #e2e8f0;">{ai_data['insight']}</div>
-                </div>
-            </div>
-            <div style="background: #e11d48; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">Live</div>
-        </div>
-        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
-            <div style="color: #a855f7; font-size: 0.85rem; font-weight: 600; border: 1px solid rgba(168, 85, 247, 0.3); padding: 4px 12px; border-radius: 12px;">Confidence: {ai_data['confidence']}%</div>
-            <div style="color: #a855f7; font-size: 0.85rem;">Maintain current routine</div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Detailed Metrics Grid
-    c_grid1, c_grid2 = st.columns(2)
-    with c_grid1:
-        st.markdown(f"""
-        <div class="ai-grid-card">
-            <div class="ai-grid-label">⏱️ Expected Recovery</div>
-            <div class="ai-grid-value">{ai_data['recovery']:.1f} min</div>
-            <div style="font-size: 0.7rem; color: #10b981;">{ai_data['recovery_trend']}</div>
-        </div>
-        """, unsafe_allow_html=True)
-        st.markdown(f"""
-        <div class="ai-grid-card">
-            <div class="ai-grid-label">🎯 Peak Performance</div>
-            <div class="ai-grid-value">{ai_data['peak_perf']}</div>
-            <div style="font-size: 0.7rem; color: #94a3b8;">Today</div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with c_grid2:
-        st.markdown(f"""
-        <div class="ai-grid-card">
-            <div class="ai-grid-label">📉 Stress Risk</div>
-            <div class="ai-grid-value" style="color: {ai_data['stress_color']};">{ai_data['stress_risk']}</div>
-            <div style="font-size: 0.7rem; color: #10b981;">Stable trend</div>
-        </div>
-        """, unsafe_allow_html=True)
-        st.markdown(f"""
-        <div class="ai-grid-card">
-            <div class="ai-grid-label">🤖 AI Confidence</div>
-            <div class="ai-grid-value">{ai_data['confidence']}%</div>
-            <div style="font-size: 0.7rem; color: #94a3b8;">High accuracy</div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # Personalized Tips
-    st.markdown(f"""
-    <div class="glass-card" style="background: rgba(118, 75, 162, 0.1);">
-        <div style="font-weight: 700; color: #d8b4fe; margin-bottom: 10px;">💡 Personalized Tips</div>
-        <ul style="margin: 0; padding-left: 20px; color: #e2e8f0;">
-            <li style="margin-bottom: 5px;">{current_tips[0]}</li>
-            <li style="margin-bottom: 5px;">{current_tips[1]}</li>
-            <li>{current_tips[2]}</li>
-        </ul>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # --- SECTION 5: DID YOU KNOW? (BREATHING) ---
-    # --- SECTION 5: DID YOU KNOW? (ROTATING SCIENCE) ---
-    # Use columns to place the refresh button next to the title
-    st.markdown(f"""
-    <div class="glass-card" style="background: rgba(255, 255, 255, 0.05); border-left: 4px solid #f59e0b;">
-    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-    <div style="display: flex; align-items: center; margin-bottom: 10px;">
-    <div style="background: #451a03; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-right: 12px;">
-    <span style="font-size: 1.2rem; color: #f59e0b;">💡</span>
-    </div>
-    <span style="font-weight: 700; color: white; font-size: 1.1rem;">Did You Know? - {current_fact['title']}</span>
-    </div>
-    </div>
-    <div style="color: #cbd5e1; margin-bottom: 15px; line-height: 1.6;">
-    {current_fact['text']}
-    </div>
-    <div style="display: flex; gap: 5px;">
-    <div style="width: 20px; height: 4px; background: #f59e0b; border-radius: 2px;"></div>
-    <div style="width: 4px; height: 4px; background: #475569; border-radius: 50%;"></div>
-    <div style="width: 4px; height: 4px; background: #475569; border-radius: 50%;"></div>
-    <div style="width: 4px; height: 4px; background: #475569; border-radius: 50%;"></div>
-    <div style="width: 4px; height: 4px; background: #475569; border-radius: 50%;"></div>
-    </div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Invisible button to cycle facts (placed over the refresh icon area if we had one, 
-    # but for now we can just add a small text button below or rely on auto-refresh)
-    col_fact_refresh, _ = st.columns([1, 5])
-    with col_fact_refresh:
-        st.button("🔄 New Fact", on_click=cycle_fact, use_container_width=True)
-
-# ==========================================
-# SIDEBAR NAVIGATION
-# ==========================================
-with st.sidebar:
-    st.markdown(f"""
-        <div style='text-align: center; padding: 20px 0;'>
-            <h1 style='color: #00f2fe; margin-bottom: 0;'>SYMBIOME</h1>
-            <p style='color: #94a3b8; font-size: 0.8rem;'>Biological Intelligence v7.1</p>
-        </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("---")
-    
-    # Navigation Menu
-    pages = {
-        "📊 Dashboard": "Dashboard",
-        "🛡️ SENTINEL": "SENTINEL",
-        "🧠 Journal (NLP)": "Journal",
-        "🔮 Predictive": "Predictive",
-        "🌤️ Forecast": "Forecast",
-        "🌍 Environmental": "Environmental",
-        "🔒 Clinical Vault": "Clinical Vault",
-        "⚡ Custom Activity": "Custom Stress",
-        "🔄 Closed Loop": "Closed Loop",
-        "✨ Research": "Research",
-        "🏆 Resilience Quotient": "Resilience Quotient",
-        "📈 Live Monitor": "Monitor",
-        "🏋️ Training": "Training",
-        "⚙️ Settings": "Settings"
-    }
-    
-    # Use index to persist selection
-    current_page_index = list(pages.values()).index(st.session_state.page) if st.session_state.page in pages.values() else 0
-    selection = st.radio("NAVIGATION", list(pages.keys()), index=current_page_index, label_visibility="collapsed")
-    st.session_state.page = pages[selection]
-    
-    st.markdown("---")
-    
-    # Progress Summary
-    progress = load_user_progress()
-    st.markdown(f"""
-        <div style='background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);'>
-            <div style='color: #94a3b8; font-size: 0.7rem; text-transform: uppercase; margin-bottom: 5px;'>User Level</div>
-            <div style='color: white; font-weight: 700; font-size: 1.2rem;'>Lvl {progress['level']} • {progress['xp']} XP</div>
-            <div style='color: #00f2fe; font-size: 0.8rem; margin-top: 5px;'>🔥 {progress['streak_days']} Day Streak</div>
-        </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("---")
-    st.info("System Status: OPTIMAL\nBuild: 9A8B7C6E5D4F3G2H1I")
 
 # ==========================================
 # MAIN LAYOUT ROUTING
