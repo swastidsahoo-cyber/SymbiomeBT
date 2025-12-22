@@ -12,9 +12,7 @@ import textwrap
 import pandas as pd
 from datetime import datetime
 
-def clean_render(html_str):
-    """Ensure HTML strings are perfectly dedented and clean for Streamlit."""
-    st.markdown(textwrap.dedent(html_str).strip(), unsafe_allow_html=True)
+
 
 def render_nlp_journal_page():
     # --- SESSION STATE INITIALIZATION ---
@@ -165,7 +163,7 @@ html, body, [data-testid="stAppViewContainer"] {
     margin-top: 50px;
 }
 </style>
-    """)
+    """, unsafe_allow_html=True)
 
     # --- TOP HEADER ---
     st.markdown("""

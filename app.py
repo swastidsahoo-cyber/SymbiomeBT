@@ -1,12 +1,12 @@
 # ==========================================
-# SYMBIOME STABLE VERSION 1.7
-# BUILD ID: RENDER-STABILITY-V17
-# TIMESTAMP: 2025-12-22 13:10 UTC
+# SYMBIOME STABLE VERSION 1.8
+# BUILD ID: HTML-RENDER-FIX-V18
+# TIMESTAMP: 2025-12-22 13:20 UTC
 # ==========================================
 
 import streamlit as st
 st.set_page_config(page_title="Symbiome | AI Resilience", page_icon="🧬", layout="wide")
-st.info("🔄 SYMBIOME SYSTEM BOOTING - VERSION 1.7")
+st.info("🔄 SYMBIOME SYSTEM BOOTING - VERSION 1.8")
 
 # --- CORE UTILITIES ---
 import pandas as pd

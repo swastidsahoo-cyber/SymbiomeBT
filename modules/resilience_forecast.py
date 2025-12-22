@@ -11,13 +11,9 @@ import time
 import textwrap
 from datetime import datetime, timedelta
 
-def clean_render(html_str):
-    """Ensure HTML strings are perfectly dedented and clean for Streamlit."""
-    st.markdown(textwrap.dedent(html_str).strip(), unsafe_allow_html=True)
 
 def render_resilience_forecast_page():
-    # --- CSS STYLES (PIXEL-PERFECT FIGMA ACCURACY) ---
-    clean_render("""
+    st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
 
@@ -278,7 +274,7 @@ html, body, [data-testid="stAppViewContainer"] {
     padding-top: 40px;
 }
 </style>
-    """)
+""", unsafe_allow_html=True)
 
     # --- TOP TITLE ---
     st.markdown("""
@@ -289,7 +285,8 @@ html, body, [data-testid="stAppViewContainer"] {
     """, unsafe_allow_html=True)
 
     # --- TODAY'S FORECAST CARD ---
-    st.markdown("""
+    # Using a flat string to guarantee rendering
+    today_card_html = """
 <div class="today-card">
     <div class="today-tag">Today's Forecast</div>
     <div class="today-headline">Good Resilience</div>
@@ -317,7 +314,8 @@ html, body, [data-testid="stAppViewContainer"] {
     
     <div class="today-icon" style="filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.3));">☀️</div>
 </div>
-    """, unsafe_allow_html=True)
+"""
+    st.markdown(today_card_html, unsafe_allow_html=True)
 
     # --- 7-DAY OUTLOOK CHART PANEL ---
     st.markdown('<div class="chart-panel">', unsafe_allow_html=True)
@@ -384,7 +382,7 @@ html, body, [data-testid="stAppViewContainer"] {
     st.markdown(grid_html, unsafe_allow_html=True)
 
     # --- FACTORS & ACTIONS ---
-    st.markdown("""
+    factors_html = """
 <div class="factors-panel">
     <div class="panel-title">Forecast Factors</div>
     <div class="factor-row">
@@ -469,7 +467,8 @@ html, body, [data-testid="stAppViewContainer"] {
         📊 <b>Forecast Methodology:</b> Predictions use time-series analysis of your last 14 days, combined with behavioral inputs (sleep, activity, environment). The model learns your personal resilience rhythms and extrapolates forward with confidence intervals. Accuracy improves with more data.
     </div>
 </div>
-    """, unsafe_allow_html=True)
+"""
+    st.markdown(factors_html, unsafe_allow_html=True)
 
     # --- PIXEL PERFECT FOOTER (v1.5) ---
     st.markdown("""
@@ -514,7 +513,7 @@ html, body, [data-testid="stAppViewContainer"] {
     <div class="footer-text" style="font-size: 0.7rem; margin-top: 5px;">Multi-modal biometrics • AI prediction • Environmental correlation • Gut-brain research • Community health mapping</div>
     <div class="footer-text" style="font-size: 0.7rem; margin-top: 15px; color: #475569;">Symbiome Research Platform © 2025 - Advancing the science of human resilience</div>
 </div>
-    """, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
 if __name__ == "__main__":
     render_resilience_forecast_page()

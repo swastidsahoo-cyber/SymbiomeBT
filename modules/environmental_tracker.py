@@ -12,9 +12,6 @@ import textwrap
 import pandas as pd
 from datetime import datetime
 
-def clean_render(html_str):
-    """Ensure HTML strings are perfectly dedented and clean for Streamlit."""
-    st.markdown(textwrap.dedent(html_str).strip(), unsafe_allow_html=True)
 
 def render_environmental_tracker_page():
     # --- CSS STYLES (PIXEL-PERFECT FIGMA ACCURACY) ---
