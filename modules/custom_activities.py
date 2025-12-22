@@ -192,6 +192,16 @@ div.stButton > button:hover {
         elapsed = int(time.time() - session["start_time"])
         mins, secs = divmod(elapsed, 60)
         if random.random() > 0.7: session["readings"] += 1
+        
+        # v8.9: Realistic Stress Level & Metric Fluctuations
+        # Random walk for stress level (0.1 steps)
+        session["stress_level"] = round(max(1.0, min(10.0, session["stress_level"] + random.uniform(-0.15, 0.15))), 1)
+        
+        # Generate varied metrics for the grid
+        hrv = 70 + random.randint(0, 15)
+        hr = 72 + random.randint(0, 10)
+        gsr = 50 + random.randint(0, 8)
+        calm = 40 + random.randint(0, 12)
 
         clean_render(f"""
 <div class="active-session-v2">
@@ -217,10 +227,10 @@ div.stButton > button:hover {
         </div>
     </div>
     <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; text-align: center;">
-        <div><div style="color: #2dd4bf; font-size: 1.8rem; font-weight: 800;">{70 + random.randint(0,10)}</div><div style="color: #94a3b8; font-size: 0.75rem;">HRV (ms)</div></div>
-        <div><div style="color: #38bdf8; font-size: 1.8rem; font-weight: 800;">{75 + random.randint(0,5)}</div><div style="color: #94a3b8; font-size: 0.75rem;">HR (bpm)</div></div>
-        <div><div style="color: #a855f7; font-size: 1.8rem; font-weight: 800;">{50 + random.randint(0,5)}</div><div style="color: #94a3b8; font-size: 0.75rem;">GSR (μS)</div></div>
-        <div><div style="color: #10b981; font-size: 1.8rem; font-weight: 800;">{40 + random.randint(0,10)}</div><div style="color: #94a3b8; font-size: 0.75rem;">Calm Index</div></div>
+        <div><div style="color: #2dd4bf; font-size: 1.8rem; font-weight: 800;">{hrv}</div><div style="color: #94a3b8; font-size: 0.75rem;">HRV (ms)</div></div>
+        <div><div style="color: #38bdf8; font-size: 1.8rem; font-weight: 800;">{hr}</div><div style="color: #94a3b8; font-size: 0.75rem;">HR (bpm)</div></div>
+        <div><div style="color: #a855f7; font-size: 1.8rem; font-weight: 800;">{gsr}</div><div style="color: #94a3b8; font-size: 0.75rem;">GSR (μS)</div></div>
+        <div><div style="color: #10b981; font-size: 1.8rem; font-weight: 800;">{calm}</div><div style="color: #94a3b8; font-size: 0.75rem;">Calm Index</div></div>
     </div>
 </div>
         """)
