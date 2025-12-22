@@ -1,7 +1,7 @@
 """
 Custom Activities Interface.
 Allows users to define and track real-world stress challenges using Virtual Sensors.
-Version 8.6 - BULLETPROOF RENDERING & UNIFIED MODAL
+Version 8.7 - INTERACTIVE HI-FI MODAL FIX
 """
 import streamlit as st
 import numpy as np
@@ -120,17 +120,28 @@ def render_custom_activities_page():
         }
         .btn-start:hover { background: rgba(255,255,255,0.1); color: white; }
 
-        /* V8.6 INTEGRATED POPUP FORM STYLES */
-        .modal-form-box [data-testid="stForm"] {
-            background: #0f172a !important;
-            border: 1px solid rgba(255,255,255,0.1) !important;
-            border-radius: 20px !important;
-            padding: 30px !important;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.8) !important;
-        }
+        /* V8.7 MODAL FIX - ABSOLUTE POPUP */
         .modal-overlay {
-            position: fixed; top:0; left:0; width:100%; height:100%; 
-            background: rgba(0,0,0,0.85); z-index: 9999;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.8); z-index: 1000 !important;
+        }
+        /* Target the specific form when modal is active */
+        .modal-active [data-testid="stForm"] {
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            width: 600px !important;
+            background-color: #0f172a !important;
+            border: 1px solid rgba(255,255,255,0.2) !important;
+            border-radius: 20px !important;
+            padding: 40px !important;
+            box-shadow: 0 20px 80px rgba(0,0,0,0.9) !important;
+            z-index: 1100 !important;
+        }
+        /* Ensure inputs are crisp and editable */
+        .modal-active input, .modal-active select, .modal-active text-area, .modal-active button {
+            z-index: 1200 !important;
         }
         </style>
     """), unsafe_allow_html=True)
@@ -144,10 +155,6 @@ def render_custom_activities_page():
             </p>
         </div>
     """)
-
-    # --- MODAL OVERLAY (V8.6) ---
-    if st.session_state.show_add_activity:
-        clean_render("""<div class="modal-overlay"></div>""")
 
     # --- ACTIVE SESSION VIEW ---
     if st.session_state.active_ca_session["active"]:
@@ -169,9 +176,6 @@ def render_custom_activities_page():
                             <span style="font-size: 0.8rem; color: #94a3b8;">⌨️ Typing</span>
                         </div>
                     </div>
-                    <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: white; padding: 6px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 8px;">
-                        <span style="font-size: 0.9rem;">⏹️</span> End & Compute Score
-                    </div>
                 </div>
                 <div style="margin-bottom: 25px;">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
@@ -191,12 +195,12 @@ def render_custom_activities_page():
             </div>
         """)
         
-        if st.button("Click to End Session", key="end_hidden", type="primary", use_container_width=True):
+        if st.button("⏹️ End & Compute Score", key="end_session_btn", type="primary", use_container_width=True):
             st.session_state.active_ca_session["active"] = False
             st.toast("Activity analyzed. Data synced to Journal.", icon="📊")
             st.rerun()
 
-    # --- VIRTUAL SENSOR LAYER (V8.6) ---
+    # --- VIRTUAL SENSOR LAYER ---
     if not st.session_state.active_ca_session["active"]:
         clean_render("""
             <div class="section-container">
@@ -229,60 +233,8 @@ def render_custom_activities_page():
                         <div class="sensor-sub">Reaction time & accuracy</div>
                     </div>
                 </div>
-                <div class="no-hw-box">
-                    <span style="font-weight: 700;">No hardware required:</span> These virtual sensors use your device's camera, microphone, and interaction patterns to measure physiological stress without any wearable devices.
-                </div>
             </div>
         """)
-
-    # --- INTEGRATED MODAL FORM (V8.6) ---
-    if st.session_state.show_add_activity:
-        # We use a container with a specific class to style the form AS a popup
-        with st.container():
-            st.markdown('<div class="modal-form-box">', unsafe_allow_html=True)
-            m_col1, m_col2, m_col3 = st.columns([0.1, 0.8, 0.1])
-            with m_col2:
-                with st.form("new_activity_form_v86"):
-                    clean_render("""
-                        <div style="text-align: left; margin-bottom: 20px;">
-                            <h3 style="color: white; margin-bottom: 5px;">Add New Stress Activity</h3>
-                            <p style="color: #94a3b8; font-size: 0.9rem;">Create a custom activity to track your stress response</p>
-                        </div>
-                    """)
-                    
-                    new_name = st.text_input("Activity Name", placeholder="e.g., Chemistry Exam, Job Interview, Public Speaking")
-                    new_type = st.selectbox("Activity Type", [
-                        "Cognitive (studying, exams)", 
-                        "Social (presentations, interviews)", 
-                        "Physical (sports, exercise)", 
-                        "Emotional (difficult conversations)", 
-                        "High Pressure (competitions, deadlines)"
-                    ])
-                    # Intensity with proper label styling
-                    clean_render('<div style="margin-top: 15px; color: white; font-size: 0.9rem; font-weight: 600;">Estimated Intensity: 5/10</div>')
-                    new_intensity = st.slider("Intensity Slider", 1, 10, 5, label_visibility="collapsed")
-                    
-                    new_duration = st.number_input("Expected Duration (minutes)", min_value=1, value=10)
-                    new_notes = st.text_area("Notes (optional)", placeholder="What triggers stress? Where are you? Who are you with?")
-                    
-                    f_col1, f_col2 = st.columns([2, 1])
-                    with f_col1:
-                        if st.form_submit_button("✅ Add Activity", use_container_width=True):
-                            st.session_state.custom_activities.append({
-                                "name": new_name if new_name else "Untitled Activity",
-                                "type": new_type.split(" (")[0],
-                                "intensity": new_intensity,
-                                "duration": new_duration,
-                                "notes": new_notes,
-                                "sessions": 0
-                            })
-                            st.session_state.show_add_activity = False
-                            st.rerun()
-                    with f_col2:
-                        if st.form_submit_button("Cancel", use_container_width=True):
-                            st.session_state.show_add_activity = False
-                            st.rerun()
-            st.markdown('</div>', unsafe_allow_html=True)
 
     # --- YOUR CUSTOM ACTIVITIES HEADER ---
     ca_header_col1, ca_header_col2 = st.columns([3, 1])
@@ -292,6 +244,56 @@ def render_custom_activities_page():
         if st.button("+ Add New Activity", key="btn_show_add", use_container_width=True):
             st.session_state.show_add_activity = True
             st.rerun()
+
+    # --- MODAL FLOW (V8.7) ---
+    if st.session_state.show_add_activity:
+        # 1. Background Overlay (Darkened & Fixed)
+        clean_render("""<div class="modal-overlay"></div>""")
+        
+        # 2. Interactive Form (Forced to Front)
+        st.markdown('<div class="modal-active">', unsafe_allow_html=True)
+        with st.form("new_activity_form_v87"):
+            clean_render("""
+                <div style="text-align: left; margin-bottom: 20px;">
+                    <h3 style="color: white; margin-bottom: 5px;">Add New Stress Activity</h3>
+                    <p style="color: #94a3b8; font-size: 0.9rem;">Create a custom activity to track your stress response</p>
+                </div>
+            """)
+            
+            new_name = st.text_input("Activity Name", placeholder="e.g., Chemistry Exam, Job Interview, Public Speaking")
+            new_type = st.selectbox("Activity Type", [
+                "Cognitive (studying, exams)", 
+                "Social (presentations, interviews)", 
+                "Physical (sports, exercise)", 
+                "Emotional (difficult conversations)", 
+                "High Pressure (competitions, deadlines)"
+            ])
+            
+            clean_render('<div style="margin-top: 15px; color: white; font-size: 0.9rem; font-weight: 600;">Estimated Intensity: 5/10</div>')
+            new_intensity = st.slider("Intensity Slider", 1, 10, 5, label_visibility="collapsed")
+            
+            new_duration = st.number_input("Expected Duration (minutes)", min_value=1, value=10)
+            new_notes = st.text_area("Notes (optional)", placeholder="What triggers stress? Where are you? Who are you with?")
+            
+            st.markdown('<div style="height: 10px;"></div>', unsafe_allow_html=True)
+            f_col1, f_col2 = st.columns([2, 1])
+            with f_col1:
+                if st.form_submit_button("✅ Add Activity", use_container_width=True):
+                    st.session_state.custom_activities.append({
+                        "name": new_name if new_name else "Untitled Activity",
+                        "type": new_type.split(" (")[0],
+                        "intensity": new_intensity,
+                        "duration": new_duration,
+                        "notes": new_notes,
+                        "sessions": 0
+                    })
+                    st.session_state.show_add_activity = False
+                    st.rerun()
+            with f_col2:
+                if st.form_submit_button("Cancel", use_container_width=True):
+                    st.session_state.show_add_activity = False
+                    st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
 
     # --- EMPTY STATE ---
     if not st.session_state.custom_activities and not st.session_state.show_add_activity:

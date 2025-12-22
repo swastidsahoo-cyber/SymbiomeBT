@@ -1,7 +1,7 @@
 # ==========================================
-# SYMBIOME STABLE VERSION 8.6
-# BUILD ID: BULLETPROOF-RENDERING-V86
-# TIMESTAMP: 2025-12-22 10:00 UTC
+# SYMBIOME STABLE VERSION 8.7
+# BUILD ID: INTERACTIVE-MODAL-V87
+# TIMESTAMP: 2025-12-22 10:30 UTC
 # ==========================================
 
 import streamlit as st
