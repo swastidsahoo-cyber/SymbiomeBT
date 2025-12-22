@@ -20,6 +20,7 @@ from modules.clinical_vault import render_clinical_vault_page # NEW: Clinical Va
 from modules.custom_activities import render_custom_activities_page # NEW: Custom Activities
 from modules.closed_loop import render_closed_loop_page # NEW: Closed-Loop System
 from modules.advanced_features import render_advanced_features_page # NEW: Advanced Features
+from modules.settings_privacy import render_settings_privacy_page # NEW: Settings & Privacy
 from modules.passive_sentinel import render_passive_sentinel_inlined
  # Import Passive Sentinel module
 
@@ -1657,6 +1658,8 @@ elif st.session_state.page == 'Research':
     render_advanced_features_page()
 elif st.session_state.page == 'Resilience Quotient':
     render_resilience_quotient_page()
+elif st.session_state.page == 'Settings':
+    render_settings_privacy_page()
 elif st.session_state.page == 'Dashboard':
     # ==========================================
     # DASHBOARD LAYOUT
