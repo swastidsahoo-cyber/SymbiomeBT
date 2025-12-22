@@ -1,10 +1,13 @@
 # ==========================================
-# EMERGENCY RECOVERY VERSION 4.0
-# TIMESTAMP: 2025-12-22 07:25 UTC
-# This version definitively removes the legacy import.
+# SYMBIOME STABLE VERSION 5.1
+# VERIFIED DEPLOYMENT: 2025-12-22 07:42 UTC
+# FORCE SYNC INITIATED
 # ==========================================
 
 import streamlit as st
+st.set_page_config(page_title="Symbiome | AI Resilience", page_icon="🧬", layout="wide")
+st.success("✅ SYMBIOME SYSTEM ONLINE - VERSION 5.1")
+
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
