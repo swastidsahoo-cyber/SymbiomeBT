@@ -11,6 +11,8 @@ import math
 from data_engine import data_engine # Import the new backend engine
 from modules.passive_sentinel import render_passive_sentinel # Import Passive Sentinel module
 from modules.digital_twin_ui import render_digital_twin_page # Import Digital Twin UI
+from modules.digital_twin_advanced import render_digital_twin_advanced_page # NEW: Advanced Digital Twin
+from modules.passive_sentinel import render_passive_sentinel_inlined # Import Passive Sentinel module
 
 # ==========================================
 # SYMBIOME APP CONFIGURATION
@@ -596,8 +598,11 @@ def render_sidebar():
         if st.button("📈 Predictive Engine", key="nav_predictive", use_container_width=True, type="secondary" if st.session_state.page != "Predictive" else "primary"):
             st.session_state.page = "Predictive"
             st.rerun()
-        if st.button("🤖 Digital Twin", key="nav_twin", use_container_width=True, type="secondary" if st.session_state.page != "Digital Twin" else "primary"):
+        if st.button("🤖 Digital Twin (B)", key="nav_twin", use_container_width=True, type="secondary" if st.session_state.page != "Digital Twin" else "primary"):
             st.session_state.page = "Digital Twin"
+            st.rerun()
+        if st.button("🧬 Digital Twin (Adv)", key="nav_twin_adv", use_container_width=True, type="secondary" if st.session_state.page != "Digital Twin Advanced" else "primary"):
+            st.session_state.page = "Digital Twin Advanced"
             st.rerun()
         if st.button("🌤️ Resilience Forecast", key="nav_forecast", use_container_width=True, type="secondary" if st.session_state.page != "Forecast" else "primary"):
             st.session_state.page = "Forecast"
@@ -1616,6 +1621,8 @@ elif st.session_state.page == 'Summary':
     render_session_summary()
 elif st.session_state.page == 'Digital Twin':
     render_digital_twin_page()
+elif st.session_state.page == 'Digital Twin Advanced':
+    render_digital_twin_advanced_page()
 elif st.session_state.page == 'SENTINEL':
     render_passive_sentinel_inlined()
 elif st.session_state.page == 'Custom Stress':
