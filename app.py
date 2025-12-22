@@ -1,7 +1,7 @@
 # ==========================================
-# SYMBIOME STABLE VERSION 7.1
-# BUILD ID: 9A8B7C6E5D4F3G2H1I
-# TIMESTAMP: 2025-12-22 08:00 UTC
+# SYMBIOME STABLE VERSION 7.2
+# BUILD ID: DEF-DEPENDENCY-FIX-99
+# TIMESTAMP: 2025-12-22 08:05 UTC
 # ==========================================
 
 import streamlit as st
@@ -37,7 +37,7 @@ from modules.advanced_features import render_advanced_features_page
 from modules.settings_privacy import render_settings_privacy_page
 from modules.passive_sentinel import render_passive_sentinel # CORRECT SYMBOL
 
-st.success("🚀 SYMBIOME VERSION 7.1 (STABLE DEPLOYMENT ACTIVE)")
+st.success("🚀 SYMBIOME VERSION 7.2 (CRITICAL FIX ACTIVE)")
 
 # SAFETY NET: Alias if cache is stale
 try:

@@ -3,13 +3,31 @@ Custom Activities Interface.
 Real-time biometric capture using camera-based PPG (Photoplethysmography).
 """
 import streamlit as st
-import cv2
 import numpy as np
-from streamlit_webrtc import webrtc_streamer, VideoTransformerBase, RTCConfiguration, WebRtcMode
 import av
-from .ppg_analyzer import PPGAnalyzer
-from .utils import DataModels
 import time
+
+# --- DEFENSIVE IMPORTS ---
+try:
+    import cv2
+    CV2_AVAILABLE = True
+except ImportError:
+    CV2_AVAILABLE = False
+    st.warning("⚠️ Computer Vision libraries (OpenCV) not found. Some real-time facial analytics may be limited.")
+
+try:
+    from streamlit_webrtc import webrtc_streamer, VideoTransformerBase, RTCConfiguration, WebRtcMode
+    WEBRTC_AVAILABLE = True
+except ImportError:
+    WEBRTC_AVAILABLE = False
+    st.warning("⚠️ WebRTC libraries not found. Real-time camera capture is disabled.")
+
+try:
+    from .ppg_analyzer import PPGAnalyzer
+except ImportError:
+    PPGAnalyzer = None
+
+from .utils import DataModels
 
 # --- PPG VIDEO PROCESSOR ---
 class PPGVideoProcessor:
@@ -34,14 +52,14 @@ class PPGVideoProcessor:
             self.last_hrv = hrv
             self.confidence = conf
             
-        # Draw ROI and HR on frame for user feedback
-        roi = self.analyzer.extract_roi(img)
-        if roi is not None:
-            # Drawing logic simplified for performance
-            cv2.putText(img, f"Capturing: {int(hr)} BPM", (20, 40), 
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-            cv2.rectangle(img, (20, 60), (320, 80), (255, 255, 255), 1)
-            cv2.rectangle(img, (20, 60), (20 + int(conf * 3), 80), (0, 255, 0), -1)
+        if CV2_AVAILABLE:
+            roi = self.analyzer.extract_roi(img)
+            if roi is not None:
+                # Drawing logic simplified for performance
+                cv2.putText(img, f"Capturing: {int(hr)} BPM", (20, 40), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+                cv2.rectangle(img, (20, 60), (320, 80), (255, 255, 255), 1)
+                cv2.rectangle(img, (20, 60), (20 + int(conf * 3), 80), (0, 255, 0), -1)
             
         return av.VideoFrame.from_ndarray(img, format="bgr24")
 
@@ -76,42 +94,50 @@ def render_custom_activities_page():
     # --- WEBRTC STREAMER ---
     st.markdown("### 📹 Biometric Signal Capture")
     
+    if not WEBRTC_AVAILABLE:
+        st.error("❌ High-speed camera capture is not available in this environment.")
+        st.info("💡 Potential Fix: Check your Streamlit Cloud logs for dependency installation errors.")
+        return
+
     # RTC Configuration for better connectivity
     RTC_CONFIG = RTCConfiguration(
         {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
     )
 
-    webrtc_ctx = webrtc_streamer(
-        key="ppg-capture",
-        mode=WebRtcMode.SENDRECV,
-        rtc_configuration=RTC_CONFIG,
-        video_processor_factory=PPGVideoProcessor,
-        media_stream_constraints={"video": True, "audio": False},
-        async_processing=True,
-    )
+    try:
+        webrtc_ctx = webrtc_streamer(
+            key="ppg-capture",
+            mode=WebRtcMode.SENDRECV,
+            rtc_configuration=RTC_CONFIG,
+            video_processor_factory=PPGVideoProcessor,
+            media_stream_constraints={"video": True, "audio": False},
+            async_processing=True,
+        )
 
-    # --- REAL-TIME STATS ---
-    if webrtc_ctx.video_processor:
-        st.markdown("### 📊 Live Autonomic Stream")
-        
-        stat_col1, stat_col2, stat_col3 = st.columns(3)
-        
-        # We need to pull values from the video processor
-        curr_hr = webrtc_ctx.video_processor.last_hr
-        curr_hrv = webrtc_ctx.video_processor.last_hrv
-        curr_conf = webrtc_ctx.video_processor.confidence
-        
-        with stat_col1:
-            st.metric("Estimated Heart Rate", f"{int(curr_hr)} BPM" if curr_hr > 0 else "--")
-        with stat_col2:
-            st.metric("Estimated HRV", f"{int(curr_hrv)} ms" if curr_hrv > 0 else "--")
-        with stat_col3:
-            st.metric("Signal Confidence", f"{int(curr_conf)}%")
+        # --- REAL-TIME STATS ---
+        if webrtc_ctx and webrtc_ctx.video_processor:
+            st.markdown("### 📊 Live Autonomic Stream")
+            
+            stat_col1, stat_col2, stat_col3 = st.columns(3)
+            
+            # We need to pull values from the video processor
+            curr_hr = webrtc_ctx.video_processor.last_hr
+            curr_hrv = webrtc_ctx.video_processor.last_hrv
+            curr_conf = webrtc_ctx.video_processor.confidence
+            
+            with stat_col1:
+                st.metric("Estimated Heart Rate", f"{int(curr_hr)} BPM" if curr_hr > 0 else "--")
+            with stat_col2:
+                st.metric("Estimated HRV", f"{int(curr_hrv)} ms" if curr_hrv > 0 else "--")
+            with stat_col3:
+                st.metric("Signal Confidence", f"{int(curr_conf)}%")
 
-        if st.button("🔴 Start Recording Session", use_container_width=True):
-            st.toast("Recording biometric trajectory...", icon="⏺️")
-    else:
-        st.warning("Please click 'Start' on the camera component above to begin biometric capture.")
+            if st.button("🔴 Start Recording Session", use_container_width=True):
+                st.toast("Recording biometric trajectory...", icon="⏺️")
+        else:
+            st.warning("Please click 'Start' on the camera component above to begin biometric capture.")
+    except Exception as e:
+        st.error(f"Failed to initialize Camera PPG: {str(e)}")
 
     st.divider()
 
