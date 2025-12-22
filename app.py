@@ -1,7 +1,7 @@
 # ==========================================
-# SYMBIOME STABLE VERSION 7.3
-# BUILD ID: LATE-LOAD-RECOVERY-01
-# TIMESTAMP: 2025-12-22 08:10 UTC
+# SYMBIOME STABLE VERSION 7.4
+# BUILD ID: STABILITY-V74-FINAL
+# TIMESTAMP: 2025-12-22 08:20 UTC
 # ==========================================
 
 import streamlit as st
@@ -1521,49 +1521,6 @@ elif st.session_state.page == 'Dashboard':
                 st.session_state.page = target_page
                 st.rerun()
     
-    # --- FOOTER ---
-    st.markdown("""
-    <div class="footer-container">
-        <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 40px;">
-            <div class="footer-col" style="flex: 1; min-width: 200px;">
-                <h4>✨ About Symbiome</h4>
-                <p style="font-size: 0.85rem; color: #94a3b8; line-height: 1.6;">
-                    An AI-enhanced, non-invasive biofeedback platform measuring how body and environment interact to shape stress and gut-related wellbeing.
-                </p>
-            </div>
-            <div class="footer-col" style="flex: 1; min-width: 150px;">
-                <h4>Core Features</h4>
-                <ul>
-                    <li>HRV, GSR, Facial Calm tracking</li>
-                    <li>Digital Twin AI prediction</li>
-                    <li>Environmental correlation</li>
-                    <li>Gut-brain axis logging</li>
-                </ul>
-            </div>
-            <div class="footer-col" style="flex: 1; min-width: 150px;">
-                <h4>Research Ethics</h4>
-                <p style="font-size: 0.85rem; color: #94a3b8; line-height: 1.6;">
-                    All data is anonymized and stored securely. This platform is designed for research and educational purposes.
-                </p>
-                <p style="font-size: 0.8rem; color: #00f2fe; margin-top: 10px;">Privacy-first • Consent-driven • Transparent</p>
-            </div>
-            <div class="footer-col" style="flex: 1; min-width: 150px;">
-                <h4>Future Vision</h4>
-                <ul>
-                    <li>Symbiome Glove (BLE wearable)</li>
-                    <li>Cloud-based AI learning</li>
-                    <li>Global resilience mapping</li>
-                    <li>Clinical validation studies</li>
-                </ul>
-            </div>
-        </div>
-        <div class="bottom-bar">
-            🏆 Built for BTYSTE & Science Competition Excellence <br>
-            Multi-modal biometrics - AI prediction - Environmental correlation - Gut-brain research - Community health mapping <br>
-            Symbiome Research Platform © 2025 • Advancing the science of human resilience
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
     
     # --- AI COACH (INTERACTIVE & DYNAMIC) ---
     # Floating Bubble CSS (Hidden button overlay)
@@ -1840,7 +1797,27 @@ route_page()
 
 # --- FOOTER ---
 st.markdown("---")
-st.caption("Symbiome Research Platform © 2025 • Advancing the science of human resilience")
+st.markdown("""
+<div class="footer-container" style="padding-top: 40px; margin-top: 60px; border-top: 1px solid rgba(255,255,255,0.05);">
+    <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 40px;">
+        <div style="flex: 1.5; min-width: 250px;">
+            <h4 style="color: #00f2fe; margin-bottom: 15px;">✨ About Symbiome</h4>
+            <p style="font-size: 0.85rem; color: #94a3b8; line-height: 1.6;">
+                The Science of Resilience. A multi-modal biofeedback system built for research, clinical validation, and human performance optimization.
+            </p>
+        </div>
+        <div style="flex: 1; min-width: 150px;">
+            <h4 style="color: #94a3b8; margin-bottom: 15px;">Technical Stack</h4>
+            <div style="font-size: 0.85rem; color: #64748b; line-height: 1.8;">
+                AI Predictive Engine<br>Digital Twin Modality<br>NLP Sentiment Analysis<br>Closed-Loop Intervention
+            </div>
+        </div>
+    </div>
+    <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; color: #475569; font-size: 0.8rem;">
+        Symbiome Research Platform © 2025 • Advancing the science of human resilience
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # --- AUTO-REFRESH ---
 if st.session_state.live_mode:
