@@ -1,7 +1,8 @@
 """
-Environmental Symbiome Feedback (v2.0)
-COMPLETE REWRITE - BULLETPROOF HTML RENDERING
+Environmental Symbiome Feedback (v2.1)
+COMPLETE REWRITE - BULLETPROOF HTML RENDERING + REAL-TIME FLUCTUATION
 Zero indentation, direct variable injection for guaranteed visual rendering.
+Dynamic sensor readings and impact calculations updating every 3 seconds.
 """
 import streamlit as st
 import plotly.graph_objects as go
@@ -12,6 +13,31 @@ import pandas as pd
 from datetime import datetime
 
 def render_environmental_tracker_page():
+    # Initialize session state for dynamic updates
+    if 'env_last_update' not in st.session_state:
+        st.session_state.env_last_update = time.time()
+        st.session_state.light_base = 65
+        st.session_state.noise_base = 39
+        st.session_state.temp_base = 21
+        st.session_state.humidity_base = 69
+    
+    # Auto-refresh every 3 seconds
+    current_time = time.time()
+    if current_time - st.session_state.env_last_update > 3:
+        st.session_state.env_last_update = current_time
+        # Add small random fluctuations to sensors
+        st.session_state.light_base = max(60, min(70, st.session_state.light_base + random.uniform(-2, 2)))
+        st.session_state.noise_base = max(35, min(45, st.session_state.noise_base + random.uniform(-1, 1)))
+        st.session_state.temp_base = max(20, min(23, st.session_state.temp_base + random.uniform(-0.5, 0.5)))
+        st.session_state.humidity_base = max(65, min(75, st.session_state.humidity_base + random.uniform(-1, 1)))
+        st.rerun()
+    
+    # Dynamic sensor values
+    light_val = int(st.session_state.light_base + random.uniform(-0.5, 0.5))
+    noise_val = int(st.session_state.noise_base + random.uniform(-0.5, 0.5))
+    temp_val = int(st.session_state.temp_base + random.uniform(-0.2, 0.2))
+    humidity_val = int(st.session_state.humidity_base + random.uniform(-0.5, 0.5))
+
     # CSS - stored in variable with ZERO indentation
     css_styles = """<style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
@@ -35,20 +61,20 @@ html, body, [data-testid="stAppViewContainer"] { font-family: 'Inter', sans-seri
 </style>"""
     st.markdown(css_styles, unsafe_allow_html=True)
     
-    # Header
-    header_html = """<div class="env-header-v15">
-<div class="env-title-v15">Environmental Symbiome Feedback</div>
-<div class="env-sub-v15">How your surrounding environment shapes your physiological resilience</div>
+    # Header - with live timestamp
+    header_html = f"""<div class="env-header-v15">
+<div class="env-title-v15">Environmental Symbiome Feedback • Live</div>
+<div class="env-sub-v15">How your surrounding environment shapes your physiological resilience • Updated {datetime.now().strftime('%H:%M:%S')}</div>
 </div>"""
     st.markdown(header_html, unsafe_allow_html=True)
     
-    # Sensor Row
+    # Sensor Row - with dynamic values
     st.markdown('<div class="env-stat-row-v15">', unsafe_allow_html=True)
     sensors = [
-        ("☀️", "65 %", "Light Intensity"),
-        ("🔊", "39 dB", "Ambient Noise"),
-        ("🌡️", "21 °C", "Temperature"),
-        ("💧", "69 %", "Humidity")
+        ("☀️", f"{light_val} %", "Light Intensity"),
+        ("🔊", f"{noise_val} dB", "Ambient Noise"),
+        ("🌡️", f"{temp_val} °C", "Temperature"),
+        ("💧", f"{humidity_val} %", "Humidity")
     ]
     cols = st.columns(4)
     for i, (icon, val, lbl) in enumerate(sensors):

@@ -1,7 +1,8 @@
 """
-Resilience Weather Forecast (v2.0)
-COMPLETE REWRITE - BULLETPROOF HTML RENDERING
+Resilience Weather Forecast (v2.1)
+COMPLETE REWRITE - BULLETPROOF HTML RENDERING + REAL-TIME FLUCTUATION
 Zero indentation, direct variable injection for guaranteed visual rendering.
+Dynamic data updates every 3 seconds for living system feel.
 """
 import streamlit as st
 import plotly.graph_objects as go
@@ -11,6 +12,25 @@ import time
 from datetime import datetime, timedelta
 
 def render_resilience_forecast_page():
+    # Initialize session state for dynamic updates
+    if 'last_update' not in st.session_state:
+        st.session_state.last_update = time.time()
+        st.session_state.sri_base = 61
+        st.session_state.confidence_base = 85
+    
+    # Auto-refresh every 3 seconds
+    current_time = time.time()
+    if current_time - st.session_state.last_update > 3:
+        st.session_state.last_update = current_time
+        # Add small random fluctuations
+        st.session_state.sri_base = max(55, min(67, st.session_state.sri_base + random.uniform(-2, 2)))
+        st.session_state.confidence_base = max(80, min(90, st.session_state.confidence_base + random.uniform(-1, 1)))
+        st.rerun()
+    
+    # Dynamic values with small variations
+    sri_current = int(st.session_state.sri_base + random.uniform(-0.5, 0.5))
+    confidence_current = int(st.session_state.confidence_base + random.uniform(-0.5, 0.5))
+
     # CSS - stored in variable with ZERO indentation
     css_styles = """<style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
@@ -64,22 +84,22 @@ html, body, [data-testid="stAppViewContainer"] { font-family: 'Inter', sans-seri
 </div>"""
     st.markdown(title_html, unsafe_allow_html=True)
     
-    # Today's Forecast Card
-    today_html = """<div class="today-card">
-<div class="today-tag">Today's Forecast</div>
+    # Today's Forecast Card - with dynamic values
+    today_html = f"""<div class="today-card">
+<div class="today-tag">Today's Forecast • Live</div>
 <div class="today-headline">Good Resilience</div>
-<div class="today-date">Monday, December 22</div>
+<div class="today-date">Monday, December 22 • {datetime.now().strftime('%H:%M:%S')}</div>
 <div class="today-metrics">
 <div class="metric-box">
 <div class="metric-label">Predicted SRI</div>
-<div class="metric-value-large">61</div>
+<div class="metric-value-large">{sri_current}</div>
 <div class="metric-sub" style="color: #10b981;">↗ Improving</div>
 </div>
 <div class="metric-box">
 <div class="metric-label">Confidence</div>
-<div class="metric-value-conf">85%</div>
+<div class="metric-value-conf">{confidence_current}%</div>
 <div style="width: 250px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 15px;">
-<div style="width: 85%; height: 100%; background: white; border-radius: 2px;"></div>
+<div style="width: {confidence_current}%; height: 100%; background: white; border-radius: 2px;"></div>
 </div>
 </div>
 <div class="metric-box">
@@ -92,10 +112,12 @@ html, body, [data-testid="stAppViewContainer"] { font-family: 'Inter', sans-seri
 </div>"""
     st.markdown(today_html, unsafe_allow_html=True)
     
-    # 7-Day Chart
-    st.markdown('<div class="chart-panel"><div class="panel-title">7-Day Resilience Outlook</div>', unsafe_allow_html=True)
+    # 7-Day Chart - with dynamic fluctuations
+    st.markdown('<div class="chart-panel"><div class="panel-title">7-Day Resilience Outlook • Updating Live</div>', unsafe_allow_html=True)
     days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    sri_values = [61, 58, 72, 75, 68, 52, 55]
+    # Base values with small random fluctuations
+    sri_values = [sri_current + random.uniform(-2, 2), 58 + random.uniform(-2, 2), 72 + random.uniform(-2, 2), 
+                  75 + random.uniform(-2, 2), 68 + random.uniform(-2, 2), 52 + random.uniform(-2, 2), 55 + random.uniform(-2, 2)]
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=days, y=sri_values, fill='tozeroy', line=dict(color='#0ea5e9', width=3), fillcolor='rgba(14, 165, 233, 0.1)'))
     fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=250, margin=dict(l=0,r=0,t=0,b=0), xaxis=dict(showgrid=False), yaxis=dict(showgrid=True, gridcolor='#1e293b', range=[0, 100]))
