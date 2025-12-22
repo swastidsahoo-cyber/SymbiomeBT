@@ -91,20 +91,79 @@ html, body, [data-testid="stAppViewContainer"] { font-family: 'Inter', sans-seri
     with col1:
         st.markdown('<div style="color: #94a3b8; font-size: 0.75rem; margin-bottom: 8px;">😴 Sleep Duration</div>', unsafe_allow_html=True)
         sleep_duration = st.slider("", 0.0, 12.0, st.session_state.sleep_duration, 0.5, key="sleep_slider", label_visibility="collapsed")
-        st.markdown(f'<div style="color: #10b981; font-size: 0.7rem; margin-top: -10px;">{sleep_duration} hrs • +12% optimal</div>', unsafe_allow_html=True)
+        
+        # Dynamic feedback for sleep
+        if sleep_duration < 6:
+            sleep_feedback = f'<div style="color: #ef4444; font-size: 0.7rem; margin-top: -10px;">⚠️ {sleep_duration} hrs • Critical - Sleep more! Target 7-9 hrs</div>'
+            sleep_impact = -15
+        elif sleep_duration < 7:
+            sleep_feedback = f'<div style="color: #f59e0b; font-size: 0.7rem; margin-top: -10px;">⚡ {sleep_duration} hrs • Below optimal - Increase sleep duration</div>'
+            sleep_impact = -8
+        elif sleep_duration <= 9:
+            sleep_feedback = f'<div style="color: #10b981; font-size: 0.7rem; margin-top: -10px;">✓ {sleep_duration} hrs • Optimal range!</div>'
+            sleep_impact = 12
+        else:
+            sleep_feedback = f'<div style="color: #f59e0b; font-size: 0.7rem; margin-top: -10px;">⚡ {sleep_duration} hrs • Too much - Reduce to 7-9 hrs</div>'
+            sleep_impact = -5
+        st.markdown(sleep_feedback, unsafe_allow_html=True)
         
         st.markdown('<div style="color: #94a3b8; font-size: 0.75rem; margin-bottom: 8px; margin-top: 20px;">☕ Caffeine Intake</div>', unsafe_allow_html=True)
         caffeine_intake = st.slider("", 0.0, 8.0, st.session_state.caffeine_intake, 0.5, key="caffeine_slider", label_visibility="collapsed")
-        st.markdown(f'<div style="color: #10b981; font-size: 0.7rem; margin-top: -10px;">{int(caffeine_intake)} cups • +3% optimal</div>', unsafe_allow_html=True)
+        
+        # Dynamic feedback for caffeine
+        if caffeine_intake == 0:
+            caffeine_feedback = f'<div style="color: #94a3b8; font-size: 0.7rem; margin-top: -10px;">💤 {int(caffeine_intake)} cups • No caffeine</div>'
+            caffeine_impact = 0
+        elif caffeine_intake <= 2:
+            caffeine_feedback = f'<div style="color: #10b981; font-size: 0.7rem; margin-top: -10px;">✓ {int(caffeine_intake)} cups • Optimal intake!</div>'
+            caffeine_impact = 3
+        elif caffeine_intake <= 4:
+            caffeine_feedback = f'<div style="color: #f59e0b; font-size: 0.7rem; margin-top: -10px;">⚠️ {int(caffeine_intake)} cups • Moderate - Consider reducing</div>'
+            caffeine_impact = -5
+        else:
+            caffeine_feedback = f'<div style="color: #ef4444; font-size: 0.7rem; margin-top: -10px;">🚨 {int(caffeine_intake)} cups • Too high! Decrease intake immediately</div>'
+            caffeine_impact = -12
+        st.markdown(caffeine_feedback, unsafe_allow_html=True)
     
     with col2:
         st.markdown('<div style="color: #94a3b8; font-size: 0.75rem; margin-bottom: 8px;">⏰ Stress Time</div>', unsafe_allow_html=True)
         stress_time = st.slider("", 0.0, 12.0, st.session_state.stress_time, 0.5, key="stress_slider", label_visibility="collapsed")
-        st.markdown(f'<div style="color: #ef4444; font-size: 0.7rem; margin-top: -10px;">{stress_time} hrs • -8% recommended</div>', unsafe_allow_html=True)
+        
+        # Dynamic feedback for stress
+        if stress_time <= 2:
+            stress_feedback = f'<div style="color: #10b981; font-size: 0.7rem; margin-top: -10px;">✓ {stress_time} hrs • Excellent stress management!</div>'
+            stress_impact = 8
+        elif stress_time <= 4:
+            stress_feedback = f'<div style="color: #06b6d4; font-size: 0.7rem; margin-top: -10px;">✓ {stress_time} hrs • Manageable stress levels</div>'
+            stress_impact = 0
+        elif stress_time <= 6:
+            stress_feedback = f'<div style="color: #f59e0b; font-size: 0.7rem; margin-top: -10px;">⚠️ {stress_time} hrs • High stress - Practice relaxation techniques</div>'
+            stress_impact = -8
+        else:
+            stress_feedback = f'<div style="color: #ef4444; font-size: 0.7rem; margin-top: -10px;">🚨 {stress_time} hrs • Critical! Reduce stress exposure urgently</div>'
+            stress_impact = -15
+        st.markdown(stress_feedback, unsafe_allow_html=True)
         
         st.markdown('<div style="color: #94a3b8; font-size: 0.75rem; margin-bottom: 8px; margin-top: 20px;">🏃 Exercise Duration</div>', unsafe_allow_html=True)
         exercise_duration = st.slider("", 0.0, 180.0, st.session_state.exercise_duration, 5.0, key="exercise_slider", label_visibility="collapsed")
-        st.markdown(f'<div style="color: #10b981; font-size: 0.7rem; margin-top: -10px;">{int(exercise_duration)} min • +6% optimal</div>', unsafe_allow_html=True)
+        
+        # Dynamic feedback for exercise
+        if exercise_duration == 0:
+            exercise_feedback = f'<div style="color: #ef4444; font-size: 0.7rem; margin-top: -10px;">⚠️ {int(exercise_duration)} min • No exercise - Start moving!</div>'
+            exercise_impact = -10
+        elif exercise_duration < 30:
+            exercise_feedback = f'<div style="color: #f59e0b; font-size: 0.7rem; margin-top: -10px;">⚡ {int(exercise_duration)} min • Below target - Aim for 30+ min</div>'
+            exercise_impact = -3
+        elif exercise_duration <= 60:
+            exercise_feedback = f'<div style="color: #10b981; font-size: 0.7rem; margin-top: -10px;">✓ {int(exercise_duration)} min • Optimal exercise!</div>'
+            exercise_impact = 10
+        elif exercise_duration <= 120:
+            exercise_feedback = f'<div style="color: #06b6d4; font-size: 0.7rem; margin-top: -10px;">💪 {int(exercise_duration)} min • Great dedication!</div>'
+            exercise_impact = 8
+        else:
+            exercise_feedback = f'<div style="color: #f59e0b; font-size: 0.7rem; margin-top: -10px;">⚡ {int(exercise_duration)} min • Very high - Ensure adequate recovery</div>'
+            exercise_impact = 5
+        st.markdown(exercise_feedback, unsafe_allow_html=True)
     
     # Update Twin Prediction Button
     if st.button("🔄 Update Twin Prediction", use_container_width=True, type="primary"):
@@ -116,13 +175,53 @@ html, body, [data-testid="stAppViewContainer"] { font-family: 'Inter', sans-seri
     
     st.markdown('</div>', unsafe_allow_html=True)
     
-    # Impact Analysis
-    impact_html = """<div class="impact-card">
+    # Dynamic Impact Analysis - Show all negative impacts
+    negative_impacts = []
+    
+    if sleep_impact < 0:
+        if sleep_duration < 6:
+            negative_impacts.append(("😴 Critical Sleep Deficit", sleep_impact, "Sleep < 6 hours severely impacts resilience"))
+        elif sleep_duration < 7:
+            negative_impacts.append(("😴 Insufficient Sleep", sleep_impact, "Sleep below 7 hours reduces recovery"))
+        else:
+            negative_impacts.append(("😴 Excessive Sleep", sleep_impact, "Too much sleep can reduce alertness"))
+    
+    if caffeine_impact < 0:
+        if caffeine_intake > 4:
+            negative_impacts.append(("☕ Excessive Caffeine", caffeine_impact, f"{int(caffeine_intake)} cups disrupts sleep & increases anxiety"))
+        else:
+            negative_impacts.append(("☕ High Caffeine", caffeine_impact, f"{int(caffeine_intake)} cups may affect sleep quality"))
+    
+    if stress_impact < 0:
+        if stress_time > 6:
+            negative_impacts.append(("⏰ Critical Stress Levels", stress_impact, f"{stress_time} hrs of stress is unsustainable"))
+        else:
+            negative_impacts.append(("⏰ Elevated Stress", stress_impact, f"{stress_time} hrs of stress impacts recovery"))
+    
+    if exercise_impact < 0:
+        if exercise_duration == 0:
+            negative_impacts.append(("🏃 No Exercise", exercise_impact, "Physical activity is essential for resilience"))
+        else:
+            negative_impacts.append(("🏃 Insufficient Exercise", exercise_impact, f"{int(exercise_duration)} min below recommended 30 min"))
+    
+    # Show impact cards
+    if negative_impacts:
+        for impact_name, impact_value, impact_desc in negative_impacts:
+            impact_html = f"""<div class="impact-card">
 <span class="impact-icon">⚠️</span>
-<span class="impact-text">Caffeine > 2 cups</span>
-<span class="impact-value">-3 points</span>
+<span class="impact-text">{impact_name}</span>
+<span class="impact-value">{impact_value:+d} points</span>
+</div>
+<div style="color: #94a3b8; font-size: 0.7rem; margin: -10px 0 15px 40px;">{impact_desc}</div>"""
+            st.markdown(impact_html, unsafe_allow_html=True)
+    else:
+        # Show positive message if all inputs are optimal
+        positive_html = """<div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; padding: 16px; margin: 15px 0;">
+<span style="color: #10b981; font-size: 1.2rem; margin-right: 10px;">✓</span>
+<span style="color: white; font-size: 0.85rem; font-weight: 700;">All Behavioral Inputs Optimal!</span>
+<span style="color: #10b981; font-size: 0.9rem; font-weight: 800; float: right;">Excellent resilience foundation</span>
 </div>"""
-    st.markdown(impact_html, unsafe_allow_html=True)
+        st.markdown(positive_html, unsafe_allow_html=True)
     
     # Twin Accuracy Chart
     st.markdown('<div class="chart-container">', unsafe_allow_html=True)
