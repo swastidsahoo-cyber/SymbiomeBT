@@ -1,18 +1,55 @@
 """
-Advanced Digital Twin (In-Silico) Interface
-High-fidelity physiological simulation and scenario testing.
+Digital Twin (Basic) Interface
+Real-time physiological simulation and scenario testing.
 """
 import streamlit as st
 import plotly.graph_objects as go
 import numpy as np
-from .physiological_model import AdvancedPhysiologyModel
-from .utils import DataModels
+import random
 
-def render_digital_twin_advanced_page():
+class SimplePhysiologyModel:
+    """Simple physiological model for basic digital twin"""
+    def __init__(self):
+        self.params = {
+            'vagal_tone': random.uniform(6.5, 8.5),
+            'metabolic_rate': random.uniform(1.0, 1.5),
+            'sympathetic_reactivity': random.uniform(0.6, 0.9)
+        }
+    
+    def simulate_stress_response(self, stress_magnitude, duration_minutes):
+        """Simulate stress response over time"""
+        time_points = np.linspace(0, duration_minutes, 100)
+        
+        # HRV decreases with stress
+        hrv_baseline = 70
+        hrv = hrv_baseline - (stress_magnitude * 5) * np.exp(-time_points / 10) + np.random.normal(0, 2, len(time_points))
+        
+        # Cortisol increases with stress
+        cortisol_baseline = 10
+        cortisol = cortisol_baseline + (stress_magnitude * 3) * (1 - np.exp(-time_points / 5)) + np.random.normal(0, 1, len(time_points))
+        
+        return {
+            'time': time_points,
+            'hrv': np.maximum(30, hrv),
+            'cortisol': np.maximum(5, cortisol)
+        }
+    
+    def predict_recovery_kinetics(self, current_state):
+        """Predict recovery metrics"""
+        hrv_val = current_state.get('hrv', 60)
+        half_life = int(30 + (70 - hrv_val) * 0.5)
+        readiness = max(0, min(100, int(hrv_val * 1.2)))
+        
+        return {
+            'half_life_min': half_life,
+            'readiness_score': f"{readiness}%"
+        }
+
+def render_digital_twin_page():
     st.markdown("""
     <div style="text-align: center; margin-bottom: 30px;">
         <h1 style="color: #60a5fa; font-size: 2.5rem; font-weight: 800; margin-bottom: 5px;">
-            <span style="font-size: 2rem;">🧬</span> Digital Twin (In-Silico)
+            <span style="font-size: 2rem;">🧬</span> Digital Twin (Basic)
         </h1>
         <p style="color: #94a3b8; font-size: 1.1rem; font-style: italic;">
             High-fidelity biometric simulation engine for predictive resilience modeling.
@@ -21,7 +58,7 @@ def render_digital_twin_advanced_page():
     """, unsafe_allow_html=True)
 
     if 'phys_model' not in st.session_state:
-        st.session_state.phys_model = AdvancedPhysiologyModel()
+        st.session_state.phys_model = SimplePhysiologyModel()
 
     model = st.session_state.phys_model
 
@@ -117,3 +154,6 @@ def render_digital_twin_advanced_page():
     ))
     fig_heat.update_layout(height=400, title="24h Vulnerability Map (Personalized Distribution)", paper_bgcolor='rgba(0,0,0,0)')
     st.plotly_chart(fig_heat, use_container_width=True)
+
+if __name__ == "__main__":
+    render_digital_twin_page()
