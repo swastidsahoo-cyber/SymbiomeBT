@@ -13,6 +13,7 @@ from modules.passive_sentinel import render_passive_sentinel # Import Passive Se
 from modules.digital_twin_ui import render_digital_twin_page # Import Digital Twin UI
 from modules.digital_twin_advanced import render_digital_twin_advanced_page # NEW: Advanced Digital Twin
 from modules.resilience_quotient import render_resilience_quotient_page # NEW: Resilience Quotient
+from modules.nlp_journal import render_nlp_journal_page # NEW: NLP Journal
 from modules.passive_sentinel import render_passive_sentinel_inlined # Import Passive Sentinel module
 
 # ==========================================
@@ -611,7 +612,7 @@ def render_sidebar():
 
         # 5. Data & Analysis
         nav_category("Data & Analysis")
-        if st.button("❤️ Emotional Journal", key="nav_journal", use_container_width=True, type="secondary" if st.session_state.page != "Journal" else "primary"):
+        if st.button("❤️ Emotional Journal (NLP)", key="nav_journal", use_container_width=True, type="secondary" if st.session_state.page != "Journal" else "primary"):
             st.session_state.page = "Journal"
             st.rerun()
         if st.button("🏆 Resilience Quotient™", key="nav_rq", use_container_width=True, type="secondary" if st.session_state.page != "Resilience Quotient" else "primary"):
