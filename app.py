@@ -8,27 +8,27 @@ import os
 import random
 from datetime import datetime
 import math
-from data_engine import data_engine # Import the new backend engine
-from modules.digital_twin_ui import render_digital_twin_page # Import Digital Twin UI
-from modules.digital_twin_advanced import render_digital_twin_advanced_page # NEW: Advanced Digital Twin
-from modules.resilience_quotient import render_resilience_quotient_page # NEW: Resilience Quotient
-from modules.nlp_journal import render_nlp_journal_page # NEW: NLP Journal
-from modules.predictive_engine import render_predictive_engine_page # NEW: Predictive Engine
-from modules.resilience_forecast import render_resilience_forecast_page # NEW: Resilience Forecast
-from modules.environmental_tracker import render_environmental_tracker_page # NEW: Environmental Tracker
-from modules.clinical_vault import render_clinical_vault_page # NEW: Clinical Vault
-from modules.custom_activities import render_custom_activities_page # NEW: Custom Activities
-from modules.closed_loop import render_closed_loop_page # NEW: Closed-Loop System
-from modules.advanced_features import render_advanced_features_page # NEW: Advanced Features
-from modules.settings_privacy import render_settings_privacy_page # NEW: Settings & Privacy
-from modules.passive_sentinel import render_passive_sentinel # Import Passive Sentinel module
+from data_engine import data_engine
+from modules.digital_twin_ui import render_digital_twin_page
+from modules.digital_twin_advanced import render_digital_twin_advanced_page
+from modules.resilience_quotient import render_resilience_quotient_page
+from modules.nlp_journal import render_nlp_journal_page
+from modules.predictive_engine import render_predictive_engine_page
+from modules.resilience_forecast import render_resilience_forecast_page
+from modules.environmental_tracker import render_environmental_tracker_page
+from modules.clinical_vault import render_clinical_vault_page
+from modules.custom_activities import render_custom_activities_page
+from modules.closed_loop import render_closed_loop_page
+from modules.advanced_features import render_advanced_features_page
+from modules.settings_privacy import render_settings_privacy_page
+from modules.passive_sentinel import render_passive_sentinel # CORRECT FUNCTION NAME
 
 # ==========================================
 # SYMBIOME APP CONFIGURATION
-# Version: 2.1 - Passive Sentinel Active
+# EMERGENCY FIX VERSION: 3.1 - DEFINITIVE IMPORT FIX
 # ==========================================
 st.set_page_config(
-    page_title="Symbiome | AI Resilience Platform",
+    page_title="Symbiome | AI Resilience",
     page_icon="🧬",
     layout="wide",
     initial_sidebar_state="expanded"
