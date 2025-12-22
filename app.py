@@ -15,6 +15,7 @@ from modules.resilience_quotient import render_resilience_quotient_page # NEW: R
 from modules.nlp_journal import render_nlp_journal_page # NEW: NLP Journal
 from modules.predictive_engine import render_predictive_engine_page # NEW: Predictive Engine
 from modules.resilience_forecast import render_resilience_forecast_page # NEW: Resilience Forecast
+from modules.environmental_tracker import render_environmental_tracker_page # NEW: Environmental Tracker
 from modules.passive_sentinel import render_passive_sentinel_inlined
  # Import Passive Sentinel module
 
@@ -607,8 +608,11 @@ def render_sidebar():
         if st.button("🧬 Digital Twin (Adv)", key="nav_twin_adv", use_container_width=True, type="secondary" if st.session_state.page != "Digital Twin Advanced" else "primary"):
             st.session_state.page = "Digital Twin Advanced"
             st.rerun()
-        if st.button("🌤️ Resilience Forecast", key="nav_forecast", use_container_width=True, type="secondary" if st.session_state.page != "Forecast" else "primary"):
+        if st.button("Forecast", key="nav_forecast", use_container_width=True, type="secondary" if st.session_state.page != "Forecast" else "primary"): # Adjusted label for space
             st.session_state.page = "Forecast"
+            st.rerun()
+        if st.button("🌍 Environment", key="nav_env", use_container_width=True, type="secondary" if st.session_state.page != "Environmental" else "primary"):
+            st.session_state.page = "Environmental"
             st.rerun()
 
         # 5. Data & Analysis
@@ -1634,6 +1638,8 @@ elif st.session_state.page == 'Predictive':
     render_predictive_engine_page()
 elif st.session_state.page == 'Forecast':
     render_resilience_forecast_page()
+elif st.session_state.page == 'Environmental':
+    render_environmental_tracker_page()
 elif st.session_state.page == 'Resilience Quotient':
     render_resilience_quotient_page()
 elif st.session_state.page == 'Dashboard':
