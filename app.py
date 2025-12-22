@@ -1,12 +1,11 @@
 # ==========================================
-# SYMBIOME STABLE VERSION 7.0 (ULTRA-FORCED SYNC)
+# SYMBIOME STABLE VERSION 7.1
 # BUILD ID: 9A8B7C6E5D4F3G2H1I
-# TIMESTAMP: 2025-12-22 07:46 UTC
+# TIMESTAMP: 2025-12-22 08:00 UTC
 # ==========================================
 
 import streamlit as st
 st.set_page_config(page_title="Symbiome | AI Resilience", page_icon="🧬", layout="wide")
-st.success("🚀 SYMBIOME VERSION 7.0 (STABLE DEPLOYMENT ACTIVE)")
 
 # --- EMERGENCY SAFETY FOR STALE CLOUD RUNTIME ---
 def render_passive_sentinel_inlined():
@@ -38,7 +37,7 @@ from modules.advanced_features import render_advanced_features_page
 from modules.settings_privacy import render_settings_privacy_page
 from modules.passive_sentinel import render_passive_sentinel # CORRECT SYMBOL
 
-st.success("✅ SYMBIOME SYSTEM ONLINE - VERSION 6.0 (STABLE)")
+st.success("🚀 SYMBIOME VERSION 7.1 (STABLE DEPLOYMENT ACTIVE)")
 
 # SAFETY NET: Alias if cache is stale
 try:
@@ -1637,6 +1636,58 @@ elif st.session_state.page == 'Dashboard':
             time.sleep(1)
             st.toast("Insight saved to Journal", icon="✅")
     
+
+# ==========================================
+# SIDEBAR NAVIGATION
+# ==========================================
+with st.sidebar:
+    st.markdown(f"""
+        <div style='text-align: center; padding: 20px 0;'>
+            <h1 style='color: #00f2fe; margin-bottom: 0;'>SYMBIOME</h1>
+            <p style='color: #94a3b8; font-size: 0.8rem;'>Biological Intelligence v7.1</p>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
+    # Navigation Menu
+    pages = {
+        "📊 Dashboard": "Dashboard",
+        "🛡️ SENTINEL": "SENTINEL",
+        "🧠 Journal (NLP)": "Journal",
+        "🔮 Predictive": "Predictive",
+        "🌤️ Forecast": "Forecast",
+        "🌍 Environmental": "Environmental",
+        "🔒 Clinical Vault": "Clinical Vault",
+        "⚡ Custom Activity": "Custom Stress",
+        "🔄 Closed Loop": "Closed Loop",
+        "✨ Research": "Research",
+        "🏆 Resilience Quotient": "Resilience Quotient",
+        "📈 Live Monitor": "Monitor",
+        "🏋️ Training": "Training",
+        "⚙️ Settings": "Settings"
+    }
+    
+    # Use index to persist selection
+    current_page_index = list(pages.values()).index(st.session_state.page) if st.session_state.page in pages.values() else 0
+    selection = st.radio("NAVIGATION", list(pages.keys()), index=current_page_index, label_visibility="collapsed")
+    st.session_state.page = pages[selection]
+    
+    st.markdown("---")
+    
+    # Progress Summary
+    progress = load_user_progress()
+    st.markdown(f"""
+        <div style='background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);'>
+            <div style='color: #94a3b8; font-size: 0.7rem; text-transform: uppercase; margin-bottom: 5px;'>User Level</div>
+            <div style='color: white; font-weight: 700; font-size: 1.2rem;'>Lvl {progress['level']} • {progress['xp']} XP</div>
+            <div style='color: #00f2fe; font-size: 0.8rem; margin-top: 5px;'>🔥 {progress['streak_days']} Day Streak</div>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    st.info("System Status: OPTIMAL\nBuild: 9A8B7C6E5D4F3G2H1I")
+
 # ==========================================
 # MAIN LAYOUT ROUTING
 # ==========================================
