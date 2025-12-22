@@ -195,7 +195,7 @@ def generate_simulation_data(scenario_key, baseline=61):
     
     return hours, sri_values
 
-def render_digital_twin_page():
+def render_digital_twin_advanced_page():
     # Initialize session state
     if 'selected_scenario' not in st.session_state:
         st.session_state.selected_scenario = "caffeine_10am"
