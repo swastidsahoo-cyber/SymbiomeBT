@@ -2109,12 +2109,31 @@ elif st.session_state.page == 'Dashboard':
         # --- DEBUG STATUS ---
         st.divider()
         st.markdown("#### 🔧 Debug Status")
-        st.code(f"""
-        Page: {st.session_state.get('page')}
-        Active: {st.session_state.get('biofeedback_active')}
-        Engine Run: {data_engine.is_running}
-        Engine Start: {data_engine.start_time}
-        """)
+        
+        # Determine status colors
+        engine_status_color = "#10b981" if data_engine.is_running else "#94a3b8"
+        active_color = "#10b981" if st.session_state.get('biofeedback_active') else "#64748b"
+        
+        st.markdown(f"""
+        <div style="background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; font-family: monospace; font-size: 0.8rem; color: #cbd5e1;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span style="color: #94a3b8;">Page:</span>
+                <span style="color: #e2e8f0;">{st.session_state.get('page')}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span style="color: #94a3b8;">Active:</span>
+                <span style="color: {active_color};">{st.session_state.get('biofeedback_active')}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span style="color: #94a3b8;">Engine:</span>
+                <span style="color: {engine_status_color};">{data_engine.is_running}</span>
+            </div>
+             <div style="display: flex; justify-content: space-between;">
+                <span style="color: #94a3b8;">Start:</span>
+                <span style="color: #64748b;">{str(data_engine.start_time)[11:19] if data_engine.start_time else 'None'}</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
         st.divider()
         # --------------------
         with st.expander("📄 Scientific Documentation"):
