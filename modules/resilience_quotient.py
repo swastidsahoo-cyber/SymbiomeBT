@@ -12,6 +12,7 @@ from datetime import datetime
 from .rq_calculator import RQCalculator
 
 def render_resilience_quotient_page():
+    # Force reload - v2.0 NEW UI
     # Initialize calculator
     calc = RQCalculator()
     
