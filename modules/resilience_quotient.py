@@ -191,19 +191,27 @@ html, body, [data-testid="stAppViewContainer"] { font-family: 'Inter', sans-seri
     # RQ Trend Graph
     st.markdown('<div class="chart-panel">', unsafe_allow_html=True)
     
-    # Time period toggle buttons
-    col_title, col_7d, col_30d, col_90d = st.columns([3, 1, 1, 1])
-    with col_title:
-        st.markdown('<div class="chart-title">Resilience Quotient Trend</div>', unsafe_allow_html=True)
+    # Time period toggle buttons with proper styling
+    st.markdown('<div class="chart-title">Resilience Quotient Trend</div>', unsafe_allow_html=True)
+    
+    col_7d, col_30d, col_90d = st.columns(3)
     with col_7d:
-        if st.button('7d', key='rq_7d', use_container_width=True):
+        button_type = "primary" if st.session_state.rq_time_period == '7d' else "secondary"
+        if st.button('7 Days', key='rq_7d', use_container_width=True, type=button_type):
             st.session_state.rq_time_period = '7d'
+            st.rerun()
     with col_30d:
-        if st.button('30d', key='rq_30d', use_container_width=True):
+        button_type = "primary" if st.session_state.rq_time_period == '30d' else "secondary"
+        if st.button('30 Days', key='rq_30d', use_container_width=True, type=button_type):
             st.session_state.rq_time_period = '30d'
+            st.rerun()
     with col_90d:
-        if st.button('90d', key='rq_90d', use_container_width=True):
+        button_type = "primary" if st.session_state.rq_time_period == '90d' else "secondary"
+        if st.button('90 Days', key='rq_90d', use_container_width=True, type=button_type):
             st.session_state.rq_time_period = '90d'
+            st.rerun()
+    
+    st.markdown('<br>', unsafe_allow_html=True)
     
     # Generate trend data based on selected period
     period_days = {'7d': 7, '30d': 30, '90d': 90}
