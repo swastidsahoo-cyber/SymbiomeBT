@@ -1,12 +1,12 @@
 # ==========================================
-# SYMBIOME STABLE VERSION 2.7
-# BUILD ID: NLP-SENTIMENT-V27
-# TIMESTAMP: 2025-12-23 18:23 UTC
+# SYMBIOME STABLE VERSION 2.8
+# BUILD ID: RESILIENCE-QUOTIENT-V28
+# TIMESTAMP: 2025-12-23 19:50 UTC
 # ==========================================
 
 import streamlit as st
 st.set_page_config(page_title="Symbiome | AI Resilience", page_icon="🧬", layout="wide")
-st.info("🔄 SYMBIOME SYSTEM BOOTING - VERSION 2.7 • NLP SENTIMENT & EMOTIONAL AI")
+st.info("🔄 SYMBIOME SYSTEM BOOTING - VERSION 2.8 • RESILIENCE QUOTIENT™ DASHBOARD")
 
 # --- CORE UTILITIES ---
 import pandas as pd
