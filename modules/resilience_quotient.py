@@ -16,9 +16,33 @@ def render_resilience_quotient_page():
     # Initialize calculator
     calc = RQCalculator()
     
-    # Calculate current RQ
-    if 'current_rq' not in st.session_state:
+    # Initialize session state for persistent RQ tracking
+    if 'rq_history' not in st.session_state:
+        st.session_state.rq_history = []
+    
+    # Initialize time period selection
+    if 'rq_time_period' not in st.session_state:
+        st.session_state.rq_time_period = '30d'
+    
+    # Calculate current RQ (recalculate periodically to show changes)
+    if 'current_rq' not in st.session_state or 'last_rq_update' not in st.session_state:
         st.session_state.current_rq = calc.calculate_rq()
+        st.session_state.last_rq_update = datetime.now()
+        # Add to history
+        st.session_state.rq_history.append({
+            'timestamp': datetime.now(),
+            'rq_score': st.session_state.current_rq['rq_score']
+        })
+    else:
+        # Update RQ every 5 minutes to show natural variation
+        time_since_update = (datetime.now() - st.session_state.last_rq_update).total_seconds()
+        if time_since_update > 300:  # 5 minutes
+            st.session_state.current_rq = calc.calculate_rq()
+            st.session_state.last_rq_update = datetime.now()
+            st.session_state.rq_history.append({
+                'timestamp': datetime.now(),
+                'rq_score': st.session_state.current_rq['rq_score']
+            })
     
     rq_data = st.session_state.current_rq
     rq_score = rq_data['rq_score']
@@ -167,18 +191,24 @@ html, body, [data-testid="stAppViewContainer"] { font-family: 'Inter', sans-seri
     # RQ Trend Graph
     st.markdown('<div class="chart-panel">', unsafe_allow_html=True)
     
-    chart_header_html = """<div class="chart-header">
-<div class="chart-title">Resilience Quotient Trend</div>
-<div class="chart-toggles">
-<div class="chart-toggle">7d</div>
-<div class="chart-toggle active">30d</div>
-<div class="chart-toggle">90d</div>
-</div>
-</div>"""
-    st.markdown(chart_header_html, unsafe_allow_html=True)
+    # Time period toggle buttons
+    col_title, col_7d, col_30d, col_90d = st.columns([3, 1, 1, 1])
+    with col_title:
+        st.markdown('<div class="chart-title">Resilience Quotient Trend</div>', unsafe_allow_html=True)
+    with col_7d:
+        if st.button('7d', key='rq_7d', use_container_width=True):
+            st.session_state.rq_time_period = '7d'
+    with col_30d:
+        if st.button('30d', key='rq_30d', use_container_width=True):
+            st.session_state.rq_time_period = '30d'
+    with col_90d:
+        if st.button('90d', key='rq_90d', use_container_width=True):
+            st.session_state.rq_time_period = '90d'
     
-    # Generate trend data
-    trend_data = calc.generate_trend_data(days=14)
+    # Generate trend data based on selected period
+    period_days = {'7d': 7, '30d': 30, '90d': 90}
+    days = period_days.get(st.session_state.rq_time_period, 30)
+    trend_data = calc.generate_trend_data(days=days)
     dates = [d['date'] for d in trend_data]
     rq_scores = [d['rq_score'] for d in trend_data]
     
@@ -216,8 +246,10 @@ html, body, [data-testid="stAppViewContainer"] { font-family: 'Inter', sans-seri
         st.markdown('<div class="chart-panel">', unsafe_allow_html=True)
         st.markdown('<div class="chart-title">Stress Response Profile</div>', unsafe_allow_html=True)
         
-        # Generate stress response data
-        stress_events = calc.generate_stress_response_data(num_events=50)
+        # Generate stress response data based on selected period
+        num_events = {'7d': 20, '30d': 50, '90d': 150}
+        events_count = num_events.get(st.session_state.rq_time_period, 50)
+        stress_events = calc.generate_stress_response_data(num_events=events_count)
         
         # Separate by category
         fast_events = [e for e in stress_events if e['category'] == "Fast (< 5min)"]
