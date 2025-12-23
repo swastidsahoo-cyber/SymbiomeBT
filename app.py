@@ -58,8 +58,8 @@ def route_page():
     elif page == 'Summary':
         render_session_summary()
     elif page == 'Journal':
-        from modules.nlp_journal import render_nlp_journal_page
-        render_nlp_journal_page()
+        from modules.nlp_sentiment import render_nlp_sentiment_page
+        render_nlp_sentiment_page()
     elif page == 'Resilience Quotient':
         from modules.resilience_quotient import render_resilience_quotient_page
         render_resilience_quotient_page()
@@ -747,7 +747,7 @@ def render_sidebar():
 
         # 5. Data & Analysis
         nav_category("Data & Analysis")
-        if st.button("❤️ Emotional Journal (NLP)", key="nav_journal", use_container_width=True, type="secondary" if st.session_state.page != "Journal" else "primary"):
+        if st.button("💬 Sentiment AI (NLP)", key="nav_journal", use_container_width=True, type="secondary" if st.session_state.page != "Journal" else "primary"):
             st.session_state.page = "Journal"
             st.rerun()
         if st.button("🏆 Resilience Quotient™", key="nav_rq", use_container_width=True, type="secondary" if st.session_state.page != "Resilience Quotient" else "primary"):
