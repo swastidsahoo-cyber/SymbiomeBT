@@ -87,8 +87,7 @@ def route_page():
         from modules.resilience_mapping import render_resilience_mapping_page
         render_resilience_mapping_page()
     elif page == 'Research':
-        from modules.advanced_features import render_advanced_features_page
-        render_advanced_features_page()
+        render_placeholder("Research Dashboard", "📊", "Access research data, analytics, and insights from the Symbiome platform.")
     elif page == 'Advanced Features':
         from modules.advanced_features import render_advanced_features_page
         render_advanced_features_page()
