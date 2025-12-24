@@ -710,3 +710,47 @@ footer {
 .stSelectbox [data-baseweb="select"] span {
     color: #ffffff !important;
 }
+
+/* ========================================
+   CRITICAL FIX: REMOVE ALL TOP SPACING
+   ======================================== */
+
+/* Force remove ALL top padding and margins from Streamlit containers */
+section.main {
+    padding-top: 0rem !important;
+    margin-top: 0rem !important;
+}
+
+section.main>div {
+    padding-top: 0rem !important;
+    margin-top: 0rem !important;
+}
+
+div.block-container {
+    padding-top: 0rem !important;
+    margin-top: 0rem !important;
+    padding-bottom: 1rem !important;
+}
+
+.main .block-container {
+    padding-top: 0rem !important;
+    margin-top: 0rem !important;
+}
+
+section[data-testid="stAppViewContainer"] {
+    padding-top: 0rem !important;
+}
+
+section[data-testid="stAppViewContainer"]>.main {
+    padding-top: 0rem !important;
+}
+
+.element-container:first-child {
+    margin-top: 0rem !important;
+}
+
+/* Force first element in main to have no top margin */
+.main>div:first-child {
+    margin-top: 0rem !important;
+    padding-top: 0rem !important;
+}
