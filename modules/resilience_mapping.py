@@ -352,10 +352,10 @@ header {visibility: hidden;}
     if 'resilience_view' not in st.session_state:
         st.session_state.resilience_view = 'school'
     
-    # Container
-    st.markdown('<div class="mapping-container">', unsafe_allow_html=True)
+    # Container with NEGATIVE MARGIN to move to TOP
+    st.markdown('<div class="mapping-container" style="margin-top: -5rem !important; padding-top: 0 !important;">', unsafe_allow_html=True)
     
-    # VIEW TOGGLES + TIME PERIOD TOGGLES (FUNCTIONAL)
+    # VIEW TOGGLES + TIME PERIOD TOGGLES (FUNCTIONAL) - FIRST ELEMENT
     st.markdown('<div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 14px; padding: 16px 24px; margin: 0 0 20px 0;">', unsafe_allow_html=True)
     
     col_left, col_right = st.columns([2, 1])
