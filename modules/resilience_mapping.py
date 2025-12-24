@@ -11,13 +11,13 @@ from datetime import datetime
 from .resilience_mapping_engine import ResilienceMappingEngine
 
 def render_resilience_mapping_page():
-    # BALANCED CSS - Remove gap without hiding content
+    # BALANCED CSS - Move content UP with small negative margin
     st.markdown("""
     <style>
-    /* Remove top gap with BALANCED negative margin */
+    /* Move content UP with SMALL negative margin */
     section.main > div.block-container {
-        padding-top: 1rem !important;
-        margin-top: 0rem !important;
+        padding-top: 0.5rem !important;
+        margin-top: -2rem !important;
     }
     
     /* Remove default Streamlit spacing */
