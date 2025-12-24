@@ -342,57 +342,54 @@ header {visibility: hidden;}
     # Container
     st.markdown('<div class="mapping-container">', unsafe_allow_html=True)
     
-    # FORCE TO TOP WITH NEGATIVE MARGIN
+    # VIEW TOGGLES + TIME PERIOD TOGGLES (matching screenshot)
     st.markdown("""
-    <style>
-    .mapping-container > div:first-child {
-        margin-top: -5rem !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-    
-    # HEADER SECTION
-    st.markdown("""
-    <div style="text-align: center; padding: 20px 20px 30px 20px; background: linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%); border-radius: 16px; margin-bottom: 30px; border: 1px solid rgba(6, 182, 212, 0.1);">
-        <div style="color: #06b6d4; font-size: 2.2rem; font-weight: 900; margin-bottom: 12px; letter-spacing: -0.5px; text-shadow: 0 0 20px rgba(6, 182, 212, 0.3);">
-            🗺️ Community Resilience Mapping
-        </div>
-        <div style="color: #94a3b8; font-size: 0.95rem; line-height: 1.7; max-width: 900px; margin: 0 auto 25px auto; font-weight: 400;">
-            Environment-driven insights for institutional wellbeing. Aggregated, anonymised resilience signals across physical environments aid decision-making, risk mitigation, and preventive wellbeing strategies.
-        </div>
-        <div style="display: flex; gap: 12px; justify-content: center; margin: 25px 0 0 0; flex-wrap: wrap;">
-            <div style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(6, 182, 212, 0.05) 100%); border: 1.5px solid rgba(6, 182, 212, 0.4); color: #06b6d4; padding: 10px 20px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;">
-                View Dashboard
+    <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 14px; padding: 16px 24px; margin: 0 0 20px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <div id="view-school" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.25) 0%, rgba(6, 182, 212, 0.15) 100%); border: 1.5px solid rgba(6, 182, 212, 0.5); color: #06b6d4; padding: 8px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
+                <span>🏫</span> School View
             </div>
-            <div style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(6, 182, 212, 0.05) 100%); border: 1.5px solid rgba(6, 182, 212, 0.4); color: #06b6d4; padding: 10px 20px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;">
-                Administrative Actions
+            <div id="view-city" style="background: rgba(30, 41, 59, 0.5); border: 1.5px solid rgba(148, 163, 184, 0.3); color: #94a3b8; padding: 8px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
+                <span>🏙️</span> City View
             </div>
-            <div style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(6, 182, 212, 0.05) 100%); border: 1.5px solid rgba(6, 182, 212, 0.4); color: #06b6d4; padding: 10px 20px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;">
-                Policy Insights
+            <div id="view-national" style="background: rgba(30, 41, 59, 0.5); border: 1.5px solid rgba(148, 163, 184, 0.3); color: #94a3b8; padding: 8px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
+                <span>🌍</span> National View
+            </div>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <div style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.25) 0%, rgba(6, 182, 212, 0.15) 100%); border: 1.5px solid rgba(6, 182, 212, 0.5); color: #06b6d4; padding: 8px 16px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;">
+                Day
+            </div>
+            <div style="background: rgba(30, 41, 59, 0.5); border: 1.5px solid rgba(148, 163, 184, 0.3); color: #94a3b8; padding: 8px 16px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;">
+                Week
+            </div>
+            <div style="background: rgba(30, 41, 59, 0.5); border: 1.5px solid rgba(148, 163, 184, 0.3); color: #94a3b8; padding: 8px 16px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;">
+                Month
             </div>
         </div>
     </div>
     """, unsafe_allow_html=True)
     
-    # PRIVACY GUARD STATUS PANEL
+    # PRIVACY GUARD STATUS PANEL (matching screenshot - more compact)
     st.markdown("""
-    <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(16, 185, 129, 0.03) 100%); border: 1.5px solid rgba(16, 185, 129, 0.3); border-radius: 14px; padding: 24px 28px; margin: 25px 0; display: flex; align-items: center; gap: 24px; flex-wrap: wrap; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.1);">
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <span style="color: #64748b; font-size: 0.8rem; font-weight: 600; margin-right: 6px;">Privacy Status:</span>
-            <span style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(16, 185, 129, 0.15) 100%); color: #10b981; padding: 6px 14px; border-radius: 8px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid rgba(16, 185, 129, 0.3);">
-                Protected
-            </span>
+    <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(16, 185, 129, 0.03) 100%); border: 1.5px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 16px 20px; margin: 0 0 20px 0; display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="color: #10b981; font-size: 1.2rem;">🛡️</span>
+            <span style="color: #10b981; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Privacy-First Design</span>
         </div>
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <span style="color: #64748b; font-size: 0.8rem; font-weight: 600; margin-right: 6px;">Aggregation:</span>
-            <span style="color: #e2e8f0; font-size: 0.9rem; font-weight: 700;">K-anonymised</span>
+        <div style="color: #94a3b8; font-size: 0.75rem; line-height: 1.5;">
+            All data is aggregated and anonymised. Individual users cannot be identified. Only location-based patterns and time-based trends are shown to administrators.
         </div>
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <span style="color: #64748b; font-size: 0.8rem; font-weight: 600; margin-right: 6px;">Granularity:</span>
-            <span style="color: #e2e8f0; font-size: 0.9rem; font-weight: 700;">Zone-level only</span>
-        </div>
-        <div style="margin-left: auto; color: #64748b; font-size: 0.75rem; font-style: italic; font-weight: 500;">
-            ⓘ No individual-level data is displayed or stored on this screen
+        <div style="display: flex; gap: 12px; margin-left: auto;">
+            <div style="background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.3);">
+                ✓ GDPR Compliant
+            </div>
+            <div style="background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.3);">
+                ✓ Minimum 20 users per zone
+            </div>
+            <div style="background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.3);">
+                ✓ No personal identifiers
+            </div>
         </div>
     </div>
     """, unsafe_allow_html=True)
