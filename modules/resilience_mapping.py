@@ -11,6 +11,32 @@ from datetime import datetime
 from .resilience_mapping_engine import ResilienceMappingEngine
 
 def render_resilience_mapping_page():
+    # ULTRA-AGGRESSIVE CSS - MUST BE FIRST
+    st.markdown("""
+    <style>
+    /* NUCLEAR OPTION: Force EVERYTHING to top */
+    section.main > div {
+        padding-top: 0rem !important;
+        padding-bottom: 0rem !important;
+    }
+    
+    div.block-container {
+        padding-top: 0rem !important;
+        padding-bottom: 0rem !important;
+        margin-top: 0rem !important;
+    }
+    
+    section[data-testid="stAppViewContainer"] {
+        padding-top: 0rem !important;
+    }
+    
+    .main .block-container {
+        padding-top: 0rem !important;
+        max-width: 100% !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     # Initialize engine
     engine = ResilienceMappingEngine(min_n=10)
     
