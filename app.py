@@ -89,6 +89,9 @@ def route_page():
     elif page == 'Research':
         from modules.advanced_features import render_advanced_features_page
         render_advanced_features_page()
+    elif page == 'Advanced Features':
+        from modules.advanced_features import render_advanced_features_page
+        render_advanced_features_page()
     elif page == 'Community':
         render_placeholder("Community Cloud", "🌍", "Connect with the Symbiome research community and share anonymized insights.")
     elif page == 'Cognitive':
@@ -766,6 +769,9 @@ def render_sidebar():
             st.rerun()
         if st.button("📊 Research Dashboard", key="nav_analysis", use_container_width=True, type="secondary" if st.session_state.page != "Research" else "primary"):
             st.session_state.page = "Research"
+            st.rerun()
+        if st.button("⚡ Advanced Features", key="nav_advanced", use_container_width=True, type="secondary" if st.session_state.page != "Advanced Features" else "primary"):
+            st.session_state.page = "Advanced Features"
             st.rerun()
 
         # 6. Community & Impact
