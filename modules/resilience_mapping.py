@@ -291,8 +291,48 @@ html, body, [data-testid="stAppViewContainer"] { font-family: 'Inter', sans-seri
     st.markdown("---")
     st.markdown("### 📄 Export Community Resilience Report")
     
-    if st.button("📥 Download Community Resilience Report", key="download_mapping_pdf", use_container_width=True, type="primary"):
-        st.info("📋 PDF export functionality will generate a comprehensive institutional report with all sections: Executive Summary, Spatial Analysis, Temporal Analysis, Environmental Correlations, Recommendations, and Ethics & Limitations.")
+    export_col1, export_col2 = st.columns(2)
+    
+    with export_col1:
+        st.markdown("""
+        **Generate Comprehensive Institutional Report**
+        
+        Export your complete Community Resilience Mapping analysis including:
+        - Executive Summary with key findings
+        - Spatial analysis and location heatmaps
+        - Temporal analysis and peak stress patterns
+        - Environmental correlations
+        - Non-prescriptive recommendations
+        - Ethics & limitations
+        """)
+    
+    with export_col2:
+        if st.button("📥 Download Community Resilience Report", key="download_mapping_pdf", use_container_width=True, type="primary"):
+            try:
+                from .resilience_mapping_pdf import generate_community_resilience_pdf
+                
+                # Generate PDF
+                pdf_buffer = generate_community_resilience_pdf(
+                    locations_data=locations_data,
+                    action_items=action_items,
+                    policy_insights=insights
+                )
+                
+                # Offer download
+                st.download_button(
+                    label="💾 Save PDF Report",
+                    data=pdf_buffer,
+                    file_name=f"Community_Resilience_Report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf",
+                    mime="application/pdf",
+                    key="save_mapping_pdf",
+                    use_container_width=True
+                )
+                
+                st.success("✅ Community Resilience Report generated successfully!")
+                
+            except Exception as e:
+                st.error(f"❌ Error generating PDF: {str(e)}")
+                st.info("Please ensure all required dependencies are installed.")
 
 if __name__ == "__main__":
     render_resilience_mapping_page()
