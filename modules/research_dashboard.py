@@ -271,24 +271,32 @@ def render_timeline_tab():
     st.markdown('<p style="color: #cbd5e1; font-size: 0.9rem;">Chronological feed of key observations and pattern detections</p>', unsafe_allow_html=True)
     
     timeline_events = [
-        ("12/24/2024", "Insight Date", "3 sessions completed - baseline pattern established", "#3b82f6", "Milestone"),
-        ("12/24/2024", "Recovery time shows strong negative correlation with HRV (r = -0.68, p < 0.001)", "Pattern"),
-        ("12/23/2024", "Stress spike detected at 14:52 - GSR increased 45%, baseline", "#f59e0b", "Alert"),
-        ("12/22/2024", "Fastest recovery time achieved: 3.2 minutes (target: <5 min)", "#10b981", "Achievement")
+        {"date": "12/24/2024", "title": "Insight Date", "desc": "3 sessions completed - baseline pattern established", "color": "#3b82f6", "badge": "Milestone"},
+        {"date": "12/24/2024", "title": "", "desc": "Recovery time shows strong negative correlation with HRV (r = -0.68, p < 0.001)", "color": "#06b6d4", "badge": "Pattern"},
+        {"date": "12/23/2024", "title": "", "desc": "Stress spike detected at 14:52 - GSR increased 45%, baseline", "color": "#f59e0b", "badge": "Alert"},
+        {"date": "12/22/2024", "title": "", "desc": "Fastest recovery time achieved: 3.2 minutes (target: <5 min)", "color": "#10b981", "badge": "Achievement"}
     ]
     
-    for i, event in enumerate(timeline_events):
-        if len(event) == 5:
-            date, title, desc, color, badge = event
-        else:
-            date, desc, badge = event
-            title = ""
-            color = "#06b6d4"
+    icon_map = {"Milestone": "🎯", "Pattern": "🔍", "Alert": "⚠️", "Achievement": "🏆"}
+    
+    for event in timeline_events:
+        icon = icon_map.get(event["badge"], "📌")
+        display_title = event["title"] if event["title"] else event["desc"][:50]
         
-        icon_map = {"Milestone": "🎯", "Pattern": "🔍", "Alert": "⚠️", "Achievement": "🏆"}
-        icon = icon_map.get(badge, "📌")
+        # Build HTML in parts to avoid complex f-string
+        html = f'<div style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; padding: 16px; margin: 12px 0; display: flex; gap: 15px;">'
+        html += f'<div style="color: {event["color"]}; font-size: 2rem;">{icon}</div>'
+        html += '<div style="flex: 1;">'
+        html += f'<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">'
+        html += f'<div style="color: #e2e8f0; font-weight: 700;">{display_title}</div>'
+        html += f'<div style="background: rgba(139, 92, 246, 0.2); color: {event["color"]}; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 700;">{event["badge"]}</div>'
+        html += '</div>'
+        html += f'<div style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 6px;">{event["date"]}</div>'
+        if event["title"]:
+            html += f'<div style="color: #cbd5e1; font-size: 0.9rem;">{event["desc"]}</div>'
+        html += '</div></div>'
         
-        st.markdown(f'<div style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; padding: 16px; margin: 12px 0; display: flex; gap: 15px;"><div style="color: {color}; font-size: 2rem;">{icon}</div><div style="flex: 1;"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;"><div style="color: #e2e8f0; font-weight: 700;">{title if title else desc[:50]}</div><div style="background: rgba{tuple(int(color.lstrip("#")[i:i+2], 16) for i in (0, 2, 4)) + (0.2,)}; color: {color}; padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 700;">{badge}</div></div><div style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 6px;">{date}</div>{f"<div style=\\"color: #cbd5e1; font-size: 0.9rem;\\">{desc}</div>" if title else ""}</div></div>', unsafe_allow_html=True)
+        st.markdown(html, unsafe_allow_html=True)
     
     # Bottom buttons
     col1, col2 = st.columns(2)
