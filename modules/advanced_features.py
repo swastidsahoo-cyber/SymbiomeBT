@@ -534,27 +534,11 @@ def render_api_platform():
     with col1:
         st.markdown('<div class="feature-card">', unsafe_allow_html=True)
         st.markdown('<div style="color: #f59e0b; font-size: 1.1rem; font-weight: 700; margin-bottom: 16px;">💼 Business Model (Platform Strategy)</div>', unsafe_allow_html=True)
-        st.markdown("""
-        <div style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.8;">
-            <strong style="color: #10b981;">Consumer Tier (Free):</strong><br>
-            • Basic RQ score access<br>
-            • 1,000 API calls/month<br>
-            • Personal use only<br><br>
-            
-            <strong style="color: #06b6d4;">Developer Tier (€49/month):</strong><br>
-            • Full API access<br>
-            • 100,000 API calls/month<br>
-            • Commercial applications
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown('<div style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.8;"><strong style="color: #10b981;">Consumer Tier (Free):</strong><br>• Basic RQ score access<br>• 1,000 API calls/month<br>• Personal use only<br><br><strong style="color: #06b6d4;">Developer Tier (€49/month):</strong><br>• Full API access<br>• 100,000 API calls/month<br>• Commercial applications</div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
     
     with col2:
         st.markdown('<div class="feature-card">', unsafe_allow_html=True)
         st.markdown('<div style="color: #f59e0b; font-size: 1.1rem; font-weight: 700; margin-bottom: 16px;">📈 Scalability</div>', unsafe_allow_html=True)
-        st.markdown("""
-        <div style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.8;">
-            An API platform creates a moat. Fitness apps, meditation apps, sleep trackers—all become dependent on Symbiome's RQ metric. This isn't just a science project—it's a billion-dollar company blueprint.
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown('<div style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.8;">An API platform creates a moat. Fitness apps, meditation apps, sleep trackers—all become dependent on Symbiome\'s RQ metric. This isn\'t just a science project—it\'s a billion-dollar company blueprint.</div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
