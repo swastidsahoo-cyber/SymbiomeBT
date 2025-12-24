@@ -391,8 +391,17 @@ header {visibility: hidden;}
                 plot_bgcolor='rgba(15,23,42,0.7)',
                 height=220,
                 margin=dict(l=40, r=20, t=20, b=40),
-                xaxis=dict(showgrid=False, color='#94a3b8', title='Hour', titlefont=dict(size=12, color='#94a3b8')),
-                yaxis=dict(showgrid=True, gridcolor='rgba(148,163,184,0.15)', color='#94a3b8', title='Stress Intensity', titlefont=dict(size=12, color='#94a3b8')),
+                xaxis=dict(
+                    showgrid=False, 
+                    color='#94a3b8', 
+                    title=dict(text='Hour', font=dict(size=12, color='#94a3b8'))
+                ),
+                yaxis=dict(
+                    showgrid=True, 
+                    gridcolor='rgba(148,163,184,0.15)', 
+                    color='#94a3b8', 
+                    title=dict(text='Stress Intensity', font=dict(size=12, color='#94a3b8'))
+                ),
                 font=dict(family='Inter', color='#cbd5e1', size=11)
             )
             
