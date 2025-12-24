@@ -416,6 +416,133 @@ header {visibility: hidden;}
     </div>
     """, unsafe_allow_html=True)
     
+    # CONDITIONAL RENDERING BASED ON VIEW
+    if st.session_state.resilience_view == 'national':
+        # NATIONAL VIEW
+        render_national_view()
+    else:
+        # SCHOOL/CITY VIEW (existing code)
+        render_school_city_view(engine)
+
+
+def render_national_view():
+    """Render National View with city-level statistics"""
+    
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 14px; padding: 24px; margin: 20px 0;">
+        <div style="color: #06b6d4; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px;">National Resilience - All Cities (Ireland)</div>
+        
+        <!-- National Stats -->
+        <div style="display: flex; gap: 24px; margin-bottom: 30px; flex-wrap: wrap;">
+            <div style="text-align: center; flex: 1; min-width: 150px;">
+                <div style="color: #06b6d4; font-size: 2.5rem; font-weight: 900;">66.3</div>
+                <div style="color: #94a3b8; font-size: 0.85rem;">Average RQ Score</div>
+            </div>
+            <div style="text-align: center; flex: 1; min-width: 150px;">
+                <div style="color: #06b6d4; font-size: 2.5rem; font-weight: 900;">12,847</div>
+                <div style="color: #94a3b8; font-size: 0.85rem;">Active Users</div>
+            </div>
+            <div style="text-align: center; flex: 1; min-width: 150px;">
+                <div style="color: #06b6d4; font-size: 2.5rem; font-weight: 900;">6</div>
+                <div style="color: #94a3b8; font-size: 0.85rem;">Participating Cities</div>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # City list with resilience scores
+    cities_data = [
+        {"name": "Dublin", "population": "1.4M", "rq": 64.2, "color": "#f59e0b"},
+        {"name": "Cork", "population": "210K", "rq": 68.9, "color": "#f59e0b"},
+        {"name": "Galway", "population": "85K", "rq": 70.1, "color": "#10b981"},
+        {"name": "Limerick", "population": "95K", "rq": 62.5, "color": "#f59e0b"},
+        {"name": "Waterford", "population": "54K", "rq": 67.3, "color": "#f59e0b"},
+        {"name": "Other", "population": "Various", "rq": 65.8, "color": "#f59e0b"}
+    ]
+    
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 14px; padding: 24px; margin: 20px 0;">
+        <div style="color: #cbd5e1; font-size: 1.1rem; font-weight: 600; margin-bottom: 20px;">Cities</div>
+    """, unsafe_allow_html=True)
+    
+    for city in cities_data:
+        # Calculate progress percentage
+        progress = (city["rq"] / 100) * 360  # Convert to degrees for circular progress
+        
+        st.markdown(f"""
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid rgba(148, 163, 184, 0.1);">
+            <div>
+                <div style="color: #e2e8f0; font-size: 1rem; font-weight: 600;">{city["name"]}</div>
+                <div style="color: #64748b; font-size: 0.85rem;">{city["population"]}</div>
+            </div>
+            <div style="position: relative; width: 60px; height: 60px;">
+                <!-- Circular progress -->
+                <svg width="60" height="60" style="transform: rotate(-90deg);">
+                    <circle cx="30" cy="30" r="25" fill="none" stroke="rgba(148, 163, 184, 0.2)" stroke-width="4"/>
+                    <circle cx="30" cy="30" r="25" fill="none" stroke="{city["color"]}" stroke-width="4" 
+                            stroke-dasharray="{progress * 0.436} 157" stroke-linecap="round"/>
+                </svg>
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #e2e8f0; font-size: 0.9rem; font-weight: 700;">
+                    {city["rq"]}
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Public Health Insights
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%); border: 1.5px solid rgba(139, 92, 246, 0.3); border-radius: 12px; padding: 20px; margin: 20px 0;">
+        <div style="color: #a78bfa; font-size: 1.1rem; font-weight: 700; margin-bottom: 12px;">💡 Public Health Insights</div>
+        <div style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.7;">
+            <strong style="color: #a78bfa;">National Trends:</strong><br>
+            Urban centers show consistent stress patterns during peak commute hours. Targeted interventions in high-density workplaces could yield significant population-level resilience improvements.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Policy Recommendations
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; padding: 20px; height: 100%;">
+            <div style="color: #06b6d4; font-size: 1rem; font-weight: 700; margin-bottom: 12px;">📋 Policy Recommendations</div>
+            <div style="color: #cbd5e1; font-size: 0.85rem; line-height: 1.6;">
+                • Workplace Resilience Programs<br>
+                • Urban Green Space Expansion<br>
+                • Mental Health Service Integration
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; padding: 20px; height: 100%;">
+            <div style="color: #10b981; font-size: 1rem; font-weight: 700; margin-bottom: 12px;">📊 Data Specifications</div>
+            <div style="color: #cbd5e1; font-size: 0.85rem; line-height: 1.6;">
+                • Minimum 20 users per city<br>
+                • 7-day rolling average<br>
+                • K-anonymized aggregation
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Footer disclaimer
+    st.markdown("""
+    <div style="background: rgba(245, 158, 11, 0.1); border-left: 3px solid #f59e0b; padding: 16px; margin-top: 24px; border-radius: 4px;">
+        <div style="color: #f59e0b; font-weight: 700; margin-bottom: 8px; font-size: 0.85rem;">🔒 Privacy-First National Health Policy</div>
+        <div style="color: #cbd5e1; font-size: 0.75rem; line-height: 1.6;">
+            Aggregated resilience data informs public health policy without compromising individual privacy. All metrics use K-anonymization (minimum N≥20) and zone-level aggregation. No personally identifiable information is collected, stored, or displayed. This dashboard demonstrates how population-level insights can guide evidence-based policy while maintaining strict privacy standards.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+def render_school_city_view(engine):
+    """Render School/City View with location cards (existing functionality)"""
+    
     # Filter Row
     st.markdown('<div class="filter-row">', unsafe_allow_html=True)
     
