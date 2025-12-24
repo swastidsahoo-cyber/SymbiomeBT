@@ -318,7 +318,7 @@ header {visibility: hidden;}
     
     # HEADER SECTION
     st.markdown("""
-    <div style="text-align: center; padding: 40px 20px 30px 20px; background: linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%); border-radius: 16px; margin-bottom: 30px; border: 1px solid rgba(6, 182, 212, 0.1);">
+    <div style="text-align: center; padding: 20px 20px 30px 20px; background: linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%); border-radius: 16px; margin-bottom: 30px; border: 1px solid rgba(6, 182, 212, 0.1);">
         <div style="color: #06b6d4; font-size: 2.2rem; font-weight: 900; margin-bottom: 12px; letter-spacing: -0.5px; text-shadow: 0 0 20px rgba(6, 182, 212, 0.3);">
             🗺️ Community Resilience Mapping
         </div>
