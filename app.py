@@ -4,20 +4,25 @@
 # TIMESTAMP: 2025-12-24 06:00 UTC
 # ==========================================
 
+"""
+Symbiome - Advanced Biofeedback & Stress Management Platform
+Version 2.9 - COMMUNITY RESILIENCE MAPPING™
+DEPLOYMENT TRIGGER: 2024-12-24-10:30 - Force fresh deployment
+"""
 import streamlit as st
-st.set_page_config(page_title="Symbiome | AI Resilience", page_icon="🧬", layout="wide")
-st.info("🔄 SYMBIOME SYSTEM BOOTING - VERSION 2.9 • COMMUNITY RESILIENCE MAPPING™")
-
-# --- CORE UTILITIES ---
 import pandas as pd
 import numpy as np
-import plotly.graph_objects as go
+from datetime import datetime, timedelta
 import plotly.express as px
 import time
 import os
 import random
-from datetime import datetime
 import math
+st.set_page_config(page_title="Symbiome | AI Resilience", page_icon="🧬", layout="wide")
+st.info("🔄 SYMBIOME SYSTEM BOOTING - VERSION 2.9 • COMMUNITY RESILIENCE MAPPING™")
+
+# --- CORE UTILITIES ---
+import plotly.graph_objects as go
 from data_engine import data_engine
 from modules.science_logic import calculate_sri
 
