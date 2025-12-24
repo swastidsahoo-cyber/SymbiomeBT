@@ -100,6 +100,9 @@ def route_page():
     elif page == 'Educational Portal':
         from modules.educational_portal import render_educational_portal_page
         render_educational_portal_page()
+    elif page == 'Scientific Analysis':
+        from modules.scientific_analysis import render_scientific_analysis_page
+        render_scientific_analysis_page()
     elif page == 'Community':
         render_placeholder("Community Cloud", "🌍", "Connect with the Symbiome research community and share anonymized insights.")
     elif page == 'Cognitive':
@@ -789,6 +792,9 @@ def render_sidebar():
             st.rerun()
         if st.button("🎓 Educational Portal", key="nav_education", use_container_width=True, type="secondary" if st.session_state.page != "Educational Portal" else "primary"):
             st.session_state.page = "Educational Portal"
+            st.rerun()
+        if st.button("📊 Scientific Analysis", key="nav_scientific", use_container_width=True, type="secondary" if st.session_state.page != "Scientific Analysis" else "primary"):
+            st.session_state.page = "Scientific Analysis"
             st.rerun()
 
         # 6. Community & Impact
