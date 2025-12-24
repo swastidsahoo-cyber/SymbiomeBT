@@ -91,6 +91,15 @@ def route_page():
     elif page == 'Advanced Features':
         from modules.advanced_features import render_advanced_features_page
         render_advanced_features_page()
+    elif page == 'Settings & Privacy (New)':
+        from modules.settings_privacy_new import render_settings_privacy_page
+        render_settings_privacy_page()
+    elif page == 'Future Vision':
+        from modules.future_vision import render_future_vision_page
+        render_future_vision_page()
+    elif page == 'Educational Portal':
+        from modules.educational_portal import render_educational_portal_page
+        render_educational_portal_page()
     elif page == 'Community':
         render_placeholder("Community Cloud", "🌍", "Connect with the Symbiome research community and share anonymized insights.")
     elif page == 'Cognitive':
@@ -771,6 +780,15 @@ def render_sidebar():
             st.rerun()
         if st.button("⚡ Advanced Features", key="nav_advanced", use_container_width=True, type="secondary" if st.session_state.page != "Advanced Features" else "primary"):
             st.session_state.page = "Advanced Features"
+            st.rerun()
+        if st.button("⚙️ Settings & Privacy (New)", key="nav_settings_new", use_container_width=True, type="secondary" if st.session_state.page != "Settings & Privacy (New)" else "primary"):
+            st.session_state.page = "Settings & Privacy (New)"
+            st.rerun()
+        if st.button("🔮 Future Vision", key="nav_future", use_container_width=True, type="secondary" if st.session_state.page != "Future Vision" else "primary"):
+            st.session_state.page = "Future Vision"
+            st.rerun()
+        if st.button("🎓 Educational Portal", key="nav_education", use_container_width=True, type="secondary" if st.session_state.page != "Educational Portal" else "primary"):
+            st.session_state.page = "Educational Portal"
             st.rerun()
 
         # 6. Community & Impact
