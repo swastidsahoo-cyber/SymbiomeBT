@@ -74,7 +74,7 @@ header {visibility: hidden;}
 /* Custom Classes */
 .mapping-container {
     background: #0a0e27;
-    padding: 20px;
+    padding: 0 20px 20px 20px;
     min-height: 100vh;
 }
 
