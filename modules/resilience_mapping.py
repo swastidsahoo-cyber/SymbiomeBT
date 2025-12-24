@@ -33,6 +33,25 @@ def render_resilience_mapping_page():
     color: #ffffff !important;
 }
 
+/* REMOVE ALL TOP SPACING */
+.main {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
+.block-container {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
+[data-testid="stAppViewContainer"] > .main {
+    padding-top: 0 !important;
+}
+
+.element-container:first-child {
+    margin-top: 0 !important;
+}
+
 /* Force all text to be visible */
 .main *, .stApp *, p, span, div, label, h1, h2, h3, h4, h5, h6 {
     color: #ffffff !important;
