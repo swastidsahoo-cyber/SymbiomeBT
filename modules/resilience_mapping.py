@@ -316,6 +316,15 @@ header {visibility: hidden;}
     # Container
     st.markdown('<div class="mapping-container">', unsafe_allow_html=True)
     
+    # FORCE TO TOP WITH NEGATIVE MARGIN
+    st.markdown("""
+    <style>
+    .mapping-container > div:first-child {
+        margin-top: -5rem !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     # HEADER SECTION
     st.markdown("""
     <div style="text-align: center; padding: 20px 20px 30px 20px; background: linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%); border-radius: 16px; margin-bottom: 30px; border: 1px solid rgba(6, 182, 212, 0.1);">
