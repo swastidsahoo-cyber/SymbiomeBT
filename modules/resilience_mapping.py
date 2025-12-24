@@ -11,17 +11,27 @@ from datetime import datetime
 from .resilience_mapping_engine import ResilienceMappingEngine
 
 def render_resilience_mapping_page():
-    # AGGRESSIVE CSS - Move content to VERY TOP
+    # MAXIMUM AGGRESSIVE CSS - ELIMINATE ALL GAP
     st.markdown("""
     <style>
-    /* Move content to VERY TOP with larger negative margin */
-    section.main > div.block-container {
-        padding-top: 0.25rem !important;
-        margin-top: -3.5rem !important;
+    /* HIDE Streamlit header that creates gap */
+    header[data-testid="stHeader"] {
+        display: none !important;
     }
     
-    /* Remove default Streamlit spacing */
+    /* MAXIMUM negative margin to eliminate gap */
+    section.main > div.block-container {
+        padding-top: 0rem !important;
+        margin-top: -5rem !important;
+    }
+    
+    /* Target all container layers */
     .main {
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }
+    
+    section[data-testid="stAppViewContainer"] {
         padding-top: 0 !important;
     }
     
