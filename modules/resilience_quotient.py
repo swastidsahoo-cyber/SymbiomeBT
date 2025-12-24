@@ -445,6 +445,54 @@ html, body, [data-testid="stAppViewContainer"] { font-family: 'Inter', sans-seri
 </div>
 </div>"""
     st.markdown(methodology_html, unsafe_allow_html=True)
+    
+    # PDF Export Section
+    st.markdown('<br>', unsafe_allow_html=True)
+    st.markdown("---")
+    st.markdown("### 📄 Export RQ Report")
+    
+    export_col1, export_col2 = st.columns(2)
+    
+    with export_col1:
+        st.markdown("""
+        **Generate Comprehensive PDF Report**
+        
+        Export your complete Resilience Quotient™ analysis including:
+        - Executive Summary with current RQ score
+        - Detailed domain breakdown
+        - Visual evidence and trends
+        - Interpretation guide
+        - Ethical disclaimer
+        - Model transparency
+        """)
+    
+    with export_col2:
+        if st.button("📥 Download PDF Report", key="download_rq_pdf", use_container_width=True, type="primary"):
+            try:
+                from .rq_pdf_export import generate_rq_pdf_report
+                
+                # Generate PDF
+                pdf_buffer = generate_rq_pdf_report(
+                    rq_data=rq_data,
+                    trend_data=trend_data,
+                    stress_events=stress_events
+                )
+                
+                # Offer download
+                st.download_button(
+                    label="💾 Save PDF Report",
+                    data=pdf_buffer,
+                    file_name=f"RQ_Report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf",
+                    mime="application/pdf",
+                    key="save_rq_pdf",
+                    use_container_width=True
+                )
+                
+                st.success("✅ PDF report generated successfully!")
+                
+            except Exception as e:
+                st.error(f"❌ Error generating PDF: {str(e)}")
+                st.info("Please ensure all required dependencies are installed.")
 
 if __name__ == "__main__":
     render_resilience_quotient_page()
