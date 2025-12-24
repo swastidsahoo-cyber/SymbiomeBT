@@ -148,49 +148,6 @@ if 'data_engine' in st.session_state:
 live_data = data_engine.get_live_data()
 live_hrv = live_data['hrv']
 live_gsr = live_data['gsr']
-
-# ==========================================
-# NAVIGATION MENU
-# ==========================================
-st.markdown("---")
-st.markdown("### 🧭 Quick Navigation")
-
-nav_col1, nav_col2, nav_col3, nav_col4, nav_col5, nav_col6 = st.columns(6)
-
-with nav_col1:
-    if st.button("🏠 Dashboard", key="nav_dashboard", use_container_width=True):
-        st.session_state.page = "Dashboard"
-        st.rerun()
-
-with nav_col2:
-    if st.button("🏆 RQ Dashboard", key="nav_rq", use_container_width=True):
-        st.session_state.page = "Resilience Quotient"
-        st.rerun()
-
-with nav_col3:
-    if st.button("🗺️ Resilience Mapping", key="nav_mapping", use_container_width=True, type="primary"):
-        st.session_state.page = "Resilience Mapping"
-        st.rerun()
-
-with nav_col4:
-    if st.button("💬 Sentiment AI", key="nav_journal", use_container_width=True):
-        st.session_state.page = "Journal"
-        st.rerun()
-
-with nav_col5:
-    if st.button("🔮 Digital Twin", key="nav_twin", use_container_width=True):
-        st.session_state.page = "Digital Twin"
-        st.rerun()
-
-with nav_col6:
-    if st.button("⚙️ Settings", key="nav_settings", use_container_width=True):
-        st.session_state.page = "Settings"
-        st.rerun()
-
-st.markdown("---")
-
-# Call routing function
-route_page()
 live_facial = live_data['facial']
 live_temp = live_data['temp']
 live_ph = live_data['ph']
