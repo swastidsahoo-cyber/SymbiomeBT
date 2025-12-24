@@ -756,6 +756,9 @@ def render_sidebar():
         if st.button("🏆 Resilience Quotient™", key="nav_rq", use_container_width=True, type="secondary" if st.session_state.page != "Resilience Quotient" else "primary"):
             st.session_state.page = "Resilience Quotient"
             st.rerun()
+        if st.button("🗺️ Resilience Mapping", key="nav_mapping", use_container_width=True, type="secondary" if st.session_state.page != "Resilience Mapping" else "primary"):
+            st.session_state.page = "Resilience Mapping"
+            st.rerun()
         if st.button("📊 Research Dashboard", key="nav_analysis", use_container_width=True, type="secondary" if st.session_state.page != "Research" else "primary"):
             st.session_state.page = "Research"
             st.rerun()
