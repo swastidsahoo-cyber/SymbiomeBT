@@ -7,7 +7,7 @@
 """
 Symbiome - Advanced Biofeedback & Stress Management Platform
 Version 2.9 - COMMUNITY RESILIENCE MAPPING™
-DEPLOYMENT TRIGGER: 2024-12-24-10:30 - Force fresh deployment
+DEPLOYMENT TRIGGER: 2024-12-24-10:51 - NEGATIVE MARGIN FIX ACTIVE
 """
 import streamlit as st
 import pandas as pd
