@@ -428,27 +428,22 @@ header {visibility: hidden;}
 def render_national_view():
     """Render National View with city-level statistics"""
     
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 14px; padding: 24px; margin: 20px 0;">
-        <div style="color: #06b6d4; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px;">National Resilience - All Cities (Ireland)</div>
-        
-
-        <div style="display: flex; gap: 24px; margin-bottom: 30px; flex-wrap: wrap;">
-            <div style="text-align: center; flex: 1; min-width: 150px;">
-                <div style="color: #06b6d4; font-size: 2.5rem; font-weight: 900;">66.3</div>
-                <div style="color: #94a3b8; font-size: 0.85rem;">Average RQ Score</div>
-            </div>
-            <div style="text-align: center; flex: 1; min-width: 150px;">
-                <div style="color: #06b6d4; font-size: 2.5rem; font-weight: 900;">12,847</div>
-                <div style="color: #94a3b8; font-size: 0.85rem;">Active Users</div>
-            </div>
-            <div style="text-align: center; flex: 1; min-width: 150px;">
-                <div style="color: #06b6d4; font-size: 2.5rem; font-weight: 900;">6</div>
-                <div style="color: #94a3b8; font-size: 0.85rem;">Participating Cities</div>
-            </div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    # National header
+    st.markdown('<h3 style="color: #06b6d4;">🌍 National Resilience - All Cities (Ireland)</h3>', unsafe_allow_html=True)
+    
+    # National stats using columns
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown('<div style="text-align: center; padding: 20px; background: rgba(30, 41, 59, 0.8); border-radius: 12px;"><div style="color: #06b6d4; font-size: 2.5rem; font-weight: 900;">66.3</div><div style="color: #94a3b8; font-size: 0.85rem;">Average RQ Score</div></div>', unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown('<div style="text-align: center; padding: 20px; background: rgba(30, 41, 59, 0.8); border-radius: 12px;"><div style="color: #06b6d4; font-size: 2.5rem; font-weight: 900;">12,847</div><div style="color: #94a3b8; font-size: 0.85rem;">Active Users</div></div>', unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown('<div style="text-align: center; padding: 20px; background: rgba(30, 41, 59, 0.8); border-radius: 12px;"><div style="color: #06b6d4; font-size: 2.5rem; font-weight: 900;">6</div><div style="color: #94a3b8; font-size: 0.85rem;">Participating Cities</div></div>', unsafe_allow_html=True)
+    
+    st.markdown('<br>', unsafe_allow_html=True)
     
     # City list with resilience scores
     cities_data = [
