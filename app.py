@@ -1,12 +1,12 @@
 # ==========================================
-# SYMBIOME STABLE VERSION 2.8
-# BUILD ID: RESILIENCE-QUOTIENT-V28
-# TIMESTAMP: 2025-12-23 19:50 UTC
+# SYMBIOME STABLE VERSION 2.9
+# BUILD ID: COMMUNITY-RESILIENCE-MAPPING-V29
+# TIMESTAMP: 2025-12-24 06:00 UTC
 # ==========================================
 
 import streamlit as st
 st.set_page_config(page_title="Symbiome | AI Resilience", page_icon="🧬", layout="wide")
-st.info("🔄 SYMBIOME SYSTEM BOOTING - VERSION 2.8 • RESILIENCE QUOTIENT™ DASHBOARD")
+st.info("🔄 SYMBIOME SYSTEM BOOTING - VERSION 2.9 • COMMUNITY RESILIENCE MAPPING™")
 
 # --- CORE UTILITIES ---
 import pandas as pd
@@ -78,6 +78,9 @@ def route_page():
     elif page == 'Closed Loop':
         from modules.closed_loop import render_closed_loop_page
         render_closed_loop_page()
+    elif page == 'Resilience Mapping':
+        from modules.resilience_mapping import render_resilience_mapping_page
+        render_resilience_mapping_page()
     elif page == 'Research':
         from modules.advanced_features import render_advanced_features_page
         render_advanced_features_page()
