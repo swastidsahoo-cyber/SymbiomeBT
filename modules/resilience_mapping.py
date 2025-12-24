@@ -432,7 +432,7 @@ def render_national_view():
     <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 14px; padding: 24px; margin: 20px 0;">
         <div style="color: #06b6d4; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px;">National Resilience - All Cities (Ireland)</div>
         
-        <!-- National Stats -->
+
         <div style="display: flex; gap: 24px; margin-bottom: 30px; flex-wrap: wrap;">
             <div style="text-align: center; flex: 1; min-width: 150px;">
                 <div style="color: #06b6d4; font-size: 2.5rem; font-weight: 900;">66.3</div>
@@ -476,7 +476,7 @@ def render_national_view():
                 <div style="color: #64748b; font-size: 0.85rem;">{city["population"]}</div>
             </div>
             <div style="position: relative; width: 60px; height: 60px;">
-                <!-- Circular progress -->
+
                 <svg width="60" height="60" style="transform: rotate(-90deg);">
                     <circle cx="30" cy="30" r="25" fill="none" stroke="rgba(148, 163, 184, 0.2)" stroke-width="4"/>
                     <circle cx="30" cy="30" r="25" fill="none" stroke="{city["color"]}" stroke-width="4" 
