@@ -455,36 +455,23 @@ def render_national_view():
         {"name": "Other", "population": "Various", "rq": 65.8, "color": "#f59e0b"}
     ]
     
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 14px; padding: 24px; margin: 20px 0;">
-        <div style="color: #cbd5e1; font-size: 1.1rem; font-weight: 600; margin-bottom: 20px;">Cities</div>
-    """, unsafe_allow_html=True)
+    # Cities header
+    st.markdown('<h4 style="color: #cbd5e1; margin-top: 20px;">Cities</h4>', unsafe_allow_html=True)
     
     for city in cities_data:
-        # Calculate progress percentage
-        progress = (city["rq"] / 100) * 360  # Convert to degrees for circular progress
+        progress = (city["rq"] / 100) * 360
         
-        st.markdown(f"""
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid rgba(148, 163, 184, 0.1);">
-            <div>
-                <div style="color: #e2e8f0; font-size: 1rem; font-weight: 600;">{city["name"]}</div>
-                <div style="color: #64748b; font-size: 0.85rem;">{city["population"]}</div>
-            </div>
-            <div style="position: relative; width: 60px; height: 60px;">
-
-                <svg width="60" height="60" style="transform: rotate(-90deg);">
-                    <circle cx="30" cy="30" r="25" fill="none" stroke="rgba(148, 163, 184, 0.2)" stroke-width="4"/>
-                    <circle cx="30" cy="30" r="25" fill="none" stroke="{city["color"]}" stroke-width="4" 
-                            stroke-dasharray="{progress * 0.436} 157" stroke-linecap="round"/>
-                </svg>
-                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #e2e8f0; font-size: 0.9rem; font-weight: 700;">
-                    {city["rq"]}
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        col_name, col_progress = st.columns([3, 1])
+        
+        with col_name:
+            st.markdown(f'<div style="padding: 12px 0;"><div style="color: #e2e8f0; font-size: 1rem; font-weight: 600;">{city["name"]}</div><div style="color: #64748b; font-size: 0.85rem;">{city["population"]}</div></div>', unsafe_allow_html=True)
+        
+        with col_progress:
+            st.markdown(f'<div style="position: relative; width: 60px; height: 60px; margin: auto;"><svg width="60" height="60" style="transform: rotate(-90deg);"><circle cx="30" cy="30" r="25" fill="none" stroke="rgba(148, 163, 184, 0.2)" stroke-width="4"/><circle cx="30" cy="30" r="25" fill="none" stroke="{city["color"]}" stroke-width="4" stroke-dasharray="{progress * 0.436} 157" stroke-linecap="round"/></svg><div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #e2e8f0; font-size: 0.9rem; font-weight: 700;">{city["rq"]}</div></div>', unsafe_allow_html=True)
+        
+        st.markdown('<div style="border-bottom: 1px solid rgba(148, 163, 184, 0.1); margin: 8px 0;"></div>', unsafe_allow_html=True)
     
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('<br>', unsafe_allow_html=True)
     
     # Public Health Insights
     st.markdown("""
