@@ -11,28 +11,30 @@ from datetime import datetime
 from .resilience_mapping_engine import ResilienceMappingEngine
 
 def render_resilience_mapping_page():
-    # ULTRA-AGGRESSIVE CSS - MUST BE FIRST
+    # ULTRA-AGGRESSIVE CSS - MAXIMUM SPECIFICITY
     st.markdown("""
     <style>
-    /* NUCLEAR OPTION: Force EVERYTHING to top */
-    section.main > div {
+    /* FORCE EVERYTHING TO TOP WITH NEGATIVE MARGINS */
+    section.main > div.block-container {
         padding-top: 0rem !important;
-        padding-bottom: 0rem !important;
+        margin-top: -5rem !important;
     }
     
-    div.block-container {
-        padding-top: 0rem !important;
-        padding-bottom: 0rem !important;
-        margin-top: 0rem !important;
+    div[data-testid="stVerticalBlock"] > div:first-child {
+        margin-top: -3rem !important;
     }
     
-    section[data-testid="stAppViewContainer"] {
-        padding-top: 0rem !important;
+    .element-container:first-of-type {
+        margin-top: -2rem !important;
     }
     
-    .main .block-container {
-        padding-top: 0rem !important;
-        max-width: 100% !important;
+    /* Remove all default Streamlit spacing */
+    .main {
+        padding-top: 0 !important;
+    }
+    
+    section[data-testid="stAppViewContainer"] > .main {
+        padding-top: 0 !important;
     }
     </style>
     """, unsafe_allow_html=True)
