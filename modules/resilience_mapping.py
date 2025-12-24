@@ -339,36 +339,49 @@ header {visibility: hidden;}
 </style>"""
     st.markdown(css_styles, unsafe_allow_html=True)
     
+    # Initialize session state for view
+    if 'resilience_view' not in st.session_state:
+        st.session_state.resilience_view = 'school'
+    
     # Container
     st.markdown('<div class="mapping-container">', unsafe_allow_html=True)
     
-    # VIEW TOGGLES + TIME PERIOD TOGGLES (matching screenshot)
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 14px; padding: 16px 24px; margin: 0 0 20px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
-        <div style="display: flex; gap: 8px; align-items: center;">
-            <div id="view-school" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.25) 0%, rgba(6, 182, 212, 0.15) 100%); border: 1.5px solid rgba(6, 182, 212, 0.5); color: #06b6d4; padding: 8px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
-                <span>🏫</span> School View
-            </div>
-            <div id="view-city" style="background: rgba(30, 41, 59, 0.5); border: 1.5px solid rgba(148, 163, 184, 0.3); color: #94a3b8; padding: 8px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
-                <span>🏙️</span> City View
-            </div>
-            <div id="view-national" style="background: rgba(30, 41, 59, 0.5); border: 1.5px solid rgba(148, 163, 184, 0.3); color: #94a3b8; padding: 8px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
-                <span>🌍</span> National View
-            </div>
-        </div>
-        <div style="display: flex; gap: 8px; align-items: center;">
-            <div style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.25) 0%, rgba(6, 182, 212, 0.15) 100%); border: 1.5px solid rgba(6, 182, 212, 0.5); color: #06b6d4; padding: 8px 16px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;">
-                Day
-            </div>
-            <div style="background: rgba(30, 41, 59, 0.5); border: 1.5px solid rgba(148, 163, 184, 0.3); color: #94a3b8; padding: 8px 16px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;">
-                Week
-            </div>
-            <div style="background: rgba(30, 41, 59, 0.5); border: 1.5px solid rgba(148, 163, 184, 0.3); color: #94a3b8; padding: 8px 16px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;">
-                Month
-            </div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    # VIEW TOGGLES + TIME PERIOD TOGGLES (FUNCTIONAL)
+    st.markdown('<div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 14px; padding: 16px 24px; margin: 0 0 20px 0;">', unsafe_allow_html=True)
+    
+    col_left, col_right = st.columns([2, 1])
+    
+    with col_left:
+        view_col1, view_col2, view_col3 = st.columns(3)
+        with view_col1:
+            if st.button("🏫 School View", key="btn_school_view", use_container_width=True, type="primary" if st.session_state.resilience_view == 'school' else "secondary"):
+                st.session_state.resilience_view = 'school'
+                st.rerun()
+        with view_col2:
+            if st.button("🏙️ City View", key="btn_city_view", use_container_width=True, type="primary" if st.session_state.resilience_view == 'city' else "secondary"):
+                st.session_state.resilience_view = 'city'
+                st.rerun()
+        with view_col3:
+            if st.button("🌍 National View", key="btn_national_view", use_container_width=True, type="primary" if st.session_state.resilience_view == 'national' else "secondary"):
+                st.session_state.resilience_view = 'national'
+                st.rerun()
+    
+    with col_right:
+        time_col1, time_col2, time_col3 = st.columns(3)
+        with time_col1:
+            if st.button("Day", key="btn_day", use_container_width=True, type="primary" if st.session_state.mapping_time_window == 'day' else "secondary"):
+                st.session_state.mapping_time_window = 'day'
+                st.rerun()
+        with time_col2:
+            if st.button("Week", key="btn_week", use_container_width=True, type="primary" if st.session_state.mapping_time_window == 'week' else "secondary"):
+                st.session_state.mapping_time_window = 'week'
+                st.rerun()
+        with time_col3:
+            if st.button("Month", key="btn_month", use_container_width=True, type="primary" if st.session_state.mapping_time_window == 'month' else "secondary"):
+                st.session_state.mapping_time_window = 'month'
+                st.rerun()
+    
+    st.markdown('</div>', unsafe_allow_html=True)
     
     # PRIVACY GUARD STATUS PANEL (matching screenshot - more compact)
     st.markdown("""
