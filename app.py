@@ -104,6 +104,9 @@ def route_page():
     elif page == 'Scientific Analysis':
         from modules.scientific_analysis import render_scientific_analysis_page
         render_scientific_analysis_page()
+    elif page == 'Community Challenge Arena':
+        from modules.community_challenge_arena import render_community_challenge_arena_page
+        render_community_challenge_arena_page()
     elif page == 'Community':
         render_placeholder("Community Cloud", "🌍", "Connect with the Symbiome research community and share anonymized insights.")
     elif page == 'Cognitive':
@@ -800,8 +803,8 @@ def render_sidebar():
 
         # 6. Community & Impact
         nav_category("Community & Impact")
-        if st.button("🌍 Community Cloud", key="nav_community", use_container_width=True, type="secondary" if st.session_state.page != "Community" else "primary"):
-            st.session_state.page = "Community"
+        if st.button("🏆 Community Challenge Arena", key="nav_community", use_container_width=True, type="secondary" if st.session_state.page != "Community Challenge Arena" else "primary"):
+            st.session_state.page = "Community Challenge Arena"
             st.rerun()
 
 def render_top_bar():
