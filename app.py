@@ -7,7 +7,7 @@
 """
 Symbiome - Advanced Biofeedback & Stress Management Platform
 Version 2.9 - COMMUNITY RESILIENCE MAPPING™
-DEPLOYMENT TRIGGER: 2024-12-24-17:38 - THREE NEW SECTIONS ADDED - FORCE RELOAD
+DEPLOYMENT TRIGGER: 2025-12-25-13:55 - COGNITIVE TESTING + STRESS SIMULATION ADDED - FORCE RELOAD
 """
 import streamlit as st
 import pandas as pd
