@@ -107,6 +107,12 @@ def route_page():
     elif page == 'Community Challenge Arena':
         from modules.community_challenge_arena import render_community_challenge_arena_page
         render_community_challenge_arena_page()
+    elif page == 'Stress Simulation Sandbox':
+        from modules.stress_simulation_sandbox import render_stress_simulation_sandbox_page
+        render_stress_simulation_sandbox_page()
+    elif page == 'Cognitive Testing':
+        from modules.cognitive_testing import render_cognitive_testing_page
+        render_cognitive_testing_page()
     elif page == 'Community':
         render_placeholder("Community Cloud", "🌍", "Connect with the Symbiome research community and share anonymized insights.")
     elif page == 'Cognitive':
@@ -746,8 +752,11 @@ def render_sidebar():
         if st.button("⚡ Closed-Loop System", key="nav_closedloop", use_container_width=True, type="secondary" if st.session_state.page != "Closed Loop" else "primary"):
             st.session_state.page = "Closed Loop"
             st.rerun()
-        if st.button("🧠 Cognitive Tests", key="nav_cognitive", use_container_width=True, type="secondary" if st.session_state.page != "Cognitive" else "primary"):
-            st.session_state.page = "Cognitive"
+        if st.button("🧠 Cognitive Testing", key="nav_cognitive", use_container_width=True, type="secondary" if st.session_state.page != "Cognitive Testing" else "primary"):
+            st.session_state.page = "Cognitive Testing"
+            st.rerun()
+        if st.button("🧪 Stress Simulation", key="nav_simulation", use_container_width=True, type="secondary" if st.session_state.page != "Stress Simulation Sandbox" else "primary"):
+            st.session_state.page = "Stress Simulation Sandbox"
             st.rerun()
 
         # 4. AI & Prediction
