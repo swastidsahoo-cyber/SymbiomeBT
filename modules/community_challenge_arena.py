@@ -174,8 +174,8 @@ def render_main_arena():
         plot_bgcolor='rgba(15,23,42,0.8)',
         height=350,
         xaxis=dict(title="", gridcolor='rgba(148, 163, 184, 0.1)'),
-        yaxis=dict(title="SRI Score", gridcolor='rgba(148, 163, 184, 0.1)', titlefont=dict(color='#06b6d4')),
-        yaxis2=dict(title="XP Earned", overlaying='y', side='right', gridcolor='rgba(148, 163, 184, 0.1)', titlefont=dict(color='#a78bfa')),
+        yaxis=dict(title="SRI Score", gridcolor='rgba(148, 163, 184, 0.1)', title_font=dict(color='#06b6d4')),
+        yaxis2=dict(title="XP Earned", overlaying='y', side='right', gridcolor='rgba(148, 163, 184, 0.1)', title_font=dict(color='#a78bfa')),
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
         font=dict(color='#cbd5e1'),
         margin=dict(l=50, r=50, t=50, b=50)
