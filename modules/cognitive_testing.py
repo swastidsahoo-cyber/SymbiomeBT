@@ -91,12 +91,9 @@ def render_stroop_test():
     # Instructions
     st.markdown('<p style="color: #cbd5e1; text-align: center; font-size: 1.1rem; margin-bottom: 40px;">Select the COLOR of the text (not what it says)</p>', unsafe_allow_html=True)
     
-    # Display word
-    word = st.session_state.stroop_word
-    color = st.session_state.stroop_color
-    color_name = st.session_state.stroop_color_name
     
-    st.markdown(f'<div style="text-align: center; margin: 60px 0;"><h1 style="color: {color}; font-size: 5rem; font-weight: 900;">{word}</h1></div>', unsafe_allow_html=True)
+    # Display word with VIBRANT color (forced with !important)
+    st.markdown(f'<div style="text-align: center; margin: 60px 0;"><h1 style="color: {color} !important; font-size: 5rem; font-weight: 900; text-shadow: 0 0 20px {color}, 0 0 40px {color};">{word}</h1></div>', unsafe_allow_html=True)
     
     # Add custom CSS for VIBRANT colored buttons
     st.markdown("""
