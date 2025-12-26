@@ -102,16 +102,19 @@ def render_stroop_test():
     col1, col2 = st.columns(2)
     
     colors = [
-        ('RED', '#ef4444'),
-        ('BLUE', '#3b82f6'),
-        ('GREEN', '#10b981'),
-        ('YELLOW', '#fbbf24')
+        ('RED', '#ff0000'),
+        ('BLUE', '#0066ff'),
+        ('GREEN', '#00ff00'),
+        ('YELLOW', '#ffff00')
     ]
     
     for i, (color_text, color_hex) in enumerate(colors):
         col = col1 if i < 2 else col2
         with col:
-            if st.button(color_text, key=f"stroop_{color_text}", use_container_width=True):
+            # Create vibrant colored button
+            button_html = f'<div style="background: {color_hex}; color: #000000; font-weight: 900; font-size: 1.5rem; padding: 20px; border-radius: 12px; text-align: center; margin: 10px 0; cursor: pointer; border: 3px solid {color_hex}; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">{color_text}</div>'
+            st.markdown(button_html, unsafe_allow_html=True)
+            if st.button(color_text, key=f"stroop_{color_text}", use_container_width=True, label_visibility="collapsed"):
                 check_stroop_answer(color_text)
     
     # Score and Cancel
@@ -127,10 +130,10 @@ def generate_stroop_question():
     """Generate a new Stroop question"""
     words = ['RED', 'BLUE', 'GREEN', 'YELLOW']
     colors = {
-        'RED': '#ef4444',
-        'BLUE': '#3b82f6',
-        'GREEN': '#10b981',
-        'YELLOW': '#fbbf24'
+        'RED': '#ff0000',
+        'BLUE': '#0066ff',
+        'GREEN': '#00ff00',
+        'YELLOW': '#ffff00'
     }
     
     # Pick word and color (ensure they don't match for interference)
@@ -229,6 +232,18 @@ def render_reaction_test():
 
 def render_reaction_results():
     """Show Reaction test results"""
+    from datetime import datetime
+    
+    # Save to performance history
+    if 'reaction_history' not in st.session_state:
+        st.session_state.reaction_history = []
+    
+    st.session_state.reaction_history.append({
+        'timestamp': datetime.now().strftime('%m/%d/%Y, %I:%M:%S %p'),
+        'avg_time': sum(st.session_state.test_times) / len(st.session_state.test_times),
+        'times': st.session_state.test_times.copy()
+    })
+    
     st.markdown('<h2 style="color: #ec4899; text-align: center; margin-bottom: 30px;">Test Complete!</h2>', unsafe_allow_html=True)
     
     avg_time = sum(st.session_state.test_times) / len(st.session_state.test_times)
@@ -241,6 +256,15 @@ def render_reaction_results():
     st.markdown('<h4 style="color: #cbd5e1; margin-top: 30px;">Individual Times:</h4>', unsafe_allow_html=True)
     for i, t in enumerate(st.session_state.test_times, 1):
         st.markdown(f'<p style="color: #94a3b8;">Round {i}: {t:.0f}ms</p>', unsafe_allow_html=True)
+    
+    # Performance History Section
+    if len(st.session_state.reaction_history) > 0:
+        st.markdown('<h3 style="color: #a78bfa; margin-top: 50px; margin-bottom: 20px;">Performance History</h3>', unsafe_allow_html=True)
+        
+        for idx, record in enumerate(reversed(st.session_state.reaction_history)):
+            percentage = "0%" if idx == 0 else f"{((record['avg_time'] - st.session_state.reaction_history[-1]['avg_time']) / st.session_state.reaction_history[-1]['avg_time'] * 100):.0f}%"
+            
+            st.markdown(f'<div style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; padding: 16px; margin: 10px 0; display: flex; justify-content: space-between; align-items: center;"><div style="display: flex; align-items: center; gap: 15px;"><div style="color: #a78bfa; font-size: 1.5rem;">🎯</div><div><div style="color: #cbd5e1; font-weight: 700;">Reaction Test</div><div style="color: #64748b; font-size: 0.75rem;">{record["timestamp"]}</div></div></div><div style="text-align: right;"><div style="color: #06b6d4; font-weight: 700; font-size: 1.2rem;">{record["avg_time"]:.0f}ms avg</div></div></div>', unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
     with col1:
