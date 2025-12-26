@@ -98,24 +98,24 @@ def render_stroop_test():
     
     st.markdown(f'<div style="text-align: center; margin: 60px 0;"><h1 style="color: {color}; font-size: 5rem; font-weight: 900;">{word}</h1></div>', unsafe_allow_html=True)
     
-    # Answer buttons
+    # Answer buttons - simple and vibrant!
+    st.markdown('<div style="margin: 30px 0;">', unsafe_allow_html=True)
+    
     col1, col2 = st.columns(2)
     
-    colors = [
-        ('RED', '#ff0000'),
-        ('BLUE', '#0066ff'),
-        ('GREEN', '#00ff00'),
-        ('YELLOW', '#ffff00')
-    ]
+    with col1:
+        if st.button("🔴 RED", key="stroop_RED", use_container_width=True):
+            check_stroop_answer('RED')
+        if st.button("🟢 GREEN", key="stroop_GREEN", use_container_width=True):
+            check_stroop_answer('GREEN')
     
-    for i, (color_text, color_hex) in enumerate(colors):
-        col = col1 if i < 2 else col2
-        with col:
-            # Create vibrant colored button
-            button_html = f'<div style="background: {color_hex}; color: #000000; font-weight: 900; font-size: 1.5rem; padding: 20px; border-radius: 12px; text-align: center; margin: 10px 0; cursor: pointer; border: 3px solid {color_hex}; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">{color_text}</div>'
-            st.markdown(button_html, unsafe_allow_html=True)
-            if st.button(color_text, key=f"stroop_{color_text}", use_container_width=True, label_visibility="collapsed"):
-                check_stroop_answer(color_text)
+    with col2:
+        if st.button("🔵 BLUE", key="stroop_BLUE", use_container_width=True):
+            check_stroop_answer('BLUE')
+        if st.button("🟡 YELLOW", key="stroop_YELLOW", use_container_width=True):
+            check_stroop_answer('YELLOW')
+    
+    st.markdown('</div>', unsafe_allow_html=True)
     
     # Score and Cancel
     col1, col2 = st.columns([3, 1])
