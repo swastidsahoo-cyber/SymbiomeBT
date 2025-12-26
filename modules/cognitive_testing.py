@@ -98,24 +98,82 @@ def render_stroop_test():
     
     st.markdown(f'<div style="text-align: center; margin: 60px 0;"><h1 style="color: {color}; font-size: 5rem; font-weight: 900;">{word}</h1></div>', unsafe_allow_html=True)
     
-    # Answer buttons - simple and vibrant!
-    st.markdown('<div style="margin: 30px 0;">', unsafe_allow_html=True)
+    # Add custom CSS for VIBRANT colored buttons
+    st.markdown("""
+    <style>
+    /* Make buttons LARGE and COLORFUL */
+    div[data-testid="column"] > div > div > div > button {
+        font-size: 1.8rem !important;
+        font-weight: 900 !important;
+        padding: 30px !important;
+        border-radius: 16px !important;
+        border: 4px solid !important;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.4) !important;
+        transition: transform 0.2s !important;
+        min-height: 80px !important;
+    }
+    div[data-testid="column"] > div > div > div > button:hover {
+        transform: scale(1.05) !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
     
+    # Answer buttons - VIBRANT and COLORFUL!
     col1, col2 = st.columns(2)
     
     with col1:
-        if st.button("🔴 RED", key="stroop_RED", use_container_width=True):
+        # RED button with custom styling
+        st.markdown("""
+        <style>
+        button[kind="secondary"][data-testid*="baseButton"]:has(p:contains("RED")) {
+            background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%) !important;
+            color: white !important;
+            border-color: #ff0000 !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+        if st.button("🔴 RED", key="stroop_RED", use_container_width=True, type="secondary"):
             check_stroop_answer('RED')
-        if st.button("🟢 GREEN", key="stroop_GREEN", use_container_width=True):
+        
+        # GREEN button with custom styling
+        st.markdown("""
+        <style>
+        button[kind="secondary"][data-testid*="baseButton"]:has(p:contains("GREEN")) {
+            background: linear-gradient(135deg, #00ff00 0%, #00cc00 100%) !important;
+            color: black !important;
+            border-color: #00ff00 !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+        if st.button("🟢 GREEN", key="stroop_GREEN", use_container_width=True, type="secondary"):
             check_stroop_answer('GREEN')
     
     with col2:
-        if st.button("🔵 BLUE", key="stroop_BLUE", use_container_width=True):
+        # BLUE button with custom styling
+        st.markdown("""
+        <style>
+        button[kind="secondary"][data-testid*="baseButton"]:has(p:contains("BLUE")) {
+            background: linear-gradient(135deg, #0066ff 0%, #0044cc 100%) !important;
+            color: white !important;
+            border-color: #0066ff !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+        if st.button("🔵 BLUE", key="stroop_BLUE", use_container_width=True, type="secondary"):
             check_stroop_answer('BLUE')
-        if st.button("🟡 YELLOW", key="stroop_YELLOW", use_container_width=True):
+        
+        # YELLOW button with custom styling
+        st.markdown("""
+        <style>
+        button[kind="secondary"][data-testid*="baseButton"]:has(p:contains("YELLOW")) {
+            background: linear-gradient(135deg, #ffff00 0%, #cccc00 100%) !important;
+            color: black !important;
+            border-color: #ffff00 !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+        if st.button("🟡 YELLOW", key="stroop_YELLOW", use_container_width=True, type="secondary"):
             check_stroop_answer('YELLOW')
-    
-    st.markdown('</div>', unsafe_allow_html=True)
     
     # Score and Cancel
     col1, col2 = st.columns([3, 1])
