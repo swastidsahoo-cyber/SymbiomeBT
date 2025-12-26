@@ -234,19 +234,26 @@ def render_reaction_results():
     """Show Reaction test results"""
     from datetime import datetime
     
+    # Calculate average time
+    if len(st.session_state.test_times) == 0:
+        st.error("No reaction times recorded! Please try again.")
+        if st.button("Back to Tests", use_container_width=True):
+            cancel_test()
+        return
+    
+    avg_time = sum(st.session_state.test_times) / len(st.session_state.test_times)
+    
     # Save to performance history
     if 'reaction_history' not in st.session_state:
         st.session_state.reaction_history = []
     
     st.session_state.reaction_history.append({
         'timestamp': datetime.now().strftime('%m/%d/%Y, %I:%M:%S %p'),
-        'avg_time': sum(st.session_state.test_times) / len(st.session_state.test_times),
+        'avg_time': avg_time,
         'times': st.session_state.test_times.copy()
     })
     
     st.markdown('<h2 style="color: #ec4899; text-align: center; margin-bottom: 30px;">Test Complete!</h2>', unsafe_allow_html=True)
-    
-    avg_time = sum(st.session_state.test_times) / len(st.session_state.test_times)
     
     rating = "Excellent" if avg_time < 250 else "Good" if avg_time < 350 else "Fair"
     rating_color = "#10b981" if avg_time < 250 else "#f59e0b" if avg_time < 350 else "#ef4444"
@@ -257,14 +264,14 @@ def render_reaction_results():
     for i, t in enumerate(st.session_state.test_times, 1):
         st.markdown(f'<p style="color: #94a3b8;">Round {i}: {t:.0f}ms</p>', unsafe_allow_html=True)
     
-    # Performance History Section
+    # Performance History Section - ALWAYS SHOW
+    st.markdown('<h3 style="color: #a78bfa; margin-top: 50px; margin-bottom: 20px;">Performance History</h3>', unsafe_allow_html=True)
+    
     if len(st.session_state.reaction_history) > 0:
-        st.markdown('<h3 style="color: #a78bfa; margin-top: 50px; margin-bottom: 20px;">Performance History</h3>', unsafe_allow_html=True)
-        
         for idx, record in enumerate(reversed(st.session_state.reaction_history)):
-            percentage = "0%" if idx == 0 else f"{((record['avg_time'] - st.session_state.reaction_history[-1]['avg_time']) / st.session_state.reaction_history[-1]['avg_time'] * 100):.0f}%"
-            
             st.markdown(f'<div style="background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 12px; padding: 16px; margin: 10px 0; display: flex; justify-content: space-between; align-items: center;"><div style="display: flex; align-items: center; gap: 15px;"><div style="color: #a78bfa; font-size: 1.5rem;">🎯</div><div><div style="color: #cbd5e1; font-weight: 700;">Reaction Test</div><div style="color: #64748b; font-size: 0.75rem;">{record["timestamp"]}</div></div></div><div style="text-align: right;"><div style="color: #06b6d4; font-weight: 700; font-size: 1.2rem;">{record["avg_time"]:.0f}ms avg</div></div></div>', unsafe_allow_html=True)
+    else:
+        st.info("No previous tests recorded yet. Complete more tests to build your history!")
     
     col1, col2 = st.columns(2)
     with col1:
