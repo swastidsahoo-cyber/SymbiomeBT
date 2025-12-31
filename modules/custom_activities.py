@@ -9,6 +9,10 @@ import time
 import random
 import textwrap
 from datetime import datetime
+try:
+    from modules.sensor_manager import sensor_manager
+except ImportError:
+    sensor_manager = None
 
 def clean_render(html_str):
     """Ensure HTML strings are perfectly dedented and clean for Streamlit."""
@@ -230,15 +234,26 @@ div.stButton > button:hover {
         mins, secs = divmod(elapsed, 60)
         if random.random() > 0.7: session["readings"] += 1
         
-        # v8.9: Realistic Stress Level & Metric Fluctuations
-        # Random walk for stress level (0.1 steps)
-        session["stress_level"] = round(max(1.0, min(10.0, session["stress_level"] + random.uniform(-0.15, 0.15))), 1)
+        # v8.9: Uses Real-Time Sensor Data if Available
+        hrv, hr, gsr, calm = 70, 72, 8, 50
         
-        # Generate varied metrics for the grid
-        hrv = 70 + random.randint(0, 15)
-        hr = 72 + random.randint(0, 10)
-        gsr = 50 + random.randint(0, 8)
-        calm = 40 + random.randint(0, 12)
+        if sensor_manager:
+            readings = sensor_manager.get_readings()
+            hrv = int(readings.get('hrv', 70))
+            hr = int(readings.get('hr', 72))
+            gsr = int(readings.get('gsr', 8))
+            stress_val = readings.get('facial_stress', 50)
+            calm = int(100 - stress_val)
+            
+            # Map Facial Stress (0-100) to 1-10 Scale
+            session["stress_level"] = round(stress_val / 10.0, 1)
+        else:
+            # Fallback
+            session["stress_level"] = round(max(1.0, min(10.0, session["stress_level"] + random.uniform(-0.15, 0.15))), 1)
+            hrv = 70 + random.randint(0, 15)
+            hr = 72 + random.randint(0, 10)
+            gsr = 50 + random.randint(0, 8)
+            calm = 40 + random.randint(0, 12)
 
         clean_render(f"""
 <div class="active-session-v2">
@@ -372,6 +387,11 @@ div.stButton > button:hover {
                             "readings": 0,
                             "stress_level": 5
                         }
+                        # Force Webcam Activation
+                        if sensor_manager and sensor_manager.strategy != "WEBCAM":
+                             sensor_manager.set_strategy("WEBCAM")
+                             st.toast("Facial Stress Sensors Activated", icon="📷")
+                        
                         activity['sessions'] += 1
                         st.rerun()
 

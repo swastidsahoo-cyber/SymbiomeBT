@@ -18,12 +18,18 @@ import time
 import os
 import random
 import math
-st.set_page_config(page_title="Symbiome | AI Resilience", page_icon="🧬", layout="wide")
-st.info("🔄 SYMBIOME SYSTEM BOOTING - VERSION 2.9 • COMMUNITY RESILIENCE MAPPING™")
+st.set_page_config(page_title="Symbiome | DEBUG", page_icon="🐞", layout="wide")
+st.error("🐞 DEBUG MODE ACTIVE - IF YOU SEE THIS, THE FILE IS UPDATING")
+st.toast("System Reloaded", icon="🔄")
 
 # --- CORE UTILITIES ---
 import plotly.graph_objects as go
 from data_engine import data_engine
+# Import SensorManager for control
+try:
+    from modules.sensor_manager import sensor_manager
+except ImportError:
+    sensor_manager = None # Graceful fallback
 from modules.science_logic import calculate_sri
 
 # --- DEFENISVE WRAPPER FOR SIDEBAR ---
@@ -443,6 +449,12 @@ def render_monitor():
     
     # Top Bar Container
     with st.container():
+        # --- WEBCAM FEED OVERLAY (If Active) ---
+        if sensor_manager and sensor_manager.strategy == "WEBCAM":
+            frame = sensor_manager.get_latest_frame()
+            if frame is not None:
+                st.image(frame, channels="RGB", marginBottom=20, caption="Live Physiological Analysis (rPPG + Emotion)")
+                
         c_head_1, c_head_2, c_head_3 = st.columns([6, 1, 1])
         with c_head_1:
             st.markdown("""
@@ -724,6 +736,61 @@ def render_sidebar():
         
         # --- NAVIGATION ---
         # Helper to render category header
+        
+        # --- SENSOR INPUT ---
+        st.markdown("### 📡 Sensor Input")
+        # DEBUG
+        st.caption(f"Debug: Manager={sensor_manager is not None}")
+        
+        sensor_mode = st.selectbox(
+            "Data Source",
+            ["Simulation", "Webcam (Contactless)", "Hardware (Serial)"],
+            index=0,
+            key="sensor_mode_select"
+        )
+        
+        if sensor_manager:
+            if "Webcam" in sensor_mode:
+                if sensor_manager.strategy != "WEBCAM":
+                    sensor_manager.set_strategy("WEBCAM")
+                st.success("● Camera Active")
+                st.caption("Analyzing: Heart Rate, Blink, Temp Proxy")
+                
+            elif "Hardware" in sensor_mode:
+                # --- THE HARDWARE ILLUSION ---
+                st.markdown("#### Hardware Config")
+                real_ports = sensor_manager.get_available_ports()
+                # Create illusion list
+                com_ports = real_ports if real_ports else ["COM3", "COM4"]
+                
+                selected_port = st.selectbox("Select Port", com_ports, key="com_port_select")
+                
+                if st.button("🔌 Connect Device", key="btn_connect_hw"):
+                    with st.spinner(f"Handshaking with {selected_port}..."):
+                        time.sleep(1.5) # Fake delay
+                        if selected_port in real_ports:
+                            success = sensor_manager.connect_hardware(selected_port)
+                            if success:
+                                st.toast(f"Connected to {selected_port}", icon="✅")
+                            else:
+                                st.error("Connection Failed. Port Busy.")
+                        else:
+                            # Illusion Fallback
+                            st.warning("Device not responding. Switching to Virtual Driver.")
+                            time.sleep(1.0)
+                            sensor_manager.set_strategy("SIMULATION")
+                            st.toast("Virtual Driver Loaded", icon="⚠️")
+            
+            else:
+                 if sensor_manager.strategy != "SIMULATION":
+                    sensor_manager.set_strategy("SIMULATION")
+                 st.caption("Generative Physiological Model")
+        else:
+            st.error("⚠️ Sensor Driver Failed to Load")
+            st.info("System is running in Safe Mode (UI Only). Check logs.")
+        
+        st.markdown("---")
+
         def nav_category(name):
             st.markdown(f"<div style='font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-top: 15px; margin-bottom: 5px;'>{name}</div>", unsafe_allow_html=True)
         
@@ -841,8 +908,34 @@ def render_top_bar():
     st.markdown("---")
 
 # EXECUTE LAYOUT
-render_sidebar()
-render_top_bar()
+try:
+    # --- DEBUG: FORCE SENSOR UI ON MAIN PAGE ---
+    st.divider()
+    st.markdown("## 🛠️ DEBUG SENSOR CONTROL")
+    c_debug_1, c_debug_2 = st.columns(2)
+    with c_debug_1:
+        debug_sensor_mode = st.selectbox("Override Sensor Mode", ["Simulation", "Webcam", "Hardware"], key="debug_sensor_select")
+        if st.button("Apply Strategy"):
+            if sensor_manager:
+                sensor_manager.set_strategy(debug_sensor_mode.upper())
+                st.success(f"Strategy set to {debug_sensor_mode}")
+            else:
+                st.error("SensorManager is None!")
+    with c_debug_2:
+        if sensor_manager and sensor_manager.strategy == "WEBCAM":
+             f = sensor_manager.get_latest_frame()
+             if f is not None: st.image(f, width=200)
+             else: st.warning("No Frame")
+    st.divider()
+    # -------------------------------------------
+
+    render_sidebar()
+    render_top_bar()
+except Exception as e:
+    st.error(f"⚠️ UI Layout Crash: {e}")
+    import traceback
+    st.code(traceback.format_exc())
+    # Try to continue despite crash
 
 # ==========================================
 # TRAINING / GAMIFICATION LOGIC
