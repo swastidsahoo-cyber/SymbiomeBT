@@ -18,9 +18,10 @@ import time
 import os
 import random
 import math
-st.set_page_config(page_title="Symbiome | DEBUG", page_icon="🐞", layout="wide")
-st.error("🐞 DEBUG MODE ACTIVE - IF YOU SEE THIS, THE FILE IS UPDATING")
-st.toast("System Reloaded", icon="🔄")
+st.set_page_config(page_title="Symbiome UPGRADE", page_icon="⚡", layout="wide")
+st.error("🚨 SYSTEM UPGRADE IN PROGRESS - PLEASE RELOAD PAGE IF YOU SEE THIS 🚨")
+st.warning("Feature 'Active Facial Analysis' is being installed...")
+st.toast("Installing Updates...", icon="⏳")
 
 # --- CORE UTILITIES ---
 import plotly.graph_objects as go
