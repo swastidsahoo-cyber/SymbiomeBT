@@ -807,7 +807,7 @@ def render_sidebar():
         if st.button("❤️ Live Monitor", key="nav_monitor", use_container_width=True, type="secondary" if st.session_state.page != "Monitor" else "primary"):
             st.session_state.page = "Monitor"
             st.rerun()
-        if st.button("📷 Active Facial Analysis", key="nav_active_monitor", use_container_width=True, type="secondary" if st.session_state.page != "Active Monitoring" else "primary"):
+        if st.button("🔴 [NEW] ACTIVE FACIAL ANALYSIS", key="nav_active_monitor", use_container_width=True, type="secondary" if st.session_state.page != "Active Monitoring" else "primary"):
             st.session_state.page = "Active Monitoring"
             st.rerun()
         if st.button("👁️ Passive Sentinel", key="nav_sentinel", use_container_width=True, type="secondary" if st.session_state.page != "SENTINEL" else "primary"):
