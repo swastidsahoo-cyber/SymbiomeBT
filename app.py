@@ -29,7 +29,8 @@ from data_engine import data_engine
 # Import SensorManager for control
 try:
     from modules.sensor_manager import sensor_manager
-except ImportError:
+except Exception as e:
+    st.error(f"⚠️ SENSOR MANAGER FAILURE: {e}")
     sensor_manager = None # Graceful fallback
 from modules.science_logic import calculate_sri
 
