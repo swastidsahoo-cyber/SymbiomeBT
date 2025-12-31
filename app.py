@@ -724,6 +724,7 @@ def render_session_summary():
 def render_sidebar():
     """Renders the Sidebar Navigation matching React design categories."""
     with st.sidebar:
+        st.markdown("# 🚀 VERSION 2.5 LIVE")
         # --- LOGO SECTION ---
         st.markdown("""
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
