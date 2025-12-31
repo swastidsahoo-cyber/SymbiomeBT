@@ -66,7 +66,7 @@ def render_active_monitoring_page():
             async_processing=True
         )
         
-    with col_stats:
+    with col_metrics:
         st.markdown("### 📊 Live Metrics")
         
         # Live Stats Placeholders
@@ -74,46 +74,46 @@ def render_active_monitoring_page():
         p_stress = st.empty()
         p_details = st.empty()
         
+        if sensor_manager.strategy == "HARDWARE":
+             st.warning("⚠️ HARDWARE MODE: Requires running app LOCALLY (localhost). Cloud cannot access your USB ports.")
+        
         # Render Loop (only runs if stream is active)
+        # We use a placeholder loop that updates ONLY the metrics, not the whole page
         if ctx.state.playing:
-            # We use a loop here to update the text metrics while video runs
-            # This is a bit of a hack in Streamlit, but needed for separate UI updates
-            
-            # Get latest readings
-            readings = sensor_manager.get_readings()
-            
-            # Stress Display
-            stress_val = int(readings['facial_stress'])
-            stress_color = "#10b981" if stress_val < 30 else "#f59e0b" if stress_val < 60 else "#ef4444"
-            
-            p_stress.markdown(f"""
-            <div style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(30, 41, 59, 0.8)); border-radius: 12px; padding: 20px; border: 1px solid {stress_color}; box-shadow: 0 0 20px {stress_color}40; margin-bottom: 20px;">
-                <div style="font-size: 0.85rem; color: #94a3b8; letter-spacing: 1px;">REAL-TIME STRESS</div>
-                <div style="font-size: 3.5rem; font-weight: 800; color: {stress_color}; line-height: 1.1;">{stress_val}</div>
-                <div style="font-size: 1rem; color: {stress_color}; font-weight: 600;">{readings['emotion'].upper()}</div>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            p_details.markdown(f"""
-            <div style="background: rgba(15, 23, 42, 0.5); border-radius: 12px; padding: 15px; border: 1px solid rgba(255,255,255,0.1);">
-                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                    <span style="color: #cbd5e1;">💓 Heart Rate</span>
-                    <span style="color: #f43f5e; font-weight:bold; font-size: 1.2rem;">{int(readings['hr'])} <span style="font-size:0.8rem">bpm</span></span>
+            while ctx.state.playing:
+                # Get latest readings
+                readings = sensor_manager.get_readings()
+                
+                # Stress Display
+                stress_val = int(readings['facial_stress'])
+                stress_color = "#10b981" if stress_val < 30 else "#f59e0b" if stress_val < 60 else "#ef4444"
+                
+                p_stress.markdown(f"""
+                <div style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(30, 41, 59, 0.8)); border-radius: 12px; padding: 20px; border: 1px solid {stress_color}; box-shadow: 0 0 20px {stress_color}40; margin-bottom: 20px;">
+                    <div style="font-size: 0.85rem; color: #94a3b8; letter-spacing: 1px;">REAL-TIME STRESS</div>
+                    <div style="font-size: 3.5rem; font-weight: 800; color: {stress_color}; line-height: 1.1;">{stress_val}</div>
+                    <div style="font-size: 1rem; color: {stress_color}; font-weight: 600;">{readings['emotion'].upper()}</div>
                 </div>
-                <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                    <span style="color: #cbd5e1;">⚡ HRV</span>
-                    <span style="color: #2dd4bf; font-weight:bold; font-size: 1.2rem;">{int(readings['hrv'])} <span style="font-size:0.8rem">ms</span></span>
+                """, unsafe_allow_html=True)
+                
+                p_details.markdown(f"""
+                <div style="background: rgba(15, 23, 42, 0.5); border-radius: 12px; padding: 15px; border: 1px solid rgba(255,255,255,0.1);">
+                    <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <span style="color: #cbd5e1;">💓 Heart Rate</span>
+                        <span style="color: #f43f5e; font-weight:bold; font-size: 1.2rem;">{int(readings['hr'])} <span style="font-size:0.8rem">bpm</span></span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <span style="color: #cbd5e1;">⚡ HRV</span>
+                        <span style="color: #2dd4bf; font-weight:bold; font-size: 1.2rem;">{int(readings['hrv'])} <span style="font-size:0.8rem">ms</span></span>
+                    </div>
+                     <div style="display: flex; justify-content: space-between; padding: 10px 0;">
+                        <span style="color: #cbd5e1;">🌡️ Facial Temp</span>
+                        <span style="color: #fbbf24; font-weight:bold; font-size: 1.2rem;">{readings['temp']:.1f}°C</span>
+                    </div>
                 </div>
-                 <div style="display: flex; justify-content: space-between; padding: 10px 0;">
-                    <span style="color: #cbd5e1;">🌡️ Facial Temp</span>
-                    <span style="color: #fbbf24; font-weight:bold; font-size: 1.2rem;">{readings['temp']:.1f}°C</span>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            # Force refresh to keep stats alive
-            time.sleep(0.5)
-            st.rerun()
+                """, unsafe_allow_html=True)
+                
+                # Update rate (Keep reasonable to avoid UI lag)
+                time.sleep(0.1)
         else:
             st.info("Waiting for video stream...")
-            
