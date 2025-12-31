@@ -55,9 +55,13 @@ def render_active_monitoring_page():
         
         # WEBRTC STREAMER
         # key="active-monitor" ensures it persists
+        # RTC Configuration is moving to STUN servers to bypass cloud firewalls
+        rtc_configuration = {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
+        
         ctx = webrtc_streamer(
             key="active-monitor",
             video_processor_factory=FacialAnalysisProcessor,
+            rtc_configuration=rtc_configuration,
             media_stream_constraints={"video": True, "audio": False},
             async_processing=True
         )

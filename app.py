@@ -758,7 +758,15 @@ def render_sidebar():
             if "Webcam" in sensor_mode:
                 if sensor_manager.strategy != "WEBCAM":
                     sensor_manager.set_strategy("WEBCAM")
+                
                 st.success("● Camera Active")
+                
+                # Auto-Redirect as requested
+                if st.session_state.page != "Active Monitoring":
+                    st.info("Redirecting to Active Analysis...")
+                    st.session_state.page = "Active Monitoring"
+                    st.rerun()
+                    
                 st.caption("Analyzing: Heart Rate, Blink, Temp Proxy")
                 
             elif "Hardware" in sensor_mode:
