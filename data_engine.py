@@ -5,7 +5,12 @@ import pandas as pd
 import numpy as np
 import streamlit as st
 
-from modules.sensor_manager import sensor_manager
+try:
+    from modules.sensor_manager import sensor_manager
+except ImportError:
+    sensor_manager = None 
+except Exception:
+    sensor_manager = None
 
 class DataEngine:
     """
@@ -70,7 +75,13 @@ class DataEngine:
             }
             
         # Get Real (or Simulated) Readings from the Manager
-        readings = sensor_manager.get_readings()
+        if sensor_manager:
+            try:
+                readings = sensor_manager.get_readings()
+            except:
+                readings = {}
+        else:
+            readings = {}
         
         # Map SensorManager keys to DataEngine keys (maintain backward compatibility)
         return {
