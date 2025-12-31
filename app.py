@@ -18,20 +18,19 @@ import time
 import os
 import random
 import math
-st.set_page_config(page_title="Symbiome UPGRADE", page_icon="⚡", layout="wide")
-st.error("🚨 SYSTEM UPGRADE IN PROGRESS - PLEASE RELOAD PAGE IF YOU SEE THIS 🚨")
-st.warning("Feature 'Active Facial Analysis' is being installed...")
-st.toast("Installing Updates...", icon="⏳")
+st.set_page_config(page_title="Symbiome", page_icon="✨", layout="wide")
 
 # --- CORE UTILITIES ---
 import plotly.graph_objects as go
 from data_engine import data_engine
 # Import SensorManager for control
-try:
-    from modules.sensor_manager import sensor_manager
-except Exception as e:
-    st.error(f"⚠️ SENSOR MANAGER FAILURE: {e}")
-    sensor_manager = None # Graceful fallback
+# DEBUG: Disabling Sensor Manager to fix crash
+sensor_manager = None 
+# try:
+#     from modules.sensor_manager import sensor_manager
+# except Exception as e:
+#     st.error(f"⚠️ SENSOR MANAGER FAILURE: {e}")
+#     sensor_manager = None
 from modules.science_logic import calculate_sri
 
 # --- DEFENISVE WRAPPER FOR SIDEBAR ---
