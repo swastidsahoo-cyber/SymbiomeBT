@@ -119,6 +119,9 @@ def route_page():
     elif page == 'Cognitive Testing':
         from modules.cognitive_testing import render_cognitive_testing_page
         render_cognitive_testing_page()
+    elif page == 'Active Monitoring':
+        from modules.active_monitoring import render_active_monitoring_page
+        render_active_monitoring_page()
     elif page == 'Community':
         render_placeholder("Community Cloud", "🌍", "Connect with the Symbiome research community and share anonymized insights.")
     elif page == 'Cognitive':
@@ -824,6 +827,9 @@ def render_sidebar():
             st.rerun()
         if st.button("🧪 Stress Simulation", key="nav_simulation", use_container_width=True, type="secondary" if st.session_state.page != "Stress Simulation Sandbox" else "primary"):
             st.session_state.page = "Stress Simulation Sandbox"
+            st.rerun()
+        if st.button("📷 Active Facial Analysis", key="nav_active_monitor", use_container_width=True, type="secondary" if st.session_state.page != "Active Monitoring" else "primary"):
+            st.session_state.page = "Active Monitoring"
             st.rerun()
 
         # 4. AI & Prediction
