@@ -248,6 +248,46 @@ class SensorManager:
 
             time.sleep(0.05) # Cap at 20 FPS processing
 
+    def process_external_frame(self, frame):
+        """
+        Processes a single frame from an external source (WebRTC).
+        Updates internal metrics state. Thread-safe.
+        Note: Simple blocking implementation for immediate feedback.
+        """
+        # 1. rPPG Analysis
+        self.ppg_analyzer.add_sample(frame)
+        hr, confidence = self.ppg_analyzer.calculate_heart_rate()
+        hrv = self.ppg_analyzer.calculate_hrv()
+        
+        with self.lock:
+            # Update HR/HRV if signal is good
+            if confidence > 30: # Lower threshold for webcams
+                self.latest_readings['hr'] = hr
+                self.latest_readings['hrv'] = hrv
+                
+            # Simulate/Proxy metrics
+            # GSR Proxy (Higher HR + Lower HRV -> Higher GSR estimate)
+            self.latest_readings['gsr'] = 5.0 + (self.latest_readings['hr'] - 60)/20.0 
+             
+            # Temp Proxy
+            self.latest_readings['temp'] = 36.5 + (self.latest_readings['hr'] - 60)/50.0
+
+            # Combined Stress Score
+            stress_score = (
+                (self.latest_readings['hr'] / 110.0) * 50 + 
+                ((100 - self.latest_readings['hrv']) / 100.0) * 50
+            ) 
+            self.latest_readings['facial_stress'] = min(100, max(10, stress_score))
+            self.latest_readings['confidence'] = confidence
+            
+            # Emotion
+            if self.latest_readings['facial_stress'] > 60:
+                self.latest_readings['emotion'] = "Stressed"
+            elif self.latest_readings['facial_stress'] < 30:
+                self.latest_readings['emotion'] = "Relaxed"
+            else:
+                self.latest_readings['emotion'] = "Neutral"
+
     # --- HARDWARE STRATEGY (Serial) ---
     def get_available_ports(self):
         if not HAS_SERIAL:
@@ -261,15 +301,58 @@ class SensorManager:
         try:
             self.serial_connection = serial.Serial(port, 9600, timeout=1)
             self.strategy = "HARDWARE"
+            
+            # Start Hardware Thread
+            self.running = True
+            self.thread = Thread(target=self._hardware_loop, daemon=True)
+            self.thread.start()
+            
             return True
         except Exception as e:
             print(f"Serial Error: {e}")
             return False
             
     def _disconnect_hardware(self):
+        self.running = False
         if self.serial_connection:
-            self.serial_connection.close()
+            try:
+                self.serial_connection.close()
+            except:
+                pass
 
+    def _hardware_loop(self):
+        """Read loop for Arduino/Hardware Serial. Expects format: HR:x,GSR:y,TEMP:z"""
+        while self.running and self.serial_connection and self.serial_connection.is_open:
+            try:
+                line = self.serial_connection.readline().decode('utf-8').strip()
+                if not line:
+                    continue
+                
+                # Parse Data
+                # Example: "HR:75,GSR:3.4,TEMP:37.1"
+                parts = line.split(',')
+                updates = {}
+                for p in parts:
+                    if ':' in p:
+                        key, val = p.split(':')
+                        key = key.strip().upper()
+                        try:
+                            val = float(val)
+                            if key == 'HR': updates['hr'] = val
+                            elif key == 'GSR': updates['gsr'] = val
+                            elif key == 'TEMP': updates['temp'] = val
+                            elif key == 'HRV': updates['hrv'] = val
+                        except ValueError:
+                            pass
+                
+                if updates:
+                    with self.lock:
+                        self.latest_readings.update(updates)
+                        self.latest_readings['confidence'] = 100.0 # Trust hardware
+                        
+            except Exception as e:
+                print(f"Hardware Read Error: {e}")
+                time.sleep(1)
 
 # Singleton Export
 sensor_manager = SensorManager()
