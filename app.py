@@ -121,8 +121,13 @@ def route_page():
         from modules.cognitive_testing import render_cognitive_testing_page
         render_cognitive_testing_page()
     elif page == 'Active Monitoring':
-        from modules.active_monitoring import render_active_monitoring_page
-        render_active_monitoring_page()
+        try:
+            from modules.active_monitoring import render_active_monitoring_page
+            render_active_monitoring_page()
+        except Exception as e:
+            st.error(f"⚠️ MODULE ERROR: {e}")
+            st.warning("Please ensure 'av' and 'streamlit-webrtc' are installed.")
+            st.code(f"pip install av streamlit-webrtc", language="bash")
     elif page == 'Community':
         render_placeholder("Community Cloud", "🌍", "Connect with the Symbiome research community and share anonymized insights.")
     elif page == 'Cognitive':
