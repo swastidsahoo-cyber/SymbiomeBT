@@ -807,6 +807,9 @@ def render_sidebar():
         if st.button("❤️ Live Monitor", key="nav_monitor", use_container_width=True, type="secondary" if st.session_state.page != "Monitor" else "primary"):
             st.session_state.page = "Monitor"
             st.rerun()
+        if st.button("📷 Active Facial Analysis", key="nav_active_monitor", use_container_width=True, type="secondary" if st.session_state.page != "Active Monitoring" else "primary"):
+            st.session_state.page = "Active Monitoring"
+            st.rerun()
         if st.button("👁️ Passive Sentinel", key="nav_sentinel", use_container_width=True, type="secondary" if st.session_state.page != "SENTINEL" else "primary"):
             st.session_state.page = "SENTINEL"
             st.rerun()
@@ -827,9 +830,6 @@ def render_sidebar():
             st.rerun()
         if st.button("🧪 Stress Simulation", key="nav_simulation", use_container_width=True, type="secondary" if st.session_state.page != "Stress Simulation Sandbox" else "primary"):
             st.session_state.page = "Stress Simulation Sandbox"
-            st.rerun()
-        if st.button("📷 Active Facial Analysis", key="nav_active_monitor", use_container_width=True, type="secondary" if st.session_state.page != "Active Monitoring" else "primary"):
-            st.session_state.page = "Active Monitoring"
             st.rerun()
 
         # 4. AI & Prediction
