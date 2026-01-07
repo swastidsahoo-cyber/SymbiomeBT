@@ -18,6 +18,7 @@ import time
 import os
 import random
 import math
+import textwrap
 st.set_page_config(page_title="Symbiome | DEBUG", page_icon="🐞", layout="wide")
 st.error("🐞 DEBUG MODE ACTIVE - IF YOU SEE THIS, THE FILE IS UPDATING")
 st.toast("System Reloaded", icon="🔄")
@@ -1450,36 +1451,36 @@ def render_dashboard():
     # --- NEW DASHBOARD COMPONENTS (MOVED TO TOP) ---
     
     # 1. AI Resilience Prediction Card
-    st.markdown("""
-<div style="background: linear-gradient(90deg, #1e1b4b 0%, #312e81 100%); border-radius: 12px; padding: 25px; margin-bottom: 20px; border: 1px solid rgba(129, 140, 248, 0.2); box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
-        <div style="display: flex; gap: 15px; align-items: center;">
-            <div style="background: rgba(129, 140, 248, 0.2); width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #a5b4fc; font-size: 1.4rem;">⚡</div>
-            <div>
-                <div style="color: white; font-weight: 700; font-size: 1.2rem;">AI Resilience Prediction</div>
-                <div style="color: #a5b4fc; font-size: 0.9rem;">Based on your patterns and behavioral inputs</div>
+    st.markdown(textwrap.dedent("""
+    <div style="background: linear-gradient(90deg, #1e1b4b 0%, #312e81 100%); border-radius: 12px; padding: 25px; margin-bottom: 20px; border: 1px solid rgba(129, 140, 248, 0.2); box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <div style="background: rgba(129, 140, 248, 0.2); width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #a5b4fc; font-size: 1.4rem;">⚡</div>
+                <div>
+                    <div style="color: white; font-weight: 700; font-size: 1.2rem;">AI Resilience Prediction</div>
+                    <div style="color: #a5b4fc; font-size: 0.9rem;">Based on your patterns and behavioral inputs</div>
+                </div>
             </div>
         </div>
-    </div>
-    
-    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem; color: #a5b4fc; font-weight: 600;">
-        <span>Predicted SRI</span>
-        <span>Confidence</span>
-    </div>
-    <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
-        <div style="font-size: 2.2rem; font-weight: 800; color: #e0e7ff; line-height: 1;">59</div>
-        <div style="flex-grow: 1; height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px;">
-            <div style="width: 83%; height: 100%; background: linear-gradient(90deg, #818cf8 0%, #c084fc 100%); border-radius: 5px; box-shadow: 0 0 10px rgba(129, 140, 248, 0.5);"></div>
+        
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem; color: #a5b4fc; font-weight: 600;">
+            <span>Predicted SRI</span>
+            <span>Confidence</span>
         </div>
-        <div style="color: white; font-weight: 700; font-size: 1.1rem;">83%</div>
+        <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
+            <div style="font-size: 2.2rem; font-weight: 800; color: #e0e7ff; line-height: 1;">59</div>
+            <div style="flex-grow: 1; height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px;">
+                <div style="width: 83%; height: 100%; background: linear-gradient(90deg, #818cf8 0%, #c084fc 100%); border-radius: 5px; box-shadow: 0 0 10px rgba(129, 140, 248, 0.5);"></div>
+            </div>
+            <div style="color: white; font-weight: 700; font-size: 1.1rem;">83%</div>
+        </div>
+        
+        <div style="background: rgba(0,0,0,0.2); border-radius: 8px; padding: 15px; display: flex; gap: 15px; align-items: center; border-left: 3px solid #fbbf24;">
+            <span style="color: #fbbf24; font-size: 1.2rem;">💡</span>
+            <span style="color: #e0e7ff; font-size: 0.95rem;"><strong>Recommendation:</strong> Consider a 10-minute breathing exercise before bed to optimize recovery slope.</span>
+        </div>
     </div>
-    
-    <div style="background: rgba(0,0,0,0.2); border-radius: 8px; padding: 15px; display: flex; gap: 15px; align-items: center; border-left: 3px solid #fbbf24;">
-        <span style="color: #fbbf24; font-size: 1.2rem;">💡</span>
-        <span style="color: #e0e7ff; font-size: 0.95rem;"><strong>Recommendation:</strong> Consider a 10-minute breathing exercise before bed to optimize recovery slope.</span>
-    </div>
-</div>
-""", unsafe_allow_html=True)
+    """), unsafe_allow_html=True)
 
     # 2. Did You Know? Section
     if 'fact_idx' not in st.session_state: st.session_state.fact_idx = 0
@@ -1493,48 +1494,48 @@ def render_dashboard():
 
     c_fact, c_refresh = st.columns([15, 1]) 
     with c_fact:
-        st.markdown(f"""
-<div style="background: linear-gradient(90deg, #1c1917 0%, #292524 100%); border-left: 4px solid #f97316; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
-    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-        <div style="background: rgba(249, 115, 22, 0.15); width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #f97316; font-size: 1.1rem;">⚡</div>
-        <div style="color: #fed7aa; font-weight: 700; font-size: 1.0rem;">Did You Know? - {curr_fact['t']}</div>
-    </div>
-    <div style="color: #94a3b8; font-size: 0.95rem; line-height: 1.6; padding-left: 44px;">
-        {curr_fact['d']}
-    </div>
-    <div style="margin-top: 15px; padding-left: 44px; display: flex; gap: 6px;">
-            {''.join(['<div style="width: 25px; height: 4px; background: ' + ('#f97316' if i == st.session_state.fact_idx else '#44403c') + '; border-radius: 2px;"></div>' for i in range(len(facts))])}
-    </div>
-</div>
-""", unsafe_allow_html=True)
+        st.markdown(textwrap.dedent(f"""
+        <div style="background: linear-gradient(90deg, #1c1917 0%, #292524 100%); border-left: 4px solid #f97316; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                <div style="background: rgba(249, 115, 22, 0.15); width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #f97316; font-size: 1.1rem;">⚡</div>
+                <div style="color: #fed7aa; font-weight: 700; font-size: 1.0rem;">Did You Know? - {curr_fact['t']}</div>
+            </div>
+            <div style="color: #94a3b8; font-size: 0.95rem; line-height: 1.6; padding-left: 44px;">
+                {curr_fact['d']}
+            </div>
+            <div style="margin-top: 15px; padding-left: 44px; display: flex; gap: 6px;">
+                 {''.join(['<div style="width: 25px; height: 4px; background: ' + ('#f97316' if i == st.session_state.fact_idx else '#44403c') + '; border-radius: 2px;"></div>' for i in range(len(facts))])}
+            </div>
+        </div>
+        """), unsafe_allow_html=True)
     with c_refresh:
         if st.button("🔄", key="refresh_fact_btn", help="Next Fact"):
             st.session_state.fact_idx = (st.session_state.fact_idx + 1) % len(facts)
             st.rerun()
 
     # 3. AI Coach Overlay (Floating)
-    st.markdown("""
-<div style="position: fixed; bottom: 30px; right: 30px; width: 320px; background: #0f3d3e; border: 1px solid #14b8a6; border-radius: 12px; padding: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); z-index: 9999; font-family: 'Inter', sans-serif;">
-    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
-        <div style="background: rgba(20, 184, 166, 0.2); width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.2rem;">🍃</div>
-        <div style="color: #2dd4bf; font-weight: 700; font-size: 0.95rem;">AI Coach</div>
-        <div style="margin-left: auto; color: #5eead4; cursor: pointer; font-size: 1.2rem; opacity: 0.7;">&times;</div>
+    st.markdown(textwrap.dedent("""
+    <div style="position: fixed; bottom: 30px; right: 30px; width: 320px; background: #0f3d3e; border: 1px solid #14b8a6; border-radius: 12px; padding: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); z-index: 9999; font-family: 'Inter', sans-serif;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+            <div style="background: rgba(20, 184, 166, 0.2); width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.2rem;">🍃</div>
+            <div style="color: #2dd4bf; font-weight: 700; font-size: 0.95rem;">AI Coach</div>
+            <div style="margin-left: auto; color: #5eead4; cursor: pointer; font-size: 1.2rem; opacity: 0.7;">&times;</div>
+        </div>
+        <div style="color: white; font-weight: 700; font-size: 1rem; margin-bottom: 8px;">Maintain Balance</div>
+        <div style="color: #ccfbf1; font-size: 0.85rem; line-height: 1.5; margin-bottom: 18px;">
+            Good resilience! A quick coherent breathing session (1-2 min) can push you into optimal range.
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button style="background: #2dd4bf; border: none; padding: 8px 16px; border-radius: 6px; color: #0f172a; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex: 1;">Quick Session</button>
+            <button style="background: transparent; border: 1px solid #2dd4bf; padding: 8px 16px; border-radius: 6px; color: #2dd4bf; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex: 1;">Next Tip</button>
+        </div>
+        <div style="display: flex; justify-content: center; gap: 6px; margin-top: 15px;">
+            <div style="width: 6px; height: 6px; background: #2dd4bf; border-radius: 50%;"></div>
+            <div style="width: 6px; height: 6px; background: #115e59; border-radius: 50%;"></div>
+            <div style="width: 6px; height: 6px; background: #115e59; border-radius: 50%;"></div>
+        </div>
     </div>
-    <div style="color: white; font-weight: 700; font-size: 1rem; margin-bottom: 8px;">Maintain Balance</div>
-    <div style="color: #ccfbf1; font-size: 0.85rem; line-height: 1.5; margin-bottom: 18px;">
-        Good resilience! A quick coherent breathing session (1-2 min) can push you into optimal range.
-    </div>
-    <div style="display: flex; gap: 10px;">
-        <button style="background: #2dd4bf; border: none; padding: 8px 16px; border-radius: 6px; color: #0f172a; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex: 1;">Quick Session</button>
-        <button style="background: transparent; border: 1px solid #2dd4bf; padding: 8px 16px; border-radius: 6px; color: #2dd4bf; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex: 1;">Next Tip</button>
-    </div>
-    <div style="display: flex; justify-content: center; gap: 6px; margin-top: 15px;">
-        <div style="width: 6px; height: 6px; background: #2dd4bf; border-radius: 50%;"></div>
-        <div style="width: 6px; height: 6px; background: #115e59; border-radius: 50%;"></div>
-        <div style="width: 6px; height: 6px; background: #115e59; border-radius: 50%;"></div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
+    """), unsafe_allow_html=True)
     
     # --- SECTION 1: HERO (SRI GAUGE) ---
     current_sri = st.session_state.get('last_session_sri', 70)
