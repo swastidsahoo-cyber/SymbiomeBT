@@ -1466,7 +1466,6 @@ def render_dashboard():
 
     c_fact, c_refresh = st.columns([15, 1]) 
     with c_fact:
-    with c_fact:
         fact_progress_html = ''.join([f'<div style="width: 25px; height: 4px; background: {"#f97316" if i == st.session_state.fact_idx else "#44403c"}; border-radius: 2px;"></div>' for i in range(len(facts))])
         st.markdown(f'<div style="background: linear-gradient(90deg, #1c1917 0%, #292524 100%); border-left: 4px solid #f97316; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);"><div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;"><div style="background: rgba(249, 115, 22, 0.15); width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #f97316; font-size: 1.1rem;">⚡</div><div style="color: #fed7aa; font-weight: 700; font-size: 1.0rem;">Did You Know? - {curr_fact["t"]}</div></div><div style="color: #94a3b8; font-size: 0.95rem; line-height: 1.6; padding-left: 44px;">{curr_fact["d"]}</div><div style="margin-top: 15px; padding-left: 44px; display: flex; gap: 6px;">{fact_progress_html}</div></div>', unsafe_allow_html=True)
     with c_refresh:
