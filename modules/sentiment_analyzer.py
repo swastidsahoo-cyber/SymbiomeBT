@@ -3,10 +3,6 @@ NLP Sentiment Analyzer.
 Analyzes journal entries for emotional state and stress indicators.
 """
 from typing import Dict
-try:
-    from transformers import pipeline
-except ImportError:
-    pipeline = None
 
 class SentimentAnalyzer:
     """

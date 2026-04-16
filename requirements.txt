@@ -4,11 +4,6 @@ opencv-python-headless>=4.8.0
 mediapipe>=0.10.0
 qrcode[pil]
 reportlab
-deepface>=0.0.79
-transformers>=4.35.0
-torch>=2.1.0
-prophet>=1.1.5
-shap>=0.43.0
 cryptography>=41.0.7
 pandas>=2.1.0
 plotly>=5.17.0
