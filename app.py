@@ -1598,3 +1598,5 @@ if st.session_state.live_mode:
     st.rerun()
 
 # --- END OF APPLICATION ---
+#   T R I G G E R  
+ 
